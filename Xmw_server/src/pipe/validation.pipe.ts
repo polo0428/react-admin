@@ -26,7 +26,8 @@ export class ValidationPipe implements PipeTransform {
     }
     // 将对象转换为 Class 来验证
     const object = plainToClass(metatype, value);
-    const errors = await validate(object);
+    // 配置 forbidUnknownValues: false，允许验证没有使用装饰器的对象
+    const errors = await validate(object, { forbidUnknownValues: false });
     if (errors.length > 0) {
       const msg = Object.values(errors[0].constraints)[0]; // 只需要取第一个错误信息并返回即可
       Logger.error(`参数校验失败: ${msg}`);

@@ -230,7 +230,6 @@ const LoginPage: FC = () => {
               },
             }}
             onFinish={async (values) => {
-              umami.track('登录', pick(values, ['userName', 'password']));
               await handleSubmit(values as LoginParams);
             }}
           >

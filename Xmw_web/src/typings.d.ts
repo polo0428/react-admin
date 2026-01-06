@@ -10,7 +10,7 @@ declare module '*.jpeg';
 declare module '*.gif';
 declare module '*.bmp';
 declare module '*.tiff';
-declare module 'crypto-js'
+declare module 'crypto-js';
 declare module 'nprogress';
 declare module 'zxcvbn';
 declare module 'lodash-es';

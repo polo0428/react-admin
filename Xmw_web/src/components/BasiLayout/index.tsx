@@ -57,7 +57,9 @@ export const BasiLayout: RunTimeLayoutConfig = ({
     useBoolean(false);
 
   // 渲染菜单图标
-  const renderMenuicon = (icon) => <Icon icon={toString(icon)} style={{ fontSize: 16, display: 'flex' }} />;
+  const renderMenuicon = (icon) => (
+    <Icon icon={toString(icon)} style={{ fontSize: 16, display: 'flex' }} />
+  );
   return {
     /* 水印 */
     waterMarkProps: {
@@ -75,10 +77,6 @@ export const BasiLayout: RunTimeLayoutConfig = ({
       if (!ACCESS_TOKEN && !eq(pathname, ROUTES.LOGIN)) {
         history.push(ROUTES.LOGIN);
       }
-      // 中文状态下，绑定 umami 事件
-      if (eq(getLocale(), 'zh-CN') && !eq(pathname, '/')) {
-        umami.track(formatMessage({ id: formatPerfix(pathname, '', true) }));
-      }
     },
     menu: {
       request: async () => initialState?.RouteMenu,
@@ -87,7 +85,7 @@ export const BasiLayout: RunTimeLayoutConfig = ({
     breadcrumbProps: {
       itemRender: (route) => {
         return (
-          <Space align='center'>
+          <Space align="center">
             <Icon icon={MenuRemixIconMap[route.linkPath as ROUTES]} style={{ display: 'flex' }} />
             <span>{route.breadcrumbName}</span>
           </Space>
@@ -102,8 +100,7 @@ export const BasiLayout: RunTimeLayoutConfig = ({
         return (
           <Space size={4}>
             {/* 分组布局不用渲染图标，避免重复 */}
-            {pro_layout_parentKeys?.length &&
-              renderMenuicon(icon)}
+            {pro_layout_parentKeys?.length && renderMenuicon(icon)}
             {!isGroup || (isGroup && !isCollapsed) ? (
               <Paragraph ellipsis={{ rows: 1, tooltip: defaultDom }} style={{ marginBottom: 0 }}>
                 {isGroup ? formatMessage({ id: locale as string }) : defaultDom}

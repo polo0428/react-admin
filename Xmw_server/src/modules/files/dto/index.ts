@@ -14,5 +14,5 @@ export class UploadFileDto {
     description: '文件流',
     format: 'binary',
   })
-  file: BinaryData;
+  file: any;
 }

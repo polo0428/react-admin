@@ -144,14 +144,17 @@ export default defineConfig({
   },
   requestRecord: {},
   /**
-  * @name <head> 中额外的 script
-  * @description 配置 <head> 中额外的 script
-  */
+   * @name <head> 中额外的 script
+   * @description 配置 <head> 中额外的 script
+   */
   headScripts: [
     // 解决首次加载时白屏的问题
     { src: '/scripts/loading.js', async: true },
     // Umimai 统计
-    { src: 'https://umami.baiwumm.com/script.js', 'data-website-id': '7e15460c-1124-4f43-9d26-33ecc1e9bd94' },
+    {
+      src: 'https://umami.baiwumm.com/script.js',
+      'data-website-id': '7e15460c-1124-4f43-9d26-33ecc1e9bd94',
+    },
   ],
   // 站点统计
   analytics: {

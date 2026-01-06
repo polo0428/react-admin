@@ -42,8 +42,8 @@ React Admin 是一个现代化的企业级中后台管理系统框架，采用�
 2. 📝 **完整审计日志**：自动记录用户的 CRUD 操作，提供全面的系统行为追踪和审计能力
 3. 🧩 **动态路由菜单**：根据用户角色权限动态生成路由和菜单，实现真正的按需加载
 4. 📢 **实时消息推送**：基于 SSE (Server-Sent Events) 技术实现服务器到客户端的实时消息推送
-5. 🎨 **主题定制**：支持多种预设主题，并可根据企业VI进行个性化定制
-6. 🛡️ **TypeScript支持**：全面使用 TypeScript 开发，提供完整的类型定义，增强代码健壮性
+5. 🎨 **主题定制**：支持多种预设主题，并可根据企业 VI 进行个性化定制
+6. 🛡️ **TypeScript 支持**：全面使用 TypeScript 开发，提供完整的类型定义，增强代码健壮性
 7. 🧪 **组件封装**：包含大量实用的业务组件和功能展示，可直接应用于实际项目
 
 ## 🔧 环境要求与依赖
@@ -60,9 +60,9 @@ React Admin 是一个现代化的企业级中后台管理系统框架，采用�
 ### 📚 技术依赖
 
 - 前端框架：[Umi](https://umijs.org/) (4.x)
-- UI组件库：[Ant Design](https://ant.design/) (5.x)
+- UI 组件库：[Ant Design](https://ant.design/) (5.x)
 - 后端框架：[Nest.js](https://nestjs.com/) (10.x)
-- ORM框架：[Sequelize](https://sequelize.org/) (6.x)
+- ORM 框架：[Sequelize](https://sequelize.org/) (6.x)
 
 ## 🚀 项目运行指南
 
@@ -79,7 +79,7 @@ DATABASE_PORT = 3306
 # 用户名
 DATABASE_NAME = root
 # 密码
-DATABASE_PWD = 123456
+DATABASE_PWD = 110120...
 # 数据库名
 DATABASE_LIB = react-admin
 ```
@@ -175,12 +175,12 @@ pnpm build
 
 ## 🖼️ 系统截图展示
 
-| ![](./demo/1.png) | ![](./demo/2.png) |
-| ----------------- | ----------------- |
-| ![](./demo/3.png) | ![](./demo/4.png) |
-| ![](./demo/5.png) | ![](./demo/6.png) |
-| ![](./demo/7.png) | ![](./demo/8.png) |
-| ![](./demo/9.png) | ![](./demo/10.png) |
+| ![](./demo/1.png)  | ![](./demo/2.png)  |
+| ------------------ | ------------------ |
+| ![](./demo/3.png)  | ![](./demo/4.png)  |
+| ![](./demo/5.png)  | ![](./demo/6.png)  |
+| ![](./demo/7.png)  | ![](./demo/8.png)  |
+| ![](./demo/9.png)  | ![](./demo/10.png) |
 | ![](./demo/11.png) | ![](./demo/12.png) |
 | ![](./demo/13.png) | ![](./demo/14.png) |
 
