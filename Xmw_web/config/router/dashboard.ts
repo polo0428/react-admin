@@ -24,12 +24,5 @@ export default {
             access: 'adminRouteFilter',
             exact: true,
         },
-        {
-            path: '/dashboard/environmental-dependence',
-            name: 'environmental-dependence',
-            component: './Dashboard/EnvironmentalDependence',
-            access: 'adminRouteFilter',
-            exact: true,
-        },
     ],
 }
