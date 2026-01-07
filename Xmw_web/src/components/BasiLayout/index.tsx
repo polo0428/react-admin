@@ -78,9 +78,9 @@ export const BasiLayout: RunTimeLayoutConfig = ({
         history.push(ROUTES.LOGIN);
       }
     },
-    menu: {
-      request: async () => initialState?.RouteMenu,
-    },
+    // menu: {
+    //   request: async () => initialState?.RouteMenu,
+    // },
     /* 自定义面包屑 */
     breadcrumbProps: {
       itemRender: (route) => {

@@ -13,7 +13,7 @@ import CryptoJS from 'crypto-js'; // AES/DES加密
 import { compact, eq, get, isInteger, join, keys, random, sample, sampleSize, startsWith, toLower } from 'lodash-es';
 import { stringify } from 'querystring';
 
-import { getPermissions, getRoutesMenus, getUserInfo } from '@/services/logic/login' // 登录相关接口
+import { getPermissions, getUserInfo } from '@/services/logic/login' // 登录相关接口
 import { LOCAL_STORAGE, REQUEST_CODE, ROUTES } from '@/utils/enums'
 import type { InitialStateTypes, LockSleepTypes, PageResponse, Response } from '@/utils/types'
 
@@ -24,12 +24,12 @@ import type { InitialStateTypes, LockSleepTypes, PageResponse, Response } from '
 export const initUserAuthority = async (): Promise<InitialStateTypes> => {
   try {
     // 获取用户信息和菜单按钮权限
-    const [userInfo, routeMenuInfo, permissionInfo] =
-      await Promise.all([getUserInfo(), getRoutesMenus(), getPermissions()])
+    const [userInfo, permissionInfo] =
+      await Promise.all([getUserInfo(), getPermissions()])
     // 初始化全局状态
     return {
       CurrentUser: get(userInfo, 'data', {}),
-      RouteMenu: get(routeMenuInfo, 'data', []),
+      // RouteMenu: get(routeMenuInfo, 'data', []),
       Permissions: get(permissionInfo, 'data', []),
     }
   } catch (error) {
