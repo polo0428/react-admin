@@ -6,6 +6,8 @@
  * @LastEditors: Cyan
  * @LastEditTime: 2022-09-18 12:29:34
  */
+import menu from './zh-CN/menu';
 
 export default {
+  ...menu,
 };

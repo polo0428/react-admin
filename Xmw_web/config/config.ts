@@ -75,6 +75,11 @@ export default defineConfig({
   fastRefresh: true,
   // ============== 以下都是max的插件配置 ===============
   /**
+   * @name Tailwind CSS 插件
+   * @doc https://umijs.org/docs/max/tailwindcss
+   */
+  tailwindcss: {},
+  /**
    * @name 数据流插件
    * @@doc https://umijs.org/docs/max/data-flow
    */

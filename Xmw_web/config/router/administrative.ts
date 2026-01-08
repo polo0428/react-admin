@@ -39,5 +39,13 @@ export default {
             access: 'adminRouteFilter',
             exact: true,
         },
+        {
+            path: '/administrative/cet',
+            name: 'cet',
+            icon: 'icon-cet',
+            component: './Administrative/CET',
+            access: 'adminRouteFilter',
+            exact: true,
+        },
     ],
 }
