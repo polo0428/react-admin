@@ -10,7 +10,7 @@ export type ExamBatchStatus = 'planning' | 'registration' | 'scoring' | 'publish
 export interface ExamBatch {
   id: string;
   name: string;
-  examDate: string;
+  exam_date: string;
   status: ExamBatchStatus;
 }
 
@@ -48,7 +48,7 @@ const CreateExamModal: React.FC<CreateExamModalProps> = ({
       if (isEditing && initialValues) {
         form.setFieldsValue({
           name: initialValues.name,
-          examDate: initialValues.examDate ? dayjs(initialValues.examDate) : undefined,
+          exam_date: initialValues.exam_date ? dayjs(initialValues.exam_date) : undefined,
           status: initialValues.status,
         });
       } else {
@@ -84,7 +84,7 @@ const CreateExamModal: React.FC<CreateExamModalProps> = ({
       const { name, defaultDate } = generateNameAndDate(selectedYear, selectedSemester);
       form.setFieldsValue({
         name,
-        examDate: defaultDate ? dayjs(defaultDate) : undefined,
+        exam_date: defaultDate ? dayjs(defaultDate) : undefined,
       });
     }
   }, [selectedYear, selectedSemester, open, isEditing, form]);
@@ -167,7 +167,7 @@ const CreateExamModal: React.FC<CreateExamModalProps> = ({
         </Form.Item>
 
         <Form.Item
-          name="examDate"
+          name="exam_date"
           label="考试日期"
           rules={[{ required: true, message: '请选择考试日期' }]}
         >

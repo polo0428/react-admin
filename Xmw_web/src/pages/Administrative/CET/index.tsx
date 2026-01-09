@@ -11,6 +11,8 @@ import {
 import { App, Button, Card, Col, Row, Tag, Typography } from 'antd';
 import React, { useState } from 'react';
 
+import { saveCet } from '@/services/administrative/cet';
+import { REQUEST_CODE } from '@/utils/enums';
 import CreateExamModal, { ExamBatch, ExamBatchStatus } from './components/CreateExamModal';
 
 const { Title, Text } = Typography;
@@ -21,13 +23,13 @@ const INITIAL_BATCHES: ExamBatch[] = [
     id: '1',
     name: '2023-2024学年第二学期 (2024年6月)',
     status: 'published',
-    examDate: '2024-06-15',
+    exam_date: '2024-06-15',
   },
   {
     id: '2',
     name: '2024-2025学年第一学期 (2024年12月)',
     status: 'registration',
-    examDate: '2024-12-14',
+    exam_date: '2024-12-14',
   },
 ];
 
@@ -87,25 +89,37 @@ const ExamManagement: React.FC = () => {
   const handleSave = async (values: any) => {
     try {
       const newBatchData = {
+        year: values.year,
+        semester: values.semester,
         name: values.name,
-        examDate: values.examDate ? values.examDate.format('YYYY-MM-DD') : undefined,
+        exam_date: values.exam_date ? values.exam_date.format('YYYY-MM-DD') : undefined,
         status: values.status,
       };
 
       if (isEditing && editingBatchId) {
-        setBatches((prev) =>
-          prev.map((b) => (b.id === editingBatchId ? { ...b, ...newBatchData } : b)),
-        );
-        message.success('考次更新成功');
+        const result = await saveCet({ ...newBatchData, id: editingBatchId });
+        if (result.code === REQUEST_CODE.SUCCESS) {
+          setBatches((prev) =>
+            prev.map((b) =>
+              b.id === editingBatchId ? { ...b, ...values, exam_date: newBatchData.exam_date } : b,
+            ),
+          );
+          message.success('考次更新成功');
+          setIsModalOpen(false);
+        }
       } else {
-        const newBatch = {
-          ...newBatchData,
-          id: `batch_${Date.now()}`,
-        } as ExamBatch;
-        setBatches((prev) => [newBatch, ...prev]);
-        message.success('考次创建成功');
+        const result = await saveCet(newBatchData);
+        if (result.code === REQUEST_CODE.SUCCESS) {
+          const newBatch = {
+            ...values,
+            id: result.data.id,
+            exam_date: newBatchData.exam_date,
+          } as ExamBatch;
+          setBatches((prev) => [newBatch, ...prev]);
+          message.success('考次创建成功');
+          setIsModalOpen(false);
+        }
       }
-      setIsModalOpen(false);
     } catch (error) {
       console.error('Save failed:', error);
     }
@@ -165,7 +179,7 @@ const ExamManagement: React.FC = () => {
                       <h3 className="text-lg font-bold text-gray-900 m-0">{batch.name}</h3>
                       <Tag color={getStatusColor(batch.status)}>{getStatusLabel(batch.status)}</Tag>
                     </div>
-                    <Text type="secondary">考试日期: {batch.examDate}</Text>
+                    <Text type="secondary">考试日期: {batch.exam_date}</Text>
                   </div>
                 </div>
 

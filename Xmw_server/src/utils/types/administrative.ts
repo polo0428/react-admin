@@ -64,3 +64,17 @@ export type AlreadyAttributes = {
 } & Times &
   Pick<UserAttributes, 'user_id'> &
   Pick<AnnouncementAttributes, 'announcement_id'>;
+
+/**
+ * @description: xmw_cet Attributes
+ * @author: 白雾茫茫丶
+ */
+export type CetAttributes = {
+  id: string; // id 主键
+  year: string; // 学年
+  semester: string; // 学期
+  name: string; // 考次名称
+  exam_date: Date; // 考试日期
+  status: string; // 状态
+} & Times &
+  Pick<CommonTypes, 'founder' | 'sort' | 'describe'>;
