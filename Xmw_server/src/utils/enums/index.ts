@@ -48,17 +48,6 @@ export enum FLAG {
 }
 
 /**
- * @description: 消息类型
- * @author: 白雾茫茫丶
- */
-export enum ANNOUNCEMENT_TYPE {
-  ANNOUNCEMENT = '1', // 公告
-  ACTIVITY = '2', // 活动
-  MESSAGE = '3', // 消息
-  NOTIFICATION = '4', // 通知
-}
-
-/**
  * @description: 性别
  * @author: 白雾茫茫丶
  */
@@ -66,17 +55,6 @@ export enum SEX {
   FEMALE = '0', // 女
   MALE = '1', // 男
   PRIVACY = '2', // 隐私
-}
-
-/**
- * @description: 组织类型
- * @author: 白雾茫茫丶
- */
-export enum ORG_TYPE {
-  GROUP = 'group', // 集团
-  COMPANY = 'company', // 公司
-  UNIT = 'unit', // 单位
-  DEPARTMENT = 'department', // 部门
 }
 
 /**

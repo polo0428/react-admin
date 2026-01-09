@@ -6,29 +6,18 @@
  * @LastEditors: 白雾茫茫丶<baiwumm.com>
  * @LastEditTime: 2024-10-21 17:45:47
  */
-import {
-  ProConfigProvider,
-  SettingDrawer,
-  Settings as LayoutSettings,
-} from '@ant-design/pro-components';
+import { ProConfigProvider, Settings as LayoutSettings } from '@ant-design/pro-components';
 import { history, Icon, InitDataType, Link, RunTimeLayoutConfig, useIntl } from '@umijs/max';
 import { useBoolean } from 'ahooks';
 import { Space, Typography } from 'antd';
 import { eq, toString } from 'lodash-es';
 
-import { formatPerfix, getLocalStorageItem, setLocalStorageItem } from '@/utils';
+import { formatPerfix, getLocalStorageItem } from '@/utils';
 import { MenuRemixIconMap } from '@/utils/const';
 import { LOCAL_STORAGE, ROUTES } from '@/utils/enums';
 import type { InitialStateTypes } from '@/utils/types';
 
-import {
-  ActionButtons,
-  actionsRender,
-  avatarProps,
-  EventSourceNotice,
-  LockScreenModal,
-  LockSleep,
-} from './components';
+import { actionsRender, avatarProps } from './components';
 
 const { Paragraph } = Typography;
 
@@ -42,8 +31,7 @@ export const BasiLayout: RunTimeLayoutConfig = ({
   // 获取 ACCESS_TOKEN
   const ACCESS_TOKEN = getLocalStorageItem<string>(LOCAL_STORAGE.ACCESS_TOKEN);
   /* 是否显示锁屏弹窗 */
-  const [openLockModal, { setTrue: setLockModalTrue, setFalse: setLockModalFalse }] =
-    useBoolean(false);
+  const [openLockModal, { setTrue: setLockModalTrue }] = useBoolean(false);
 
   // 渲染菜单图标
   const renderMenuicon = (icon) => (
@@ -132,30 +120,7 @@ export const BasiLayout: RunTimeLayoutConfig = ({
     childrenRender: (children) => {
       return (
         <>
-          <ProConfigProvider>
-            {children}
-            {/* 锁屏弹窗 */}
-            <LockScreenModal open={openLockModal} setOpenFalse={setLockModalFalse} />
-            {/* 睡眠弹窗 */}
-            <LockSleep />
-            {/* 消息通知 */}
-            <EventSourceNotice />
-            {/* 全局通用按钮 */}
-            <ActionButtons />
-            {/* 工具栏 */}
-            <SettingDrawer
-              disableUrlParams
-              enableDarkTheme
-              settings={LAYOUT || {}}
-              onSettingChange={(Settings: LayoutSettings) => {
-                setLocalStorageItem(LOCAL_STORAGE.LAYOUT, {
-                  ...initialState?.Settings,
-                  ...Settings,
-                });
-                setInitialState((s: InitialStateTypes) => ({ ...s, Settings }));
-              }}
-            />
-          </ProConfigProvider>
+          <ProConfigProvider>{children}</ProConfigProvider>
         </>
       );
     },

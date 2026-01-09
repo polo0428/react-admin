@@ -7,13 +7,11 @@
  * @LastEditTime: 2023-09-28 17:04:38
  */
 import {
-  ANNOUNCEMENT_TYPE,
   FLAG,
   LANGS,
   LAYOUT_TYPE,
   MENU_THEME,
   MENU_TYPE,
-  ORG_TYPE,
   REQUEST_METHODS,
   SEX,
   STATUS,
@@ -106,18 +104,6 @@ export type Langs = Partial<Record<EnumValues<typeof LANGS>, string>>;
  * @author: 白雾茫茫丶
  */
 export type RequestMethods = EnumValues<typeof REQUEST_METHODS>;
-
-/**
- * @description: 组织类型
- * @author: 白雾茫茫丶
- */
-export type OrgTypes = EnumValues<typeof ORG_TYPE>;
-
-/**
- * @description: 活动公告类型
- * @author: 白雾茫茫丶
- */
-export type AnnouncementTypes = EnumValues<typeof ANNOUNCEMENT_TYPE>;
 
 /**
  * @description: 菜单类型
