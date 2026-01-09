@@ -46,7 +46,7 @@ export class ResponseUserManagementDto extends ResponseDto {
           org_id: '9e0d462d-5254-41ba-b8f3-982a7cf588f0',
           role_id: 'c49aeeca-bc95-444e-a437-a2d36e79def4',
           founder: 'bf75a509-f90e-4a29-8bf7-470b581550f6',
-          founder_name: '谢明伟',
+          founder_name: '黄鹏',
           login_num: 0,
           login_last_ip: null,
           login_last_time: null,

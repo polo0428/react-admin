@@ -86,7 +86,7 @@ export class UserInfoResponseDto extends ResponseDto {
       user_id: 'bf75a509-f90e-4a29-8bf7-470b581550f6',
       user_name: 'admin',
       work_no: 'XMW001',
-      cn_name: '谢明伟',
+      cn_name: '黄鹏',
       en_name: 'Cyan',
       age: 18,
       email: '843348394@qq.com',

@@ -46,7 +46,7 @@ export class ResponseMenuManagementDto extends ResponseDto {
         fixedHeader: 1,
         fixSiderbar: 1,
         founder: 'bf75a509-f90e-4a29-8bf7-470b581550f6',
-        founder_name: '谢明伟',
+        founder_name: '黄鹏',
         sort: 1,
         status: 1,
         created_time: '2022-10-27 15:42:56',
