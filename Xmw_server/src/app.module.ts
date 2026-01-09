@@ -14,7 +14,6 @@ import { CetModule } from '@/modules/administrative/cet/cet.module'; // 智能�
 import { AuthModule } from '@/modules/auth/auth.module'; // 用户鉴权
 import { CommonModule } from '@/modules/common/common.module';
 import { FilesModule } from '@/modules/files/files.module'; // 文件上传
-import { InternationalModule } from '@/modules/system/international/international.module'; // 系统设置-国际化
 import { MenuManagementModule } from '@/modules/system/menu-management/menu-management.module'; // 系统设置-菜单管理
 import { OperationLogsModule } from '@/modules/system/operation-logs/operation-logs.module'; // 系统设置-操作日志
 import { RoleManagementModule } from '@/modules/system/role-management/role-management.module'; // 系统设置-角色管理
@@ -39,7 +38,6 @@ import DatabaseConfig from './config/database'; // 数据库配置
       },
       inject: [ConfigService],
     }),
-    InternationalModule,
     MenuManagementModule,
     RoleManagementModule,
     UserManagementModule,

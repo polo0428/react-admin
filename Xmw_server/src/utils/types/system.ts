@@ -9,7 +9,6 @@
 import type {
   CommonTypes,
   Flag,
-  Langs,
   Layouts,
   MenuTheme,
   MenuTypes,
@@ -100,18 +99,6 @@ export type UserAttributes = {
 } & Times &
   Pick<RoleAttributes, 'role_id'> &
   Pick<CommonTypes, 'sort' | 'founder' | 'status'>;
-
-/**
- * @description: xmw_international Attributes
- * @author: 白雾茫茫丶
- */
-export type InternationalAttributes = {
-  id: string; // id
-  name: string; // 国际化字段
-  children?: InternationalAttributes[];
-} & Times &
-  Langs &
-  Pick<CommonTypes, 'parent_id' | 'founder' | 'sort'>;
 
 /**
  * @description: Logs Attributes

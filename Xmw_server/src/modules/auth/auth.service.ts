@@ -13,7 +13,6 @@ import { Op } from 'sequelize';
 import type { WhereOptions } from 'sequelize/types';
 import { Sequelize } from 'sequelize-typescript';
 
-import { XmwInternational } from '@/models/xmw_international.model'; // xmw_international 实体
 import { XmwMenu } from '@/models/xmw_menu.model'; // xmw_menu 实体
 import { XmwRole } from '@/models/xmw_role.model'; // xmw_role 实体
 import { XmwUser } from '@/models/xmw_user.model'; // xmw_user 实体
@@ -203,16 +202,8 @@ export class AuthService {
       const sqlData = await this.menuModel.findAll({
         attributes: {
           exclude: ['name'],
-          include: [[this.sequelize.literal('`i`.`name`'), 'name']],
+          include: [['menu_name', 'name']],
         },
-        // 联表查询
-        include: [
-          {
-            model: XmwInternational,
-            as: 'i',
-            attributes: [],
-          },
-        ],
         where: {
           menu_type: {
             [Op.ne]: 'button',

@@ -18,7 +18,6 @@ import {
   Table,
 } from 'sequelize-typescript';
 
-import { XmwInternational } from '@/models/xmw_international.model'; // 数据库实体
 import { XmwUser } from '@/models/xmw_user.model'; // xmw_user 实体
 import type {
   Layouts,
@@ -42,11 +41,8 @@ export class XmwMenu
   })
   menu_id: string;
 
-  //国际化对应的name
-  @IsUUID(4)
-  @ForeignKey(() => XmwInternational)
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING(100),
     allowNull: false,
     comment: '国际化对应的name',
   })
@@ -267,9 +263,6 @@ export class XmwMenu
     comment: '菜单状态（0:禁用，1：正常）',
   })
   status: Status;
-
-  @BelongsTo(() => XmwInternational, { as: 'i' }) // 定义多对一关系。注意使用BelongsTo是多对一关系的【多】表
-  interInfo: XmwInternational;
 
   @BelongsTo(() => XmwUser, { as: 'u' }) // 定义多对一关系。注意使用BelongsTo是多对一关系的【多】表
   userInfo: XmwUser;

@@ -12,7 +12,6 @@ import { Op } from 'sequelize';
 import type { WhereOptions } from 'sequelize/types';
 import { Sequelize } from 'sequelize-typescript';
 
-import { XmwInternational } from '@/models/xmw_international.model'; // xmw_international 实体
 import { XmwMenu } from '@/models/xmw_menu.model'; // xmw_menu 实体
 import { XmwUser } from '@/models/xmw_user.model'; // xmw_user 实体
 import { initializeTree, responseMessage } from '@/utils'; // 全局工具函数
@@ -26,8 +25,6 @@ export class MenuManagementService {
     // 使用 InjectModel 注入参数，注册数据库实体
     @InjectModel(XmwMenu)
     private readonly menuModel: typeof XmwMenu,
-    @InjectModel(XmwInternational)
-    private readonly internationaModel: typeof XmwInternational,
     private sequelize: Sequelize,
   ) { }
 
@@ -56,10 +53,6 @@ export class MenuManagementService {
       attributes: {
         include: [
           [this.sequelize.col('u.cn_name'), 'founder_name'],
-          'i.zh-CN',
-          'i.en-US',
-          'i.ja-JP',
-          'i.zh-TW',
         ],
       },
       // 联表查询
@@ -67,11 +60,6 @@ export class MenuManagementService {
         {
           model: XmwUser,
           as: 'u',
-          attributes: [],
-        },
-        {
-          model: XmwInternational,
-          as: 'i',
           attributes: [],
         },
       ],
