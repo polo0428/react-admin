@@ -8,4 +8,5 @@
  */
 
 export default {
+  'menu.cet': 'CET Exam Management',
 };

@@ -9,5 +9,5 @@
 
 
 export default {
-
+  'menu.cet': 'CET考試管理',
 };

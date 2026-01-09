@@ -100,7 +100,9 @@ export const BasiLayout: RunTimeLayoutConfig = ({
         return (
           <Space size={4}>
             {/* 分组布局不用渲染图标，避免重复 */}
-            {pro_layout_parentKeys?.length && renderMenuicon(icon)}
+            {!!pro_layout_parentKeys?.length &&
+              pro_layout_parentKeys?.length > 0 &&
+              renderMenuicon(icon)}
             {!isGroup || (isGroup && !isCollapsed) ? (
               <Paragraph ellipsis={{ rows: 1, tooltip: defaultDom }} style={{ marginBottom: 0 }}>
                 {isGroup ? formatMessage({ id: locale as string }) : defaultDom}
