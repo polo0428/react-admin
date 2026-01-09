@@ -8,38 +8,48 @@ import {
   SettingOutlined,
   SolutionOutlined,
 } from '@ant-design/icons';
+import { useRequest } from '@umijs/max';
 import { App, Button, Card, Col, Row, Tag, Typography } from 'antd';
 import React, { useState } from 'react';
 
-import { saveCet } from '@/services/administrative/cet';
+import { deleteCet, getCetList, saveCet } from '@/services/administrative/cet';
 import { REQUEST_CODE } from '@/utils/enums';
+
 import CreateExamModal, { ExamBatch, ExamBatchStatus } from './components/CreateExamModal';
 
 const { Title, Text } = Typography;
 
-// Mock data initialization
-const INITIAL_BATCHES: ExamBatch[] = [
-  {
-    id: '1',
-    name: '2023-2024学年第二学期 (2024年6月)',
-    status: 'published',
-    exam_date: '2024-06-15',
-  },
-  {
-    id: '2',
-    name: '2024-2025学年第一学期 (2024年12月)',
-    status: 'registration',
-    exam_date: '2024-12-14',
-  },
-];
-
 const ExamManagement: React.FC = () => {
   const { message } = App.useApp();
-  const [batches, setBatches] = useState<ExamBatch[]>(INITIAL_BATCHES);
+  const [examList, setExamList] = useState<ExamBatch[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingBatchId, setEditingBatchId] = useState<string | null>(null);
-  // Remove form hook as it's now in the modal component
+
+  const { run: fetchBatches } = useRequest(
+    async () => {
+      try {
+        const result = await getCetList();
+        console.log('getCetList result:', result);
+        if (
+          result.code === REQUEST_CODE.SUCCESS &&
+          result.data &&
+          Array.isArray(result.data.list)
+        ) {
+          console.log('data.list', result.data.list);
+          setExamList(result.data.list);
+          return result.data.list;
+        }
+        return [];
+      } catch (error) {
+        console.error('Fetch error:', error);
+        return [];
+      }
+    },
+    {
+      manual: false, // 自动执行
+    },
+  );
 
   // Mock navigation
   const onNavigate = (page: string, context?: any) => {
@@ -99,25 +109,16 @@ const ExamManagement: React.FC = () => {
       if (isEditing && editingBatchId) {
         const result = await saveCet({ ...newBatchData, id: editingBatchId });
         if (result.code === REQUEST_CODE.SUCCESS) {
-          setBatches((prev) =>
-            prev.map((b) =>
-              b.id === editingBatchId ? { ...b, ...values, exam_date: newBatchData.exam_date } : b,
-            ),
-          );
           message.success('考次更新成功');
           setIsModalOpen(false);
+          fetchBatches(); // 刷新列表
         }
       } else {
         const result = await saveCet(newBatchData);
         if (result.code === REQUEST_CODE.SUCCESS) {
-          const newBatch = {
-            ...values,
-            id: result.data.id,
-            exam_date: newBatchData.exam_date,
-          } as ExamBatch;
-          setBatches((prev) => [newBatch, ...prev]);
           message.success('考次创建成功');
           setIsModalOpen(false);
+          fetchBatches(); // 刷新列表
         }
       }
     } catch (error) {
@@ -125,17 +126,20 @@ const ExamManagement: React.FC = () => {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (editingBatchId) {
-      setBatches((prev) => prev.filter((b) => b.id !== editingBatchId));
-      message.success('考次已删除');
-      setIsModalOpen(false);
+      const result = await deleteCet(editingBatchId);
+      if (result.code === REQUEST_CODE.SUCCESS) {
+        message.success('考次已删除');
+        setIsModalOpen(false);
+        fetchBatches(); // 刷新列表
+      }
     }
   };
 
   const getInitialValues = () => {
     if (isEditing && editingBatchId) {
-      return batches.find((b) => b.id === editingBatchId) || null;
+      return examList.find((b) => b.id === editingBatchId) || null;
     }
     return null;
   };
@@ -155,12 +159,12 @@ const ExamManagement: React.FC = () => {
       </div>
 
       <div className="grid gap-6">
-        {batches.map((batch) => {
-          const isPublished = batch.status === 'published';
+        {examList.map((examItem) => {
+          const isPublished = examItem.status === 'published';
 
           return (
             <Card
-              key={batch.id}
+              key={examItem.id}
               hoverable
               className="border-gray-200 shadow-sm bg-[#fff]"
               bodyStyle={{ padding: '24px' }}
@@ -176,20 +180,26 @@ const ExamManagement: React.FC = () => {
                   </div>
                   <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-lg font-bold text-gray-900 m-0">{batch.name}</h3>
-                      <Tag color={getStatusColor(batch.status)}>{getStatusLabel(batch.status)}</Tag>
+                      <h3 className="text-lg font-bold text-gray-900 m-0">{examItem.name}</h3>
+                      <Tag color={getStatusColor(examItem.status)}>
+                        {getStatusLabel(examItem.status)}
+                      </Tag>
                     </div>
-                    <Text type="secondary">考试日期: {batch.exam_date}</Text>
+                    <Text type="secondary">考试日期: {examItem.exam_date}</Text>
                   </div>
                 </div>
 
-                <Button type="text" icon={<SettingOutlined />} onClick={() => handleEdit(batch)} />
+                <Button
+                  type="text"
+                  icon={<SettingOutlined />}
+                  onClick={() => handleEdit(examItem)}
+                />
               </div>
 
               <Row gutter={[16, 16]} className="pt-4 border-t border-gray-100">
                 <Col xs={24} md={6}>
                   <div
-                    onClick={() => !isPublished && onNavigate('import-reg', { batch })}
+                    onClick={() => !isPublished && onNavigate('import-reg', { examItem })}
                     className={`flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer ${
                       isPublished
                         ? 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed'
@@ -216,7 +226,7 @@ const ExamManagement: React.FC = () => {
 
                 <Col xs={24} md={6}>
                   <div
-                    onClick={() => !isPublished && onNavigate('import-score', { batch })}
+                    onClick={() => !isPublished && onNavigate('import-score', { examItem })}
                     className={`flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer ${
                       isPublished
                         ? 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed'
@@ -243,7 +253,7 @@ const ExamManagement: React.FC = () => {
 
                 <Col xs={24} md={6}>
                   <div
-                    onClick={() => onNavigate('scores', { batch })}
+                    onClick={() => onNavigate('scores', { examItem })}
                     className="flex items-center justify-between 
                     p-3 rounded-lg border border-gray-200 hover:border-blue-300
                      hover:bg-blue-50 group transition-all cursor-pointer"
@@ -263,7 +273,7 @@ const ExamManagement: React.FC = () => {
 
                 <Col xs={24} md={6}>
                   <div
-                    onClick={() => onNavigate('analysis', { batch })}
+                    onClick={() => onNavigate('analysis', { examItem })}
                     className="flex items-center justify-between 
                     p-3 rounded-lg border border-gray-200
                      hover:border-blue-300 hover:bg-blue-50 group transition-all cursor-pointer"

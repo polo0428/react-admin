@@ -56,4 +56,4 @@ import DatabaseConfig from './config/database'; // 数据库配置
     CommonModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

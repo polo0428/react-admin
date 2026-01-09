@@ -1,11 +1,22 @@
-import { Body, Controller, Post, Session, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Session,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Response, SessionTypes } from '@/utils/types';
+import { XmwCet } from '@/models/xmw_cet.model';
+import { PageResponse, Response, SessionTypes } from '@/utils/types';
 
 import { CetService } from './cet.service';
-import { SaveCetDto } from './dto/save.cet.dto';
+import { ListCetDto, SaveCetDto } from './dto';
 
 @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth('jwt')
@@ -14,6 +25,14 @@ import { SaveCetDto } from './dto/save.cet.dto';
 export class CetController {
   constructor(private readonly cetService: CetService) {}
 
+  @Get()
+  @ApiOperation({ summary: '获取考次列表' })
+  getCetList(
+    @Query() cetInfo: ListCetDto,
+  ): Promise<Response<PageResponse<XmwCet>>> {
+    return this.cetService.getCetList(cetInfo);
+  }
+
   @Post('save')
   @ApiOperation({ summary: '保存考次' })
   saveCet(
@@ -21,5 +40,11 @@ export class CetController {
     @Session() session: SessionTypes,
   ): Promise<Response<SaveCetDto>> {
     return this.cetService.saveCet(cetInfo, session);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: '删除考次' })
+  deleteCet(@Param('id') id: string): Promise<Response<number>> {
+    return this.cetService.deleteCet(id);
   }
 }
