@@ -11,20 +11,11 @@ import {
   SettingDrawer,
   Settings as LayoutSettings,
 } from '@ant-design/pro-components';
-import {
-  getLocale,
-  history,
-  Icon,
-  InitDataType,
-  Link,
-  RunTimeLayoutConfig,
-  useIntl,
-} from '@umijs/max';
+import { history, Icon, InitDataType, Link, RunTimeLayoutConfig, useIntl } from '@umijs/max';
 import { useBoolean } from 'ahooks';
 import { Space, Typography } from 'antd';
 import { eq, toString } from 'lodash-es';
 
-import Footer from '@/components/Footer'; // 全局底部版权组件
 import { formatPerfix, getLocalStorageItem, setLocalStorageItem } from '@/utils';
 import { MenuRemixIconMap } from '@/utils/const';
 import { LOCAL_STORAGE, ROUTES } from '@/utils/enums';
@@ -33,8 +24,6 @@ import type { InitialStateTypes } from '@/utils/types';
 import {
   ActionButtons,
   actionsRender,
-  AnnouncementDetail,
-  appList,
   avatarProps,
   EventSourceNotice,
   LockScreenModal,
@@ -139,8 +128,6 @@ export const BasiLayout: RunTimeLayoutConfig = ({
     onCollapse: (collapsed) => {
       setInitialState((s: InitialStateTypes) => ({ ...s, Collapsed: collapsed }));
     },
-    // 跨站点导航列表
-    appList,
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       return (
