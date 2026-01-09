@@ -14,9 +14,7 @@ import type { WhereOptions } from 'sequelize/types';
 import { Sequelize } from 'sequelize-typescript';
 
 import { XmwInternational } from '@/models/xmw_international.model'; // xmw_international 实体
-import { XmwJobs } from '@/models/xmw_jobs.model'; // xmw_jobs 实体
 import { XmwMenu } from '@/models/xmw_menu.model'; // xmw_menu 实体
-import { XmwOrganization } from '@/models/xmw_organization.model'; // xmw_organization 实体
 import { XmwRole } from '@/models/xmw_role.model'; // xmw_role 实体
 import { XmwUser } from '@/models/xmw_user.model'; // xmw_user 实体
 import { initializeTree, responseMessage } from '@/utils';
@@ -76,20 +74,10 @@ export class AuthService {
         // 将数据保存到session
         const currentUserInfo = await this.userModel.findOne({
           attributes: {
-            include: ['j.jobs_name', 'o.org_name', 'r.role_name'],
+            include: ['r.role_name'],
           },
           // 联表查询
           include: [
-            {
-              model: XmwJobs,
-              as: 'j',
-              attributes: [],
-            },
-            {
-              model: XmwOrganization,
-              as: 'o',
-              attributes: [],
-            },
             {
               model: XmwRole,
               as: 'r',

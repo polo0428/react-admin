@@ -9,6 +9,8 @@ export type ExamBatchStatus = 'planning' | 'registration' | 'scoring' | 'publish
 
 export interface ExamBatch {
   id: string;
+  year: string;
+  semester: string;
   name: string;
   exam_date: string;
   status: ExamBatchStatus;
@@ -47,6 +49,8 @@ const CreateExamModal: React.FC<CreateExamModalProps> = ({
     if (open) {
       if (isEditing && initialValues) {
         form.setFieldsValue({
+          year: initialValues.year,
+          semester: initialValues.semester,
           name: initialValues.name,
           exam_date: initialValues.exam_date ? dayjs(initialValues.exam_date) : undefined,
           status: initialValues.status,

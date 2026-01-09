@@ -11,8 +11,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import type { WhereOptions } from 'sequelize/types';
 
-import { XmwJobs } from '@/models/xmw_jobs.model';
-import { XmwOrganization } from '@/models/xmw_organization.model';
 import { XmwRole } from '@/models/xmw_role.model';
 import { XmwUser } from '@/models/xmw_user.model'; // xmw_user 实体
 import { responseMessage } from '@/utils'; // 全局工具函数
@@ -31,7 +29,7 @@ export class UserManagementService {
     // 使用 InjectModel 注入参数，注册数据库实体
     @InjectModel(XmwUser)
     private readonly userModel: typeof XmwUser,
-  ) { }
+  ) {}
 
   /**
    * @description: 获取用户管理列表
@@ -53,20 +51,10 @@ export class UserManagementService {
     // 分页查询数据
     const { count, rows } = await this.userModel.findAndCountAll({
       attributes: {
-        include: ['j.jobs_name', 'o.org_name', 'r.role_name'],
+        include: ['r.role_name'],
       },
       // 联表查询
       include: [
-        {
-          model: XmwJobs,
-          as: 'j',
-          attributes: [],
-        },
-        {
-          model: XmwOrganization,
-          as: 'o',
-          attributes: [],
-        },
         {
           model: XmwRole,
           as: 'r',

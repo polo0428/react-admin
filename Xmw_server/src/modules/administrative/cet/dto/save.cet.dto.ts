@@ -43,4 +43,12 @@ export class SaveCetDto {
     default: 'planning',
   })
   status: string;
+
+  @ApiProperty({
+    type: String,
+    description: '描述',
+    required: false,
+  })
+  describe?: string;
 }
+

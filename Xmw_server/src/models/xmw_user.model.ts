@@ -19,8 +19,6 @@ import {
   Table,
 } from 'sequelize-typescript';
 
-import { XmwJobs } from '@/models/xmw_jobs.model';
-import { XmwOrganization } from '@/models/xmw_organization.model';
 import { XmwRole } from '@/models/xmw_role.model';
 import type { Sex, Status } from '@/utils/types';
 import type { UserAttributes } from '@/utils/types/system';
@@ -155,13 +153,11 @@ export class XmwUser
 
   //岗位id
   @IsUUID(4)
-  @ForeignKey(() => XmwJobs)
   @Column({ type: DataType.UUID, allowNull: false, comment: '岗位id' })
   jobs_id: string;
 
   //组织id
   @IsUUID(4)
-  @ForeignKey(() => XmwOrganization)
   @Column({ type: DataType.UUID, allowNull: false, comment: '组织id' })
   org_id: string;
 
@@ -200,12 +196,6 @@ export class XmwUser
     comment: '最后一次登录时间',
   })
   login_last_time?: Date;
-
-  @BelongsTo(() => XmwJobs, { as: 'j' })
-  jobsInfo: XmwJobs;
-
-  @BelongsTo(() => XmwOrganization, { as: 'o' })
-  orgInfo: XmwOrganization;
 
   @BelongsTo(() => XmwRole, { as: 'r' })
   roleInfo: XmwRole;

@@ -19,8 +19,6 @@ import type {
   Times,
 } from '@/utils/types';
 
-import { JobsAttributes, OrgAttributes } from './administrative';
-
 /**
  * @description: xmw_menu Attributes
  * @author: 白雾茫茫丶
@@ -100,8 +98,6 @@ export type UserAttributes = {
   login_last_ip?: string; // 最后一次登录ip
   login_last_time?: Date; // 最后一次登录时间
 } & Times &
-  Pick<OrgAttributes, 'org_id'> &
-  Pick<JobsAttributes, 'jobs_id'> &
   Pick<RoleAttributes, 'role_id'> &
   Pick<CommonTypes, 'sort' | 'founder' | 'status'>;
 

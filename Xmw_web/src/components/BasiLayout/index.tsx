@@ -69,8 +69,6 @@ export const BasiLayout: RunTimeLayoutConfig = ({
     avatarProps: avatarProps(setLockModalTrue),
     /* 自定义操作列表 */
     actionsRender,
-    /* 底部版权 */
-    footerRender: () => <Footer />,
     /* 页面切换时触发 */
     onPageChange: ({ pathname = '' }) => {
       // 如果没有登录，重定向到 login
@@ -153,8 +151,6 @@ export const BasiLayout: RunTimeLayoutConfig = ({
             <LockScreenModal open={openLockModal} setOpenFalse={setLockModalFalse} />
             {/* 睡眠弹窗 */}
             <LockSleep />
-            {/* 公告详情 */}
-            <AnnouncementDetail />
             {/* 消息通知 */}
             <EventSourceNotice />
             {/* 全局通用按钮 */}

@@ -10,10 +10,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 
-import { AnnouncementModule } from '@/modules/administrative/announcement/announcement.module'; // 智能行政-活动公告
-import { CetModule } from '@/modules/administrative/cet/cet.module'; // 智能行政-考次管理
-import { JobsManagementModule } from '@/modules/administrative/jobs-management/jobs-management.module'; // 智能行政-岗位管理
-import { OrganizationModule } from '@/modules/administrative/organization/organization.module'; // 智能行政-组织管理
+import { CetModule } from '@/modules/administrative/cet/cet.module'; // 智能行政-CET考试
 import { AuthModule } from '@/modules/auth/auth.module'; // 用户鉴权
 import { CommonModule } from '@/modules/common/common.module';
 import { FilesModule } from '@/modules/files/files.module'; // 文件上传
@@ -43,17 +40,14 @@ import DatabaseConfig from './config/database'; // 数据库配置
       inject: [ConfigService],
     }),
     InternationalModule,
-    JobsManagementModule,
-    OrganizationModule,
     MenuManagementModule,
     RoleManagementModule,
     UserManagementModule,
     OperationLogsModule,
     FilesModule,
     AuthModule,
-    AnnouncementModule,
-    CetModule,
     CommonModule,
+    CetModule,
   ],
 })
 export class AppModule {}

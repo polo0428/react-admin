@@ -243,8 +243,6 @@ const LoginPage: FC = () => {
           </LoginForm>
         </Col>
       </Row>
-      {/* 底部版权 */}
-      <Footer />
     </div>
   );
 };
