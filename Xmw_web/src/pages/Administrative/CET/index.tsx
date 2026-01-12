@@ -18,8 +18,7 @@ import { REQUEST_CODE } from '@/utils/enums';
 import CreateExamModal, { ExamBatch, ExamBatchStatus } from './components/CreateExamModal';
 
 const { Title, Text } = Typography;
-
-const ExamManagement: React.FC = () => {
+export default function ExamManagement() {
   const { message } = App.useApp();
   const [examList, setExamList] = useState<ExamBatch[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -306,6 +305,4 @@ const ExamManagement: React.FC = () => {
       />
     </div>
   );
-};
-
-export default ExamManagement;
+}
