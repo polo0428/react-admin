@@ -100,7 +100,7 @@ const TabsLayout: FC<TabsLayoutProps> = ({
         {isCurrent && (
           <Badge status="processing" />
         )}
-        <Icon icon={MenuRemixIconMap[pathname]} style={{ display: 'flex' }} />
+        {MenuRemixIconMap[pathname] && <Icon icon={MenuRemixIconMap[pathname]} style={{ display: 'flex' }} />}
         <FormattedMessage id={`menu${pathname.replaceAll('/', '.')}`} />
       </Space>
     );

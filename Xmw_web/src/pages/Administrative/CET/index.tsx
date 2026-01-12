@@ -8,7 +8,7 @@ import {
   SettingOutlined,
   SolutionOutlined,
 } from '@ant-design/icons';
-import { useRequest } from '@umijs/max';
+import { history, useRequest } from '@umijs/max';
 import { App, Button, Card, Col, Row, Tag, Typography } from 'antd';
 import React, { useState } from 'react';
 
@@ -50,9 +50,13 @@ export default function ExamManagement() {
     },
   );
 
-  // Mock navigation
+  // Navigation
   const onNavigate = (page: string, context?: any) => {
-    message.info(`Navigating to ${page} with context ${context?.batch?.name || ''}`);
+    if (page === 'scores') {
+      history.push('/cet/scores', { examItem: context?.examItem });
+    } else {
+      message.info(`Navigating to ${page} (Not implemented yet)`);
+    }
   };
 
   const getStatusColor = (status: ExamBatchStatus) => {

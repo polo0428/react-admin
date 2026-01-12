@@ -6,7 +6,7 @@ const baseURL = '/administrative/cet';
  * @description: 获取CET考试列表
  */
 export const getCetList = (options?: any) =>
-  httpRequest.get<{ list: API.CET[]; total: number }>(`${baseURL}`, options);
+  httpRequest.get<{ list: any[]; total: number }>(`${baseURL}`, options);
 
 /**
  * @description: 创建CET考试

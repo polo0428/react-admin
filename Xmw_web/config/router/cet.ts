@@ -7,11 +7,20 @@
  * @LastEditTime: 2024-10-28 16:30:22
  */
 export default {
-    path: '/cet',
-    name: 'cet',
-    icon: 'icon-cet',
-    component: './Administrative/CET',
-    access: 'adminRouteFilter',
-    exact: true,
-}
-
+  path: '/cet',
+  name: 'cet',
+  access: 'adminRouteFilter',
+  routes: [
+    {
+      path: '/cet',
+      component: './Administrative/CET',
+      exact: true,
+    },
+    {
+      path: '/cet/scores',
+      component: './Administrative/CET/ScoreManagement',
+      name: 'scores',
+      hideInMenu: true,
+    },
+  ],
+};
