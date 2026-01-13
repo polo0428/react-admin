@@ -1,13 +1,19 @@
 import ReactECharts from 'echarts-for-react';
 import React from 'react';
 
-import { MOCK_SKILL_DATA } from '../constants';
+interface Props {
+  data?: {
+    subject: string;
+    A: number;
+    B: number;
+  }[];
+}
 
 /**
  * 单项能力分析图表 (Radar Chart)
  * 对比本批次与上批次的各项能力得分
  */
-const RadarChart: React.FC = () => {
+const RadarChart: React.FC<Props> = ({ data = [] }) => {
   const getOption = () => {
     return {
       tooltip: {
@@ -19,7 +25,7 @@ const RadarChart: React.FC = () => {
         icon: 'circle',
       },
       radar: {
-        indicator: MOCK_SKILL_DATA.map((item) => ({
+        indicator: data.map((item) => ({
           name: item.subject,
           max: 250,
         })),
@@ -45,14 +51,14 @@ const RadarChart: React.FC = () => {
           type: 'radar',
           data: [
             {
-              value: MOCK_SKILL_DATA.map((item) => item.A),
+              value: data.map((item) => item.A),
               name: '本批次平均',
               itemStyle: { color: '#8b5cf6' },
               areaStyle: { color: '#8b5cf6', opacity: 0.5 },
               lineStyle: { width: 2 },
             },
             {
-              value: MOCK_SKILL_DATA.map((item) => item.B),
+              value: data.map((item) => item.B),
               name: '上批次平均',
               itemStyle: { color: '#cbd5e1' },
               areaStyle: { color: '#cbd5e1', opacity: 0.3 },

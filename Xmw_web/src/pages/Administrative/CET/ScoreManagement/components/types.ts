@@ -4,6 +4,7 @@ export enum ExamLevel {
 }
 
 export interface ScoreRecord {
+  recordId: string; // 数据库主键ID
   id: string; // 学号
   name: string; // 姓名
   department: string; // 学院

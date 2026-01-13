@@ -1,13 +1,18 @@
 import ReactECharts from 'echarts-for-react';
 import React from 'react';
 
-import { MOCK_DISTRIBUTION_DATA } from '../constants';
+interface Props {
+  data?: {
+    range: string;
+    count: number;
+  }[];
+}
 
 /**
  * 成绩段分布统计图表 (Bar Chart)
  * 展示各分数段的人数分布
  */
-const DistributionChart: React.FC = () => {
+const DistributionChart: React.FC<Props> = ({ data = [] }) => {
   const getOption = () => {
     return {
       tooltip: {
@@ -25,7 +30,7 @@ const DistributionChart: React.FC = () => {
       },
       xAxis: {
         type: 'category',
-        data: MOCK_DISTRIBUTION_DATA.map((item) => item.range),
+        data: data.map((item) => item.range),
         axisLine: { lineStyle: { color: '#94a3b8' } },
         axisLabel: { color: '#64748b' },
         axisTick: { show: false },
@@ -43,7 +48,7 @@ const DistributionChart: React.FC = () => {
           name: '人数',
           type: 'bar',
           barWidth: '40%',
-          data: MOCK_DISTRIBUTION_DATA.map((item) => item.count),
+          data: data.map((item) => item.count),
           itemStyle: {
             color: '#3b82f6',
             borderRadius: [4, 4, 0, 0],

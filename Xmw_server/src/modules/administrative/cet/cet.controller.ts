@@ -18,6 +18,7 @@ import { PageResponse, Response, SessionTypes } from '@/utils/types';
 
 import { CetService } from './cet.service';
 import {
+  GetAnalysisDto,
   ListCetDto,
   ListScoreDto,
   SaveCetDto,
@@ -55,6 +56,12 @@ export class CetController {
     return this.cetService.deleteCet(id);
   }
 
+  @Delete('score/:id')
+  @ApiOperation({ summary: '删除成绩' })
+  deleteScore(@Param('id') id: string): Promise<Response<number>> {
+    return this.cetService.deleteScore(id);
+  }
+
   @Get('score')
   @ApiOperation({ summary: '获取成绩列表' })
   getScoreList(
@@ -75,5 +82,13 @@ export class CetController {
     @Query() analysisInfo: ScoreAnalysisDto,
   ): Promise<Response<any>> {
     return this.cetService.getScoreAnalysis(analysisInfo);
+  }
+
+  @Get('analysis/dashboard')
+  @ApiOperation({ summary: '获取仪表盘分析数据' })
+  getAnalysisDashboard(
+    @Query() analysisInfo: GetAnalysisDto,
+  ): Promise<Response<any>> {
+    return this.cetService.getAnalysisDashboard(analysisInfo);
   }
 }

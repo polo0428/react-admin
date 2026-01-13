@@ -1,13 +1,19 @@
 import ReactECharts from 'echarts-for-react';
 import React from 'react';
 
-import { MOCK_TREND_DATA } from '../constants';
+interface Props {
+  data?: {
+    batchName: string;
+    cet4PassRate: number;
+    cet6PassRate: number;
+  }[];
+}
 
 /**
  * 全校历史通过率趋势图表 (Line Chart)
  * 展示CET-4和CET-6的通过率走势
  */
-const TrendChart: React.FC = () => {
+const TrendChart: React.FC<Props> = ({ data = [] }) => {
   const getOption = () => {
     return {
       tooltip: {
@@ -32,7 +38,7 @@ const TrendChart: React.FC = () => {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: MOCK_TREND_DATA.map((item) => item.batchName),
+        data: data.map((item) => item.batchName),
         axisLine: { lineStyle: { color: '#94a3b8' } },
         axisLabel: { color: '#64748b', interval: 0 },
       },
@@ -53,7 +59,7 @@ const TrendChart: React.FC = () => {
         {
           name: 'CET-4 通过率 (%)',
           type: 'line',
-          data: MOCK_TREND_DATA.map((item) => item.cet4PassRate),
+          data: data.map((item) => item.cet4PassRate),
           smooth: true,
           showSymbol: true,
           symbolSize: 8,
@@ -76,7 +82,7 @@ const TrendChart: React.FC = () => {
         {
           name: 'CET-6 通过率 (%)',
           type: 'line',
-          data: MOCK_TREND_DATA.map((item) => item.cet6PassRate),
+          data: data.map((item) => item.cet6PassRate),
           smooth: true,
           itemStyle: { color: '#6366f1' },
           lineStyle: { width: 3 },

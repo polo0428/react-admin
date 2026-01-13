@@ -79,8 +79,21 @@ export const saveScore = (options: SaveScoreParams) =>
   httpRequest.post<any>(`${baseURL}/score/save`, options);
 
 /**
+ * @description: 删除成绩
+ * @param {string} id
+ */
+export const deleteScore = (id: string) => httpRequest.delete<number>(`${baseURL}/score/${id}`);
+
+/**
  * @description: 获取成绩分析
  * @param {batch_id: string} options
  */
 export const getScoreAnalysis = (options: { batch_id: string }) =>
   httpRequest.get<any>(`${baseURL}/score/analysis`, options);
+
+/**
+ * @description: 获取仪表盘分析数据
+ * @param {batch_id: string} options
+ */
+export const getAnalysisDashboard = (options: { batch_id: string }) =>
+  httpRequest.get<any>(`${baseURL}/analysis/dashboard`, options);

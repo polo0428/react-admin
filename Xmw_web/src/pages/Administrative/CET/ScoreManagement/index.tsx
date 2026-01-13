@@ -3,7 +3,12 @@ import { history, useLocation, useRequest } from '@umijs/max';
 import { Button, Card, Input, message, Select, Space, Tag, Typography } from 'antd';
 import React, { useMemo, useState } from 'react';
 
-import { getScoreAnalysis, getScoreList, saveScore } from '@/services/administrative/cet';
+import {
+  deleteScore,
+  getScoreAnalysis,
+  getScoreList,
+  saveScore,
+} from '@/services/administrative/cet';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import ScoreModal from './components/ScoreModal';
@@ -16,6 +21,7 @@ const { Option } = Select;
 
 // eslint-disable-next-line
 const mapScoreItem = (item: any, defaultExamDate: string): ScoreRecord => ({
+  recordId: item.id,
   id: item.student_no || item.studentNo,
   name: item.name,
   department: item.department || '',
@@ -167,6 +173,16 @@ export default function ScoreManagement() {
     }
   };
 
+  const handleDelete = async (recordId: string) => {
+    try {
+      await deleteScore(recordId);
+      message.success('删除成功');
+      refresh();
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  };
+
   const handleBack = () => {
     history.push('/cet');
   };
@@ -235,6 +251,7 @@ export default function ScoreManagement() {
         <ScoreTable
           dataSource={scores}
           loading={loading}
+          onDelete={handleDelete}
           pagination={{
             total: totalCount || 0,
             current,

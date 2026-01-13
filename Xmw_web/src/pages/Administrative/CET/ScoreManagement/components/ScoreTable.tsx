@@ -1,5 +1,5 @@
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, Table, Tag } from 'antd';
+import { Button, Popconfirm, Table, Tag } from 'antd';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import React from 'react';
 
@@ -9,13 +9,14 @@ interface ScoreTableProps {
   dataSource: ScoreRecord[];
   loading?: boolean;
   pagination?: TablePaginationConfig;
+  onDelete?: (id: string) => void;
 }
 
 /**
  * 成绩列表表格组件
  * 展示学生基本信息、考试信息、成绩详情及状态
  */
-const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination }) => {
+const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination, onDelete }) => {
   const columns: ColumnsType<ScoreRecord> = [
     {
       title: '学生信息',
@@ -68,6 +69,22 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
         <Tag color={record.passed ? 'success' : 'error'}>{record.passed ? '通过' : '未通过'}</Tag>
       ),
     },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_, record) => (
+        <Popconfirm
+          title="确定要删除这条成绩记录吗？"
+          onConfirm={() => onDelete?.(record.recordId)}
+          okText="确定"
+          cancelText="取消"
+        >
+          <Button type="link" danger size="small">
+            删除
+          </Button>
+        </Popconfirm>
+      ),
+    },
   ];
 
   return (
@@ -75,7 +92,7 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
       loading={loading}
       dataSource={dataSource}
       columns={columns}
-      rowKey="ticketNumber"
+      rowKey="recordId"
       pagination={
         pagination || {
           total: dataSource.length,
