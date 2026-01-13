@@ -1,7 +1,7 @@
 /*
- * @Author: 白雾茫茫丶<baiwumm.com>
+ * @Author: 黄鹏<baiwumm.com>
  * @Date: 2024-07-08 13:59:36
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-08 14:15:30
  * @Description: Common Controller
  */
@@ -11,7 +11,7 @@ import { CommonService } from './common.service';
 
 @Controller('/common')
 export class CommonController {
-  constructor(private readonly commonService: CommonService) { }
+  constructor(private readonly commonService: CommonService) {}
 
   /**
    * @description: 获取掘金文章列表

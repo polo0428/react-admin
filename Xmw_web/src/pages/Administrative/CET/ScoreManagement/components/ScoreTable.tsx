@@ -1,7 +1,6 @@
-import { LeftOutlined, MoreOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, Table, Tag } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import type { TablePaginationConfig } from 'antd/es/table';
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import React from 'react';
 
 import { ScoreRecord } from './types';
@@ -68,12 +67,6 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
       render: (_, record) => (
         <Tag color={record.passed ? 'success' : 'error'}>{record.passed ? '通过' : '未通过'}</Tag>
       ),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      align: 'right',
-      render: () => <Button type="text" icon={<MoreOutlined />} className="text-gray-400" />,
     },
   ];
 

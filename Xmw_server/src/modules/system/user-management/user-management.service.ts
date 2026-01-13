@@ -1,9 +1,9 @@
 /*
  * @Description: UserManagement Service
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-09 17:44:15
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-10-12 09:21:47
  */
 import { Injectable } from '@nestjs/common';
@@ -33,7 +33,7 @@ export class UserManagementService {
 
   /**
    * @description: 获取用户管理列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getUserList(
     userInfo: ListUserManagementDto,
@@ -73,7 +73,7 @@ export class UserManagementService {
 
   /**
    * @description: 创建用户数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async createUser(
     userInfo: SaveUserManagementDto,
@@ -100,7 +100,7 @@ export class UserManagementService {
 
   /**
    * @description: 更新用户数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async updateUser(
     user_id: string,
@@ -135,7 +135,7 @@ export class UserManagementService {
 
   /**
    * @description: 删除角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async deleteUser(user_id: string): Promise<Response<number>> {
     // 超级管理员不能删除，即 admin 用户
@@ -153,7 +153,7 @@ export class UserManagementService {
 
   /**
    * @description: 更新用户状态
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async updateUserStatus(
     user_id: string,

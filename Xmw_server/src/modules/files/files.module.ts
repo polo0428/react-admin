@@ -1,9 +1,9 @@
 /*
  * @Description: Files Module
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-17 17:49:35
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 15:54:55
  */
 import { HttpModule } from '@nestjs/axios';
@@ -66,4 +66,4 @@ const audio = ['mp3', 'wav', 'ogg'];
   controllers: [FilesController],
   providers: [FilesService],
 })
-export class FilesModule { }
+export class FilesModule {}

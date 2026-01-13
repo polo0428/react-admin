@@ -1,9 +1,9 @@
 /*
  * @Description: 人物标签
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-09 10:38:10
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-28 17:16:36
  */
 import { Icon, useModel } from '@umijs/max';
@@ -49,7 +49,7 @@ const FigureLabels: FC<IProps> = ({ value, onChange, canCallback }) => {
 
   /**
    * @description: 更新用户信息
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const { run: runUpdateUser } = useRequest(updateUser, {
     manual: true,

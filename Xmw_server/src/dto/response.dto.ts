@@ -1,9 +1,9 @@
 /*
  * @Description: 响应体 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-19 17:23:03
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 15:20:12
  */
 import { ApiProperty } from '@nestjs/swagger';
@@ -12,7 +12,7 @@ import type { PageResponse } from '@/utils/types';
 
 /**
  * @description: 统一响应体 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class ResponseDto {
   @ApiProperty({
@@ -39,7 +39,7 @@ export class ResponseDto {
 
 /**
  * @description: 更新数据 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class UpdateResponseDto extends ResponseDto {
   @ApiProperty({
@@ -52,7 +52,7 @@ export class UpdateResponseDto extends ResponseDto {
 
 /**
  * @description: 删除数据 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class DeleteResponseDto extends ResponseDto {
   @ApiProperty({

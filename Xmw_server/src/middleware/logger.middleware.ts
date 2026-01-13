@@ -1,9 +1,9 @@
 /*
  * @Description: 日志收集管理中间件
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-17 08:54:02
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 15:22:15
  */
 import { Injectable, NestMiddleware } from '@nestjs/common';

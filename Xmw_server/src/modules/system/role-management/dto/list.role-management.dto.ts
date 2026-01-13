@@ -1,9 +1,9 @@
 /*
  * @Description: 查询角色管理列表参数 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-28 17:47:10
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 16:57:17
  */
 import { ApiProperty } from '@nestjs/swagger';

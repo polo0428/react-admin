@@ -1,7 +1,7 @@
 /*
- * @Author: 白雾茫茫丶<baiwumm.com>
+ * @Author: 黄鹏<baiwumm.com>
  * @Date: 2024-07-08 14:04:40
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-08 14:06:36
  * @Description: Common Module
  */
@@ -26,4 +26,4 @@ import { CommonService } from './common.service';
   // 如果你这个模块中的provider 要在别的模块中使用 你必须要在这里声明 导出这些provider
   exports: [CommonService],
 })
-export class CommonModule { }
+export class CommonModule {}

@@ -1,7 +1,7 @@
 /*
  * @Description: 全局配置
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-15 09:48:17
  * @LastEditors: Cyan
  * @LastEditTime: 2022-11-29 09:15:23

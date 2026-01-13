@@ -1,9 +1,9 @@
 /*
  * @Description: Auth Controller
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-25 14:30:19
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-10 11:32:28
  */
 import {
@@ -15,7 +15,7 @@ import {
   Res,
   Session,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -52,11 +52,11 @@ import {
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   /**
    * @description: 用户登录
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Post('/login')
   @ApiOkResponse({ type: LoginResponseDto })
@@ -76,7 +76,7 @@ export class AuthController {
 
   /**
    * @description: 用户退出登录
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('/logout')
@@ -89,7 +89,7 @@ export class AuthController {
 
   /**
    * @description: 获取当前用户信息
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @UseGuards(AuthGuard('jwt'))
   @Get('/user-info')
@@ -101,7 +101,7 @@ export class AuthController {
 
   /**
    * @description: 获取用户按钮权限
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @UseGuards(AuthGuard('jwt'))
   @Get('/permissions')
@@ -114,7 +114,7 @@ export class AuthController {
 
   /**
    * @description: 获取用户权限菜单
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @UseGuards(AuthGuard('jwt'))
   @Get('/routes-menu')
@@ -127,7 +127,7 @@ export class AuthController {
 
   /**
    * @description: 获取图形验证码
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Get('verify-code') //当请求该接口时，返回一张随机图片验证码
   @ApiOkResponse({ type: VerifyCodeResponseDto })

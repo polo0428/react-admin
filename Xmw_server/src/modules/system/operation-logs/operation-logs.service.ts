@@ -1,9 +1,9 @@
 /*
  * @Description: OperationLogs Service
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-12-12 10:11:05
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-28 10:09:28
  */
 import { HttpService } from '@nestjs/axios';
@@ -35,11 +35,11 @@ export class OperationLogsService {
     @InjectModel(XmwUser)
     private readonly userModel: typeof XmwUser,
     private readonly httpService: HttpService,
-  ) { }
+  ) {}
 
   /**
    * @description: 获取用户真实ip
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getLocationByIp(ipAddress: string): Promise<any> {
     try {
@@ -66,7 +66,7 @@ export class OperationLogsService {
 
   /**
    * @description: 保存操作日志
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async logAction() {
     const { originalUrl, method, headers, body, query } = this.request;
@@ -110,7 +110,7 @@ export class OperationLogsService {
 
   /**
    * @description: 获取操作日志列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getLogsList(
     logsInfo: ListOperationLogsDto,

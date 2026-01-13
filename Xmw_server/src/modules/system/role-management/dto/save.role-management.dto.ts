@@ -1,7 +1,7 @@
 /*
  * @Description: 保存角色数据 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-28 18:06:14
  * @LastEditors: Cyan
  * @LastEditTime: 2022-11-09 14:10:09
@@ -12,7 +12,7 @@ import type { Status } from '@/utils/types';
 
 /**
  * @description: 保存角色数据 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class SaveRoleManagementDto {
   @ApiProperty({
@@ -60,7 +60,7 @@ export class SaveRoleManagementDto {
 
 /**
  * @description: 更新角色状态 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class UpdateRoleStatusDto {
   @ApiProperty({

@@ -1,9 +1,9 @@
 /*
  * @Description: 全局通用按钮
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-10-23 13:47:16
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-19 09:19:00
  */
 import { Icon, KeepAliveContext, useIntl } from '@umijs/max';

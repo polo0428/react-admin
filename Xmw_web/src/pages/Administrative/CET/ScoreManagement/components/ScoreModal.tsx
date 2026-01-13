@@ -136,7 +136,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
                 label="准考证号"
                 rules={[{ required: true, message: '请输入准考证号' }]}
               >
-                <Input placeholder="15位准考证号" />
+                <Input placeholder="15位准考证号" max={15} />
               </Form.Item>
             </Col>
           </Row>

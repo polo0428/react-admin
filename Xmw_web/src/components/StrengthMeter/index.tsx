@@ -1,23 +1,23 @@
 /*
  * @Description: 密码强度校验组件
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-01-09 17:15:19
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-14 09:40:25
  */
 import { ProFormText } from '@ant-design/pro-components';
-import { useIntl } from '@umijs/max'
+import { useIntl } from '@umijs/max';
 import { Col, Form, Progress, Row } from 'antd';
-import { keys, values } from 'lodash-es'
-import type { FC } from 'react'
+import { keys, values } from 'lodash-es';
+import type { FC } from 'react';
 import zxcvbn from 'zxcvbn'; // 密码强度校验
 
-import { formatPerfix } from '@/utils'
-import { INTERNATION, ROUTES } from '@/utils/enums'
+import { formatPerfix } from '@/utils';
+import { INTERNATION, ROUTES } from '@/utils/enums';
 
-import { strengthMeterOptions } from './config'
-import styles from './index.module.less'
+import { strengthMeterOptions } from './config';
+import styles from './index.module.less';
 
 const StrengthMeter: FC = () => {
   const { formatMessage } = useIntl();
@@ -28,13 +28,13 @@ const StrengthMeter: FC = () => {
   /**
    * @description: 监听密码强度相应变化
    * @param {string} password
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const watchStrength = (password: string): number => {
-    const analysisValue = zxcvbn(password)
+    const analysisValue = zxcvbn(password);
     // score得分只有0~4，且只有整数范围并没有小数
-    return (analysisValue.score + 1) * 20
-  }
+    return (analysisValue.score + 1) * 20;
+  };
 
   return (
     <>
@@ -44,8 +44,11 @@ const StrengthMeter: FC = () => {
         name="password"
         rules={[
           {
-            required: true, min: 6, max: 12,
-            message: formatMessage({ id: INTERNATION.PLACEHOLDER }) +
+            required: true,
+            min: 6,
+            max: 12,
+            message:
+              formatMessage({ id: INTERNATION.PLACEHOLDER }) +
               formatMessage({ id: `${formatPerfix(ROUTES.USERMANAGEMENT)}.password.rules` }),
           },
         ]}
@@ -58,7 +61,8 @@ const StrengthMeter: FC = () => {
         rules={[
           {
             required: true,
-            message: formatMessage({ id: INTERNATION.PLACEHOLDER }) +
+            message:
+              formatMessage({ id: INTERNATION.PLACEHOLDER }) +
               formatMessage({ id: `${formatPerfix(ROUTES.USERMANAGEMENT)}.confirm-password` }),
           },
           ({ getFieldValue }) => ({
@@ -66,8 +70,13 @@ const StrengthMeter: FC = () => {
               if (!value || getFieldValue('password') === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error(
-                formatMessage({ id: `${formatPerfix(ROUTES.USERMANAGEMENT)}.confirm-password.rules` })));
+              return Promise.reject(
+                new Error(
+                  formatMessage({
+                    id: `${formatPerfix(ROUTES.USERMANAGEMENT)}.confirm-password.rules`,
+                  }),
+                ),
+              );
             },
           }),
         ]}
@@ -82,13 +91,14 @@ const StrengthMeter: FC = () => {
         />
       </div>
       <Row justify="space-around" className={styles['process-steps']}>
-        {
-          keys(strengthMeterOptions).map((value: string) =>
-            <Col span={4} key={value}>{formatMessage({ id: `components.StrengthMeter.${value}` })}</Col>)
-        }
+        {keys(strengthMeterOptions).map((value: string) => (
+          <Col span={4} key={value}>
+            {formatMessage({ id: `components.StrengthMeter.${value}` })}
+          </Col>
+        ))}
       </Row>
     </>
-  )
-}
+  );
+};
 
-export default StrengthMeter
+export default StrengthMeter;

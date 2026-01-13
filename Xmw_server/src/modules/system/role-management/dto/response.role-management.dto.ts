@@ -1,9 +1,9 @@
 /*
  * @Description: 查询列表返回响应体 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-19 17:19:57
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 16:58:06
  */
 import { ApiProperty } from '@nestjs/swagger';
@@ -14,7 +14,7 @@ import type { PageResponse } from '@/utils/types';
 
 /**
  * @description: 角色管理列表响应体结构 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class ResponseRoleManagementDto extends ResponseDto {
   @ApiProperty({
@@ -66,7 +66,7 @@ export class ResponseRoleManagementDto extends ResponseDto {
 /**
  * @description: 创建角色数据 Dto
  * @return {*}
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class CreateRoleManagementDto extends ResponseDto {
   @ApiProperty({

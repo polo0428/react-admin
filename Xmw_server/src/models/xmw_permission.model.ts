@@ -1,7 +1,7 @@
 /*
  * @Description: XmwPermission Entity
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-28 17:23:20
  * @LastEditors: Cyan
  * @LastEditTime: 2022-11-09 16:55:47
@@ -24,7 +24,8 @@ import type { PermissionAttributes } from '@/utils/types/system';
 @Table({ tableName: 'xmw_permission' })
 export class XmwPermission
   extends Model<PermissionAttributes, PermissionAttributes>
-  implements PermissionAttributes {
+  implements PermissionAttributes
+{
   @IsUUID(4)
   @PrimaryKey
   @Column({

@@ -1,7 +1,7 @@
 /*
- * @Author: 白雾茫茫丶<baiwumm.com>
+ * @Author: 黄鹏<baiwumm.com>
  * @Date: 2024-07-08 13:55:01
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-08 14:41:29
  * @Description: 请求第三方接口
  */
@@ -14,7 +14,7 @@ import type { Response } from '@/utils/types';
 
 @Injectable()
 export class CommonService {
-  constructor(private readonly httpService: HttpService) { }
+  constructor(private readonly httpService: HttpService) {}
 
   /**
    * @description: 掘金文章列表

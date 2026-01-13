@@ -1,9 +1,9 @@
 /*
  * @Description: Files Controller
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-17 17:49:53
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 15:55:03
  */
 import {
@@ -51,7 +51,7 @@ export class FilesController {
 
   /**
    * @description: 上传单个文件
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
@@ -64,14 +64,15 @@ export class FilesController {
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
   ): Response<Express.Multer.File> {
-    file.path = `http://${process.env.APP_HOST}:${process.env.APP_PROT
-      }/static${file.path.replace(/\\/g, '/').replace(/upload/g, '')}`;
+    file.path = `http://${process.env.APP_HOST}:${
+      process.env.APP_PROT
+    }/static${file.path.replace(/\\/g, '/').replace(/upload/g, '')}`;
     return responseMessage(file);
   }
 
   /**
    * @description: 阿里云 oss 上传
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @UseGuards(AuthGuard('jwt'))
   @Post('single-file-oss')

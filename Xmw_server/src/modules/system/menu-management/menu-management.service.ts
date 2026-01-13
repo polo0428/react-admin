@@ -1,9 +1,9 @@
 /*
  * @Description: MenuManagement Service
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-27 10:37:42
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 16:37:29
  */
 import { Injectable } from '@nestjs/common';
@@ -26,11 +26,11 @@ export class MenuManagementService {
     @InjectModel(XmwMenu)
     private readonly menuModel: typeof XmwMenu,
     private sequelize: Sequelize,
-  ) { }
+  ) {}
 
   /**
    * @description: 获取菜单列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getMenuList(
     menuInfo: ListMenuManagementDto,
@@ -51,9 +51,7 @@ export class MenuManagementService {
     // 查询数据
     const sqlData = await this.menuModel.findAll({
       attributes: {
-        include: [
-          [this.sequelize.col('u.cn_name'), 'founder_name'],
-        ],
+        include: [[this.sequelize.col('u.cn_name'), 'founder_name']],
       },
       // 联表查询
       include: [
@@ -77,7 +75,7 @@ export class MenuManagementService {
 
   /**
    * @description: 创建菜单数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async createMenu(
     menuInfo: SaveMenuManagementDto,
@@ -114,7 +112,7 @@ export class MenuManagementService {
 
   /**
    * @description: 更新菜单数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async updateMenu(
     menu_id: string,
@@ -158,7 +156,7 @@ export class MenuManagementService {
 
   /**
    * @description: 删除菜单数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async deleteMenu(menu_id: string): Promise<Response<number>> {
     // 判断当前数据是否有子级，如果有数据的parent_id是id，则存在子级

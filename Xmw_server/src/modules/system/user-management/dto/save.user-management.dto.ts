@@ -1,9 +1,9 @@
 /*
  * @Description: 保存用户数据 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-10 11:30:40
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 17:06:18
  */
 import { ApiProperty } from '@nestjs/swagger';
@@ -12,7 +12,7 @@ import type { Sex, Status } from '@/utils/types';
 
 /**
  * @description: 保存用户数据
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class SaveUserManagementDto {
   @ApiProperty({
@@ -158,7 +158,7 @@ export class SaveUserManagementDto {
 
 /**
  * @description: 更新用户状态 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class UpdateUserStatusDto {
   @ApiProperty({

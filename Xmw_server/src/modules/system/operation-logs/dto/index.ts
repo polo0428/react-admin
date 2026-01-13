@@ -1,7 +1,7 @@
 /*
  * @Description: 操作日志 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-03-17 15:49:40
  * @LastEditors: Cyan
  * @LastEditTime: 2023-03-17 15:51:40

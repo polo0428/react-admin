@@ -1,9 +1,9 @@
 /*
  * @Description: XmwMenu Entity
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-27 10:13:54
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 17:23:20
  */
 import {
@@ -30,7 +30,8 @@ import type { MenuAttributes } from '@/utils/types/system';
 @Table({ tableName: 'xmw_menu', underscored: false })
 export class XmwMenu
   extends Model<MenuAttributes, MenuAttributes>
-  implements MenuAttributes {
+  implements MenuAttributes
+{
   @IsUUID(4)
   @PrimaryKey
   @Column({

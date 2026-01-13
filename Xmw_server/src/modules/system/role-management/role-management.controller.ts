@@ -1,9 +1,9 @@
 /*
  * @Description: RoleManagement Controller
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-28 17:39:08
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 17:01:39
  */
 import {
@@ -18,7 +18,7 @@ import {
   Query,
   Session,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -53,11 +53,11 @@ import { RoleManagementService } from './role-management.service'; // RoleManage
 @UseGuards(AuthGuard('jwt'))
 @Controller('system/role-management')
 export class RoleManagementController {
-  constructor(private readonly roleManagementService: RoleManagementService) { }
+  constructor(private readonly roleManagementService: RoleManagementService) {}
 
   /**
    * @description: 获取角色管理列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Get()
   @ApiOkResponse({ type: ResponseRoleManagementDto })
@@ -69,7 +69,7 @@ export class RoleManagementController {
 
   /**
    * @description: 创建角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Post()
   @ApiOkResponse({ type: CreateRoleManagementDto })
@@ -87,7 +87,7 @@ export class RoleManagementController {
 
   /**
    * @description: 更新角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Put('/:role_id')
   @ApiOkResponse({ type: UpdateResponseDto })
@@ -105,7 +105,7 @@ export class RoleManagementController {
 
   /**
    * @description: 删除角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Delete('/:role_id')
   @ApiOkResponse({ type: DeleteResponseDto })
@@ -117,7 +117,7 @@ export class RoleManagementController {
 
   /**
    * @description: 更新角色状态
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Patch('/:role_id')
   @ApiOkResponse({ type: UpdateResponseDto })

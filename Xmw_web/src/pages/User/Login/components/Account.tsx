@@ -1,9 +1,9 @@
 /*
  * @Description: 账户密码登录
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-11 14:52:29
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-05 14:10:28
  */
 import { ProFormText } from '@ant-design/pro-components';

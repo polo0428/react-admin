@@ -1,9 +1,9 @@
 /*
  * @Description: 全局入口文件
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-09-17 20:33:50
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-10-24 09:43:51
  */
 
@@ -60,20 +60,20 @@ export async function getInitialState() {
 /**
  * @description: 全局 lyout 布局
  * @doc ProLayout 支持的api https://procomponents.ant.design/components/layout
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  */
 export const layout = BasiLayout;
 
 /**
  * @description: 完全覆盖内置的多 Tabs 组件，需要搭配配置 hasCustomTabs:true 使用。
  * @doc https://alitajs.com/zh-CN/docs/guides/tabs#getcustomtabs
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  */
 export const getCustomTabs = () => (props: TabsLayoutProps) => <TabsLayout {...props} />;
 
 /**
  * @description: request 配置，可以配置错误处理，它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
  * @doc https://umijs.org/docs/max/request#配置
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  */
 export const request = umiRequest;

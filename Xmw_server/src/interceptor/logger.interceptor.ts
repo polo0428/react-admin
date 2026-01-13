@@ -1,7 +1,7 @@
 /*
- * @Author: 白雾茫茫丶<baiwumm.com>
+ * @Author: 黄鹏<baiwumm.com>
  * @Date: 2024-10-24 14:00:53
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-24 14:01:46
  * @Description: LoggerInterceptor 日志拦截器
  */
@@ -19,7 +19,7 @@ import { OperationLogsService } from '@/modules/system/operation-logs/operation-
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {
-  constructor(private readonly operationLogsService: OperationLogsService) { }
+  constructor(private readonly operationLogsService: OperationLogsService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     this.operationLogsService.logAction();

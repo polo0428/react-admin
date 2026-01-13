@@ -77,3 +77,10 @@ export const getScoreList = (options?: ScoreListParams) =>
  */
 export const saveScore = (options: SaveScoreParams) =>
   httpRequest.post<any>(`${baseURL}/score/save`, options);
+
+/**
+ * @description: 获取成绩分析
+ * @param {batch_id: string} options
+ */
+export const getScoreAnalysis = (options: { batch_id: string }) =>
+  httpRequest.get<any>(`${baseURL}/score/analysis`, options);

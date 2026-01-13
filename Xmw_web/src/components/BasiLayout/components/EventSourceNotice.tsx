@@ -1,9 +1,9 @@
 /*
  * @Description: SSE 事件推送
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-10-16 13:36:33
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-24 15:13:33
  */
 import { useIntl } from '@umijs/max';
@@ -25,7 +25,7 @@ const EventSourceNotice: FC = () => {
 
   useEffect(() => {
     // 获取 ACCESS_TOKEN
-    const ACCESS_TOKEN = getLocalStorageItem<string>(LOCAL_STORAGE.ACCESS_TOKEN)
+    const ACCESS_TOKEN = getLocalStorageItem<string>(LOCAL_STORAGE.ACCESS_TOKEN);
     // 创建 EventSource 实例
     const eventSource = new EventSourcePolyfill(`${BASEURL.API}${ROUTES.ANNOUNCEMENT}/sse`, {
       headers: {

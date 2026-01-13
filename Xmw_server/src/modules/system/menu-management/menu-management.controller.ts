@@ -1,7 +1,7 @@
 /*
  * @Description:
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-27 10:37:28
  * @LastEditors: Cyan
  * @LastEditTime: 2023-01-17 14:16:24
@@ -17,7 +17,7 @@ import {
   Query,
   Session,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -51,11 +51,11 @@ import { MenuManagementService } from './menu-management.service'; // MenuManage
 @UseGuards(AuthGuard('jwt'))
 @Controller('system/menu-management')
 export class MenuManagementController {
-  constructor(private readonly menuManagementService: MenuManagementService) { }
+  constructor(private readonly menuManagementService: MenuManagementService) {}
 
   /**
    * @description: 获取菜单管理列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Get()
   @ApiOkResponse({ type: ResponseMenuManagementDto })
@@ -67,7 +67,7 @@ export class MenuManagementController {
 
   /**
    * @description: 创建菜单数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Post()
   @ApiOkResponse({ type: CreateMenuManagementDto })
@@ -85,7 +85,7 @@ export class MenuManagementController {
 
   /**
    * @description: 更新菜单数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Put('/:menu_id')
   @ApiOkResponse({ type: UpdateResponseDto })
@@ -103,7 +103,7 @@ export class MenuManagementController {
 
   /**
    * @description: 删除菜单数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Delete('/:menu_id')
   @ApiOkResponse({ type: DeleteResponseDto })

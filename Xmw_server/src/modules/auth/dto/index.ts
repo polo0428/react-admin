@@ -1,9 +1,9 @@
 /*
  * @Description: 登录鉴权 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-25 10:34:23
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 15:50:52
  */
 import { ApiProperty } from '@nestjs/swagger';
@@ -14,7 +14,7 @@ import { XmwUser } from '@/models/xmw_user.model'; // xmw_user 实体
 
 /**
  * @description: 登录参数
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class LoginParamsDto {
   @ApiProperty({
@@ -59,7 +59,7 @@ export class LoginParamsDto {
 
 /**
  * @description: 登录成功返回体
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class LoginResponseDto extends ResponseDto {
   @ApiProperty({
@@ -76,7 +76,7 @@ export class LoginResponseDto extends ResponseDto {
 
 /**
  * @description: 用户信息返回体
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class UserInfoResponseDto extends ResponseDto {
   @ApiProperty({
@@ -121,7 +121,7 @@ export class UserInfoResponseDto extends ResponseDto {
 
 /**
  * @description: 用户按钮权限 dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class PermissionResponseDto extends ResponseDto {
   @ApiProperty({
@@ -167,7 +167,7 @@ export class PermissionResponseDto extends ResponseDto {
 
 /**
  * @description: 用户动态菜单 dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class RoutesMenuResponseDto extends ResponseDto {
   @ApiProperty({
@@ -237,7 +237,7 @@ export class RoutesMenuResponseDto extends ResponseDto {
 
 /**
  * @description: 图形验证码
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class VerifyCodeResponseDto extends ResponseDto {
   @ApiProperty({

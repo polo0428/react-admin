@@ -1,9 +1,9 @@
 /*
  * @Description: System Attributes
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-27 10:10:44
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 17:32:56
  */
 import type {
@@ -20,7 +20,7 @@ import type {
 
 /**
  * @description: xmw_menu Attributes
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export type MenuAttributes = {
   menu_id: string; // 菜单id
@@ -52,7 +52,7 @@ export type MenuAttributes = {
 
 /**
  * @description: xmw_permission Attributes
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export type PermissionAttributes = {
   permission_id: string; // 权限id
@@ -62,7 +62,7 @@ export type PermissionAttributes = {
 
 /**
  * @description: xmw_role Attributes
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export type RoleAttributes = {
   role_id: string; // 角色id
@@ -74,7 +74,7 @@ export type RoleAttributes = {
 
 /**
  * @description: xmw_users Attributes
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export type UserAttributes = {
   user_id: string; // 用户id
@@ -102,7 +102,7 @@ export type UserAttributes = {
 
 /**
  * @description: Logs Attributes
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export type LogsAttributes = {
   log_id?: string; // id

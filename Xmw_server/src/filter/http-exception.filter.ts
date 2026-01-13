@@ -1,7 +1,7 @@
 /*
  * @Description: http 异常捕获,把异常友好地返回到客户端
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-16 21:16:20
  * @LastEditors: Cyan
  * @LastEditTime: 2022-11-28 09:21:06

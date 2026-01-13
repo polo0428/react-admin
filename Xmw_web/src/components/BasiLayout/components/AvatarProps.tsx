@@ -1,9 +1,9 @@
 /*
  * @Description: 用户头像
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-09-14 14:51:38
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-05 10:55:34
  */
 import { HeaderProps } from '@ant-design/pro-components';
@@ -26,7 +26,7 @@ export default function AvatarProps(openLockScreen: () => void): HeaderProps['av
   const { initialState, setInitialState } = useModel('@@initialState');
   /**
    * @description: 退出登录，并且将当前的 url 保存
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const { run: loginOut } = useRequest(Logout, {
     manual: true,
@@ -45,7 +45,7 @@ export default function AvatarProps(openLockScreen: () => void): HeaderProps['av
   });
   /**
    * @description: 退出登录
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const logOutClick = () => {
     modal.confirm({
@@ -75,7 +75,7 @@ export default function AvatarProps(openLockScreen: () => void): HeaderProps['av
   };
   /**
    * @description: 用户下拉菜单
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const menuItems: MenuProps['items'] = [
     {

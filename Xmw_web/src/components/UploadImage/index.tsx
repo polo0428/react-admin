@@ -1,9 +1,9 @@
 /*
  * @Description: 全局上传图片组件
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-08-30 13:49:17
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-09 17:56:56
  */
 import {
@@ -84,7 +84,7 @@ const UploadImage: FC<UploadImageProps> = ({
   /**
    * @description: 限制用户上传的图片格式和大小
    * @param {RcFile} file
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const beforeUpload = (file: RcFile) => {
     // 获取限制的图片类型，默认全部
@@ -125,7 +125,7 @@ const UploadImage: FC<UploadImageProps> = ({
 
   /**
    * @description: 上传用户头像
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const renderUploadAvatar = () => (
     <Upload {...commonProps.fieldProps}>

@@ -1,9 +1,9 @@
 /*
  * @Description: 表格操作下拉菜单
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-08-30 17:50:17
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-05 11:06:14
  */
 import { Access, Icon, useAccess, useIntl } from '@umijs/max';
@@ -102,7 +102,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({
 
   /**
    * @description: 点击菜单回调
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   const onClickMenuItem: MenuProps['onClick'] = ({ key }) => {
     // 删除参数

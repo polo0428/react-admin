@@ -1,9 +1,9 @@
 /*
  * @Description: UserManagement Controller
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-09 17:43:51
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-24 14:33:26
  */
 import {
@@ -18,7 +18,7 @@ import {
   Query,
   Session,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -53,11 +53,11 @@ import { UserManagementService } from './user-management.service'; // UserManage
 @UseGuards(AuthGuard('jwt'))
 @Controller('system/user-management')
 export class UserManagementController {
-  constructor(private readonly userManagementService: UserManagementService) { }
+  constructor(private readonly userManagementService: UserManagementService) {}
 
   /**
    * @description: 获取用户管理列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Get()
   @ApiOkResponse({ type: ResponseUserManagementDto })
@@ -69,7 +69,7 @@ export class UserManagementController {
 
   /**
    * @description: 创建用户数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Post()
   @ApiOkResponse({ type: CreateUserManagementDto })
@@ -87,7 +87,7 @@ export class UserManagementController {
 
   /**
    * @description: 更新用户数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Put('/:user_id')
   @ApiOkResponse({ type: UpdateResponseDto })
@@ -107,7 +107,7 @@ export class UserManagementController {
 
   /**
    * @description: 删除用户数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Delete('/:user_id')
   @ApiOkResponse({ type: DeleteResponseDto })
@@ -119,7 +119,7 @@ export class UserManagementController {
 
   /**
    * @description: 更新用户状态
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   @Patch('/:user_id')
   @ApiOkResponse({ type: UpdateResponseDto })

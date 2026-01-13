@@ -1,15 +1,15 @@
 /*
  * @Description: 枚举类型
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-09-28 14:12:07
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 15:59:19
  */
 
 /**
  * @description: 请求状态码
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum REQUEST_CODE {
   NOSUCCESS = -1, // 表示请求成功，但操作未成功
@@ -22,7 +22,7 @@ export enum REQUEST_CODE {
 
 /**
  * @description: 请求提示语
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum REQUEST_MSG {
   SUCCESS = '操作成功',
@@ -31,7 +31,7 @@ export enum REQUEST_MSG {
 
 /**
  * @description: 状态
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum STATUS {
   DISABLE, // 禁用
@@ -40,7 +40,7 @@ export enum STATUS {
 
 /**
  * @description: 是否
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum FLAG {
   NO, // 否
@@ -49,7 +49,7 @@ export enum FLAG {
 
 /**
  * @description: 性别
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum SEX {
   FEMALE = '0', // 女
@@ -59,7 +59,7 @@ export enum SEX {
 
 /**
  * @description: 菜单类型
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum MENU_TYPE {
   DIR = 'dir', // 目录
@@ -69,7 +69,7 @@ export enum MENU_TYPE {
 
 /**
  * @description: 窗口打开方式
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum TARGET_TYPE {
   BLANK = '_blank',
@@ -80,7 +80,7 @@ export enum TARGET_TYPE {
 
 /**
  * @description: 导航菜单的位置,side 为正常模式，top菜单显示在顶部，mix 两种兼有
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum LAYOUT_TYPE {
   SIDE = 'side', // 侧边菜单
@@ -90,7 +90,7 @@ export enum LAYOUT_TYPE {
 
 /**
  * @description: 主题风格
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum MENU_THEME {
   DARK = 'dark', // 暗黑风格
@@ -99,7 +99,7 @@ export enum MENU_THEME {
 
 /**
  * @description: 国际化语言
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum LANGS {
   CN = 'zh-CN', // 中文
@@ -110,7 +110,7 @@ export enum LANGS {
 
 /**
  * @description: 请求方式
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export enum REQUEST_METHODS {
   GET = 'GET',

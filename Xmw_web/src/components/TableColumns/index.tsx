@@ -1,9 +1,9 @@
 /*
  * @Description: 表格列公共配置项
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-09-18 14:13:44
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-05 11:13:06
  */
 import { ProColumns } from '@ant-design/pro-components';
@@ -23,7 +23,7 @@ import defaultSettings from '../../../config/defaultSettings';
 
 /**
  * @description: 状态
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const statusColumn: ProColumns = {
   title: <FormattedMessage id={INTERNATION.STATUS} />,
@@ -46,7 +46,7 @@ export const statusColumn: ProColumns = {
 
 /**
  * @description: 排序
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const sortColumn: ProColumns = {
   title: <FormattedMessage id={INTERNATION.SORT} />,
@@ -61,7 +61,7 @@ export const sortColumn: ProColumns = {
 
 /**
  * @description: 创建时间
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const createTimeColumn: ProColumns = {
   title: <FormattedMessage id={INTERNATION.CREATED_TIME} />,
@@ -75,7 +75,7 @@ export const createTimeColumn: ProColumns = {
 
 /**
  * @description: 创建时间-搜索
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const createTimeInSearch: ProColumns = {
   title: <FormattedMessage id={INTERNATION.CREATED_TIME} />,
@@ -94,7 +94,7 @@ export const createTimeInSearch: ProColumns = {
 
 /**
  * @description: 描述
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const describeColumn: ProColumns = {
   title: <FormattedMessage id={INTERNATION.DESCRIBE} />,
@@ -107,7 +107,7 @@ export const describeColumn: ProColumns = {
 
 /**
  * @description: 操作菜单
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const operationColumn: ProColumns = {
   title: <FormattedMessage id={INTERNATION.OPERATION} />,
@@ -120,7 +120,7 @@ export const operationColumn: ProColumns = {
 
 /**
  * @description: 是否
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const flagColumn = (field: string): ProColumns => {
   return {
@@ -140,7 +140,7 @@ export const flagColumn = (field: string): ProColumns => {
 
 /**
  * @description: 渲染表单标题
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export const renderFormTitle = (pathName: string, id: string, name: string) => {
   const result = (
@@ -172,14 +172,14 @@ export const renderFormTitle = (pathName: string, id: string, name: string) => {
 
 /**
  * @description: 计算表格滚动长度
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  */
 export const columnScrollX = (columns: ProColumns[]): number =>
   reduce(columns, (sum: number, record: ProColumns) => sum + (toNumber(record.width) || 100), 0);
 
 /**
  * @description: 新增按钮
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 type CreateButtonProps = {
   callback: () => void; // 点击按钮回调

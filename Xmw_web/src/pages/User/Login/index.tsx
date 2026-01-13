@@ -1,9 +1,9 @@
 /*
  * @Description: 登录页
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-09-08 11:09:03
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-15 09:29:14
  */
 
@@ -48,7 +48,7 @@ const LoginPage: FC = () => {
   const [loginType, setLoginType] = useState<LoginType>(LOGIN_TYPE.ACCOUNT);
   /**
    * @description: 用户登录接口
-   * @Author: 白雾茫茫丶
+   * @Author: 黄鹏
    */
   const { run: runLogin, loading: loginLoading } = useRequest(
     async (params) => await Login(params),
@@ -99,7 +99,7 @@ const LoginPage: FC = () => {
   /**
    * @description: 登录表单提交
    * @param {LoginParams} values
-   * @Author: 白雾茫茫丶
+   * @Author: 黄鹏
    */
   const { run: handleSubmit } = useDebounceFn(
     async (values: LoginParams): Promise<void> => {
@@ -128,7 +128,7 @@ const LoginPage: FC = () => {
 
   /**
    * @description: Tabs 标签页配置
-   * @Author: 白雾茫茫丶
+   * @Author: 黄鹏
    */
   const TbasItems: TabsProps['items'] = [
     {

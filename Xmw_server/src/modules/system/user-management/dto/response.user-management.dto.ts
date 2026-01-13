@@ -1,9 +1,9 @@
 /*
  * @Description: 查询列表返回响应体 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-10 14:30:15
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 17:06:05
  */
 import { ApiProperty } from '@nestjs/swagger';
@@ -14,7 +14,7 @@ import type { PageResponse } from '@/utils/types';
 
 /**
  * @description: 用户管理列表响应体结构 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class ResponseUserManagementDto extends ResponseDto {
   @ApiProperty({
@@ -62,7 +62,7 @@ export class ResponseUserManagementDto extends ResponseDto {
 
 /**
  * @description: 创建用户数据 Dto
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export class CreateUserManagementDto extends ResponseDto {
   @ApiProperty({

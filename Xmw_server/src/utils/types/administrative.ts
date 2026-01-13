@@ -1,9 +1,9 @@
 /*
  * @Description: Administrative Attributes
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-27 10:12:33
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-10-09 10:27:57
  */
 import type {
@@ -13,7 +13,7 @@ import type {
 
 /**
  * @description: xmw_cet Attributes
- * @author: 白雾茫茫丶
+ * @author: 黄鹏
  */
 export type CetAttributes = {
   id: string; // id 主键

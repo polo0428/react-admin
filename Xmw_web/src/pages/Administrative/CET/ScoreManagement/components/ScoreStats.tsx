@@ -33,7 +33,7 @@ const ScoreStats: React.FC<ScoreStatsProps> = ({ stats }) => {
                 参考人数
               </Text>
               <Text strong className="text-xl">
-                {stats.total}
+                {stats?.total}
               </Text>
             </div>
           </div>
@@ -50,7 +50,7 @@ const ScoreStats: React.FC<ScoreStatsProps> = ({ stats }) => {
                 通过率
               </Text>
               <Text strong className="text-xl">
-                {stats.passRate}%
+                {stats?.passRate}%
               </Text>
             </div>
           </div>
@@ -67,7 +67,7 @@ const ScoreStats: React.FC<ScoreStatsProps> = ({ stats }) => {
                 平均分
               </Text>
               <Text strong className="text-xl">
-                {stats.avgScore}
+                {stats?.avgScore}
               </Text>
             </div>
           </div>
@@ -84,7 +84,7 @@ const ScoreStats: React.FC<ScoreStatsProps> = ({ stats }) => {
                 最高分
               </Text>
               <Text strong className="text-xl">
-                {stats.maxScore}
+                {stats?.maxScore}
               </Text>
             </div>
           </div>
@@ -95,4 +95,3 @@ const ScoreStats: React.FC<ScoreStatsProps> = ({ stats }) => {
 };
 
 export default ScoreStats;
-

@@ -1,19 +1,19 @@
 /*
  * @Description: 锁定屏幕页面
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-01-06 14:20:20
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-10-17 13:46:15
  */
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { useIntl, useModel } from '@umijs/max'
-import { useLocalStorageState } from 'ahooks'
-import { App, Avatar, Button, Col, Form, Input, Row, Typography } from 'antd'
-import type { FC } from 'react'
+import { useIntl, useModel } from '@umijs/max';
+import { useLocalStorageState } from 'ahooks';
+import { App, Avatar, Button, Col, Form, Input, Row, Typography } from 'antd';
+import type { FC } from 'react';
 
-import { encryptionAesPsd } from '@/utils'
-import { INTERNATION } from '@/utils/enums'
+import { encryptionAesPsd } from '@/utils';
+import { INTERNATION } from '@/utils/enums';
 
 const { Title } = Typography;
 
@@ -24,7 +24,7 @@ const LockScreen: FC<{ setLockPageFalse: () => void }> = ({ setLockPageFalse }) 
   // hooks 调用
   const { message } = App.useApp();
   // 表单实例
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
   // 获取锁屏密码
   const [lockPassword, setLockPassword] = useLocalStorageState<string | undefined>('lock_password');
   // 最外层样式
@@ -39,7 +39,7 @@ const LockScreen: FC<{ setLockPageFalse: () => void }> = ({ setLockPageFalse }) 
       left: 0,
       width: '100vw',
       height: '100vh',
-      background: 'url(\'/images/lockScreen.jpg\') no-repeat fixed center',
+      background: "url('/images/lockScreen.jpg') no-repeat fixed center",
     };
   });
 
@@ -48,12 +48,12 @@ const LockScreen: FC<{ setLockPageFalse: () => void }> = ({ setLockPageFalse }) 
     // 触发表单校验
     form.validateFields().then((values: { password: string }) => {
       if (lockPassword === encryptionAesPsd(values.password)) {
-        setLockPageFalse()
-        setLockPassword(undefined)
+        setLockPageFalse();
+        setLockPassword(undefined);
       } else {
-        message.error(formatMessage({ id: `${INTERNATION.BASICLAYOUT}.LockScreen.error` }))
+        message.error(formatMessage({ id: `${INTERNATION.BASICLAYOUT}.LockScreen.error` }));
       }
-    })
+    });
   };
   return (
     <div className={wrapClassName}>
@@ -76,13 +76,11 @@ const LockScreen: FC<{ setLockPageFalse: () => void }> = ({ setLockPageFalse }) 
             </Form.Item>
           </Form>
         </Col>
-        <Button
-          type="primary"
-          block
-          onClick={hanlderSubmit}>{formatMessage({ id: `${INTERNATION.BASICLAYOUT}.LockScreen.access-system` })
-          }</Button>
+        <Button type="primary" block onClick={hanlderSubmit}>
+          {formatMessage({ id: `${INTERNATION.BASICLAYOUT}.LockScreen.access-system` })}
+        </Button>
       </Row>
     </div>
-  )
-}
-export default LockScreen
+  );
+};
+export default LockScreen;

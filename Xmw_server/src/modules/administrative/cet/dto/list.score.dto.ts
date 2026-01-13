@@ -17,3 +17,7 @@ export class ListScoreDto {
   pageSize?: number;
 }
 
+export class ScoreAnalysisDto {
+  @ApiProperty({ description: '考次ID', required: true })
+  batch_id: string;
+}

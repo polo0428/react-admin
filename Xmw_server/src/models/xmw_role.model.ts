@@ -1,9 +1,9 @@
 /*
  * @Description: XmwRole Entity
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-28 16:33:09
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 17:25:09
  */
 import {
@@ -26,7 +26,8 @@ import type { RoleAttributes } from '@/utils/types/system';
 @Table({ tableName: 'xmw_role' })
 export class XmwRole
   extends Model<RoleAttributes, RoleAttributes>
-  implements RoleAttributes {
+  implements RoleAttributes
+{
   @IsUUID(4)
   @PrimaryKey
   @ForeignKey(() => XmwPermission)

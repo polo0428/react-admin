@@ -1,9 +1,9 @@
 /*
  * @Description: RoleManagement Service
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-28 17:39:28
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-21 15:26:22
  */
 import { Injectable } from '@nestjs/common';
@@ -41,11 +41,11 @@ export class RoleManagementService {
     private readonly permissionModel: typeof XmwPermission,
 
     private sequelize: Sequelize,
-  ) { }
+  ) {}
 
   /**
    * @description: 获取角色管理列表
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getRoleList(
     roleInfo: ListRoleManagementDto,
@@ -100,7 +100,7 @@ export class RoleManagementService {
 
   /**
    * @description: 创建角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async createRole(
     { menu_permission, ...roleInfo }: SaveRoleManagementDto,
@@ -144,7 +144,7 @@ export class RoleManagementService {
 
   /**
    * @description: 更新角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async updateRole(
     role_id: string,
@@ -196,7 +196,7 @@ export class RoleManagementService {
 
   /**
    * @description: 删除角色数据
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async deleteRole(role_id: string): Promise<Response<number>> {
     // 开始一个事务并将其保存到变量中
@@ -224,7 +224,7 @@ export class RoleManagementService {
 
   /**
    * @description: 更新角色状态
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async updateRoleStatus(
     role_id: string,

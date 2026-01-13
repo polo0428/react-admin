@@ -1,9 +1,9 @@
 /*
  * @Description: 查询列表返回响应体 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-03-17 16:09:30
- * @LastEditors: 白雾茫茫丶
+ * @LastEditors: 黄鹏
  * @LastEditTime: 2023-09-28 16:49:32
  */
 import { ApiProperty } from '@nestjs/swagger';

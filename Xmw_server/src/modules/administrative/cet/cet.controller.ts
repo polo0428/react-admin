@@ -17,7 +17,13 @@ import { XmwCetScore } from '@/models/xmw_cet_score.model';
 import { PageResponse, Response, SessionTypes } from '@/utils/types';
 
 import { CetService } from './cet.service';
-import { ListCetDto, ListScoreDto, SaveCetDto, SaveScoreDto } from './dto';
+import {
+  ListCetDto,
+  ListScoreDto,
+  SaveCetDto,
+  SaveScoreDto,
+  ScoreAnalysisDto,
+} from './dto';
 
 @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth('jwt')
@@ -62,5 +68,12 @@ export class CetController {
   saveScore(@Body() scoreInfo: SaveScoreDto): Promise<Response<XmwCetScore>> {
     return this.cetService.saveScore(scoreInfo);
   }
-}
 
+  @Get('score/analysis')
+  @ApiOperation({ summary: '获取成绩分析' })
+  getScoreAnalysis(
+    @Query() analysisInfo: ScoreAnalysisDto,
+  ): Promise<Response<any>> {
+    return this.cetService.getScoreAnalysis(analysisInfo);
+  }
+}

@@ -1,9 +1,9 @@
 /*
  * @Description: 应用程序的根模块(Module)
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-24 13:12:14
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-11-18 09:54:58
  */
 import { Module } from '@nestjs/common';

@@ -1,9 +1,9 @@
 /*
  * @Description: 应用程序的入口文件，它使用核心函数 NestFactory 来创建 Nest 应用程序的实例。
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-12 17:06:37
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-24 14:08:24
  */
 import { NestFactory } from '@nestjs/core';
@@ -76,7 +76,8 @@ async function bootstrap() {
   SwaggerModule.setup(process.env.SWAGGER_SETUP_PATH, app, document);
   await app.listen(App_configuration().port, () => {
     Logger.info(
-      `服务已经启动,接口请访问:http://www.localhost:${App_configuration().port
+      `服务已经启动,接口请访问:http://www.localhost:${
+        App_configuration().port
       }`,
     );
   });

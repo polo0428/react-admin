@@ -1,7 +1,7 @@
 /*
  * @Description: MenuManagement Module
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-19 11:19:47
  * @LastEditors: Cyan
  * @LastEditTime: 2023-03-20 15:25:21
@@ -16,10 +16,7 @@ import { MenuManagementService } from './menu-management.service'; // MenuManage
 
 @Module({
   // 将实体 导入到这个module中，以便你这个module中的其它provider使用
-  imports: [
-    SequelizeModule.forFeature([XmwMenu]),
-    OperationLogsModule,
-  ],
+  imports: [SequelizeModule.forFeature([XmwMenu]), OperationLogsModule],
   // 由 Nest 注入器实例化的提供者，并且可以至少在整个模块中共享
   controllers: [MenuManagementController],
   // 通过 @Module 装饰器映射 Crotroller
@@ -27,4 +24,4 @@ import { MenuManagementService } from './menu-management.service'; // MenuManage
   // 如果你这个模块中的provider 要在别的模块中使用 你必须要在这里声明 导出这些provider
   exports: [MenuManagementService],
 })
-export class MenuManagementModule { }
+export class MenuManagementModule {}

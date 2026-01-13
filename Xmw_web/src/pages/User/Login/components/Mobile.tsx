@@ -1,9 +1,9 @@
 /*
  * @Description: 手机号码登录
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-11 14:52:29
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-07-05 14:08:56
  */
 import { ProFormCaptcha, ProFormText } from '@ant-design/pro-components';

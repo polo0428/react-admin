@@ -3,13 +3,13 @@ import { history, useLocation, useRequest } from '@umijs/max';
 import { Button, Card, Input, message, Select, Space, Tag, Typography } from 'antd';
 import React, { useMemo, useState } from 'react';
 
-import { getScoreList, saveScore } from '@/services/administrative/cet';
+import { getScoreAnalysis, getScoreList, saveScore } from '@/services/administrative/cet';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import ScoreModal from './components/ScoreModal';
 import ScoreStats from './components/ScoreStats';
 import ScoreTable from './components/ScoreTable';
-import { ExamLevel, ScoreRecord } from './components/types';
+import { ExamLevel, ScoreRecord, ScoreStatsData } from './components/types';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -50,62 +50,87 @@ export default function ScoreManagement() {
 
   const [scores, setScores] = useState<ScoreRecord[]>([]);
 
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // 用于存储总数，因为 data 在 onSuccess 中可能还未更新或者类型不对
+  const [totalCount, setTotalCount] = useState(0);
+  const [statsData, setStatsData] = useState<any>(null);
+
   // 获取成绩列表
   // eslint-disable-next-line consistent-return
-  const { data, loading, refresh, run } = useRequest(async (params) => {
-    if (!batch?.id) return { list: [], total: 0 };
-    const res = await getScoreList({
-      batch_id: batch.id,
-      keyword: searchTerm,
-      exam_level: levelFilter === 'all' ? undefined : levelFilter,
-      current: params?.current || 1,
-      pageSize: params?.pageSize || 10,
-    });
+  const { loading, refresh, run } = useRequest(
+    async (params) => {
+      if (!batch?.id) return { list: [], total: 0 };
+      const res = await getScoreList({
+        batch_id: batch.id,
+        current: params?.current || current,
+        pageSize: params?.pageSize || pageSize,
+        keyword: searchTerm,
+        exam_level: levelFilter === 'all' ? undefined : levelFilter,
+      });
 
-    console.log('res', res);
-    const rawRes = res as any;
-    console.log('API Response Raw:', rawRes);
-    const responseData = rawRes?.data || rawRes || {};
+      // console.log('res', res);
+      const rawRes = res as any;
+      // console.log('API Response Raw:', rawRes);
+      const responseData = rawRes?.data || rawRes || {};
 
-    if (responseData?.list) {
-      const defaultExamDate = batch?.exam_date || '';
-      const mappedScores = responseData.list.map((item: any) =>
-        mapScoreItem(item, defaultExamDate),
-      );
-      console.log('Mapped Scores:', mappedScores);
-      setScores(mappedScores);
-    } else {
+      if (responseData?.list) {
+        const defaultExamDate = batch?.exam_date || '';
+        const mappedScores = responseData.list.map((item: any) =>
+          mapScoreItem(item, defaultExamDate),
+        );
+        // console.log('Mapped Scores:', mappedScores);
+        setScores(mappedScores);
+        setTotalCount(responseData.total || 0); // 更新总数状态
+        return {
+          list: mappedScores,
+          total: responseData.total || 0,
+        };
+      }
       setScores([]);
-    }
-  });
+      setTotalCount(0);
+      return { list: [], total: 0 };
+    },
+    {
+      refreshDeps: [batch?.id], // 仅当批次ID变化时自动刷新
+      debounceInterval: 300, // 节流/防抖时间
+    },
+  );
 
-  const scoreData = data as { list: any[]; total: number } | undefined;
+  // 监听筛选条件变化，触发搜索并重置页码
+  React.useEffect(() => {
+    setCurrent(1);
+    run({ current: 1, pageSize });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, levelFilter]);
 
-  // 移除 scores 的 useMemo
-  // const scores: ScoreRecord[] = useMemo(() => { ... });
+  // 获取统计数据
+  useRequest(
+    async () => {
+      if (!batch?.id) return null;
+      const res = await getScoreAnalysis({ batch_id: batch.id });
+      // 兼容直接返回数据和 {code, data} 结构
+      const result = (res as any)?.data || res;
+      setStatsData(result);
+      return result;
+    },
+    {
+      refreshDeps: [batch?.id, isModalOpen], // 当批次变化或保存操作后刷新统计
+    },
+  );
 
-  // 计算统计数据 (基于当前页数据，如果需要全量统计需要单独接口)
-  const stats = useMemo(() => {
-    // 这里暂时使用当前页数据进行统计，实际应用中建议后端返回统计数据
-    // 或者如果数据量不大，可以前端一次性拉取所有数据
-    if (scores.length === 0) return null;
-    const total = scores.length; // 注意：这里只是当前页的数量
-    const passed = scores.filter((s) => s.passed).length;
-    const passRate = ((passed / total) * 100).toFixed(1);
-    const totalScoreSum = scores.reduce((sum, s) => sum + s.totalScore, 0);
-    const avgScore = Math.round(totalScoreSum / total);
-    const maxScore = Math.max(...scores.map((s) => s.totalScore));
-
-    // 如果后端返回了总数，我们可以显示总人数，但通过率等只能基于当前页计算，这可能不准确。
-    // 为了更好的体验，这里我们只在有数据时显示统计组件，且明确它是基于列表数据的。
+  const stats: ScoreStatsData | null = useMemo(() => {
+    // console.log('statsData', statsData);
+    if (!statsData) return null;
     return {
-      total: scoreData?.total || total,
-      passed,
-      passRate,
-      avgScore,
-      maxScore,
+      total: statsData.total,
+      passed: statsData.passed,
+      passRate: statsData.passRate,
+      avgScore: statsData.avgScore,
+      maxScore: statsData.maxScore,
     };
-  }, [scores, scoreData]);
+  }, [statsData]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
@@ -211,11 +236,15 @@ export default function ScoreManagement() {
           dataSource={scores}
           loading={loading}
           pagination={{
-            total: scoreData?.total || 0,
-            pageSize: 10,
-            onChange: (page, pageSize) => {
-              run({ current: page, pageSize });
+            total: totalCount || 0,
+            current,
+            pageSize,
+            onChange: (page, size) => {
+              setCurrent(page);
+              setPageSize(size);
+              run({ current: page, pageSize: size });
             },
+            showTotal: (total, range) => `显示第 ${range[0]} 到 ${range[1]} 条，共 ${total} 条结果`,
           }}
         />
       </Card>

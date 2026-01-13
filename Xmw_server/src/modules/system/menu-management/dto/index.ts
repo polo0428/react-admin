@@ -1,7 +1,7 @@
 /*
  * @Description: 菜单管理 Dto
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-10-27 11:36:14
  * @LastEditors: Cyan
  * @LastEditTime: 2022-11-09 14:41:46

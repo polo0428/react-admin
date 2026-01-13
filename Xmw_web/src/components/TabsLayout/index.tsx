@@ -1,9 +1,9 @@
 /*
  * @Description: 自定义多标签页
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2023-01-30 14:04:03
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-10-24 10:11:56
  */
 import { FormattedMessage, Icon, useIntl } from '@umijs/max';
@@ -97,10 +97,10 @@ const TabsLayout: FC<TabsLayoutProps> = ({
     // 只有当前活跃的标签页才能操作
     const dom = (
       <Space size={5}>
-        {isCurrent && (
-          <Badge status="processing" />
+        {isCurrent && <Badge status="processing" />}
+        {MenuRemixIconMap[pathname] && (
+          <Icon icon={MenuRemixIconMap[pathname]} style={{ display: 'flex' }} />
         )}
-        {MenuRemixIconMap[pathname] && <Icon icon={MenuRemixIconMap[pathname]} style={{ display: 'flex' }} />}
         <FormattedMessage id={`menu${pathname.replaceAll('/', '.')}`} />
       </Space>
     );

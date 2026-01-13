@@ -1,9 +1,9 @@
 /*
  * @Description: Auth Module
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-25 14:31:27
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-11-18 09:48:34
  */
 import { Module } from '@nestjs/common';
@@ -37,4 +37,4 @@ import { JwtStrategy } from './jwt.strategy';
   // 如果你这个模块中的provider 要在别的模块中使用 你必须要在这里声明 导出这些provider
   exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

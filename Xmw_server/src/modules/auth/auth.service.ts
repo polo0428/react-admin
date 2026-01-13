@@ -1,9 +1,9 @@
 /*
  * @Description: Auth Service
  * @Version: 2.0
- * @Author: 白雾茫茫丶
+ * @Author: 黄鹏
  * @Date: 2022-11-25 14:29:53
- * @LastEditors: 白雾茫茫丶<baiwumm.com>
+ * @LastEditors: 黄鹏<baiwumm.com>
  * @LastEditTime: 2024-11-18 11:32:05
  */
 import { Injectable } from '@nestjs/common';
@@ -33,11 +33,11 @@ export class AuthService {
     private readonly menuModel: typeof XmwMenu,
     private readonly jwtService: JwtService,
     private sequelize: Sequelize,
-  ) { }
+  ) {}
 
   /**
    * @description: 用户登录
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async loginSingToken(
     loginParams: LoginParamsDto,
@@ -102,7 +102,7 @@ export class AuthService {
   /**
    * @description: 校验用户信息
    * @param {LoginParamsDto} loginParams
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async validateUser(
     loginParams: LoginParamsDto,
@@ -145,7 +145,7 @@ export class AuthService {
 
   /**
    * @description: 用户退出当前登录
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async logout(session: SessionTypes): Promise<responseResult> {
     const { currentUserInfo } = session;
@@ -165,7 +165,7 @@ export class AuthService {
 
   /**
    * @description: 获取用户按钮权限
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getPermissions(session: SessionTypes): Promise<Response<string[]>> {
     // 获取当前用户 id
@@ -191,7 +191,7 @@ export class AuthService {
 
   /**
    * @description: 获取用户权限菜单
-   * @author: 白雾茫茫丶
+   * @author: 黄鹏
    */
   async getRoutesMenus(session: SessionTypes): Promise<Response<XmwMenu[]>> {
     // 获取当前用户 id
