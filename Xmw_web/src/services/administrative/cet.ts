@@ -39,3 +39,41 @@ export const saveCet = (options: SaveCetParams) =>
  * @param {string} id
  */
 export const deleteCet = (id: string) => httpRequest.delete<number>(`${baseURL}/${id}`);
+
+export interface SaveScoreParams {
+  id?: string;
+  name: string;
+  student_no: string;
+  department?: string;
+  major?: string;
+  class_name?: string;
+  batch_id: string;
+  exam_level: string;
+  ticket_number: string;
+  listening_score: number;
+  reading_score: number;
+  writing_score: number;
+  campus?: string;
+}
+
+export interface ScoreListParams {
+  batch_id?: string;
+  keyword?: string;
+  exam_level?: string;
+  current?: number;
+  pageSize?: number;
+}
+
+/**
+ * @description: 获取成绩列表
+ * @param {ScoreListParams} options
+ */
+export const getScoreList = (options?: ScoreListParams) =>
+  httpRequest.get<PageResponse<any>>(`${baseURL}/score`, options);
+
+/**
+ * @description: 保存成绩
+ * @param {SaveScoreParams} options
+ */
+export const saveScore = (options: SaveScoreParams) =>
+  httpRequest.post<any>(`${baseURL}/score/save`, options);

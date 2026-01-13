@@ -1,6 +1,7 @@
 import { LeftOutlined, MoreOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { TablePaginationConfig } from 'antd/es/table';
 import React from 'react';
 
 import { ScoreRecord } from './types';
@@ -8,13 +9,14 @@ import { ScoreRecord } from './types';
 interface ScoreTableProps {
   dataSource: ScoreRecord[];
   loading?: boolean;
+  pagination?: TablePaginationConfig;
 }
 
 /**
  * 成绩列表表格组件
  * 展示学生基本信息、考试信息、成绩详情及状态
  */
-const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading }) => {
+const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination }) => {
   const columns: ColumnsType<ScoreRecord> = [
     {
       title: '学生信息',
@@ -55,7 +57,7 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading }) => {
           <div className="text-xs text-gray-500 flex gap-2">
             <span title="听力">听: {record.listeningScore}</span>
             <span title="阅读">读: {record.readingScore}</span>
-            <span title="写作与翻译">写/译: {record.writingTranslationScore}</span>
+            <span title="写作与翻译">写译: {record.writingTranslationScore}</span>
           </div>
         </>
       ),
@@ -81,28 +83,30 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading }) => {
       dataSource={dataSource}
       columns={columns}
       rowKey="ticketNumber"
-      pagination={{
-        total: dataSource.length,
-        pageSize: 10,
-        showTotal: (total, range) => `显示第 ${range[0]} 到 ${range[1]} 条，共 ${total} 条结果`,
-        itemRender: (current, type, originalElement) => {
-          if (type === 'prev') {
-            return (
-              <Button type="text" size="small">
-                <LeftOutlined />
-              </Button>
-            );
-          }
-          if (type === 'next') {
-            return (
-              <Button type="text" size="small">
-                <RightOutlined />
-              </Button>
-            );
-          }
-          return originalElement;
-        },
-      }}
+      pagination={
+        pagination || {
+          total: dataSource.length,
+          pageSize: 10,
+          showTotal: (total, range) => `显示第 ${range[0]} 到 ${range[1]} 条，共 ${total} 条结果`,
+          itemRender: (current, type, originalElement) => {
+            if (type === 'prev') {
+              return (
+                <Button type="text" size="small">
+                  <LeftOutlined />
+                </Button>
+              );
+            }
+            if (type === 'next') {
+              return (
+                <Button type="text" size="small">
+                  <RightOutlined />
+                </Button>
+              );
+            }
+            return originalElement;
+          },
+        }
+      }
     />
   );
 };

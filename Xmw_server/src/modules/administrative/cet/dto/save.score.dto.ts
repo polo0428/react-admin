@@ -1,0 +1,43 @@
+import { ApiProperty } from '@nestjs/swagger';
+
+export class SaveScoreDto {
+  @ApiProperty({ description: '主键ID', required: false })
+  id?: string;
+
+  @ApiProperty({ description: '学生姓名', required: true })
+  name: string;
+
+  @ApiProperty({ description: '学号', required: true })
+  student_no: string;
+
+  @ApiProperty({ description: '学院' })
+  department?: string;
+
+  @ApiProperty({ description: '专业' })
+  major?: string;
+
+  @ApiProperty({ description: '班级' })
+  class_name?: string;
+
+  @ApiProperty({ description: '考次ID', required: true })
+  batch_id: string;
+
+  @ApiProperty({ description: '考试级别', required: true, enum: ['CET-4', 'CET-6'] })
+  exam_level: string;
+
+  @ApiProperty({ description: '准考证号', required: true })
+  ticket_number: string;
+
+  @ApiProperty({ description: '听力成绩', required: true })
+  listening_score: number;
+
+  @ApiProperty({ description: '阅读成绩', required: true })
+  reading_score: number;
+
+  @ApiProperty({ description: '写作与翻译成绩', required: true })
+  writing_score: number;
+
+  @ApiProperty({ description: '校区' })
+  campus?: string;
+}
+

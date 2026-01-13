@@ -1,7 +1,9 @@
 import { LeftOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { history, useLocation } from '@umijs/max';
-import { Button, Card, Input, Select, Space, Tag, Typography } from 'antd';
+import { history, useLocation, useRequest } from '@umijs/max';
+import { Button, Card, Input, message, Select, Space, Tag, Typography } from 'antd';
 import React, { useMemo, useState } from 'react';
+
+import { getScoreList, saveScore } from '@/services/administrative/cet';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import ScoreModal from './components/ScoreModal';
@@ -9,8 +11,29 @@ import ScoreStats from './components/ScoreStats';
 import ScoreTable from './components/ScoreTable';
 import { ExamLevel, ScoreRecord } from './components/types';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
+
+// eslint-disable-next-line
+const mapScoreItem = (item: any, defaultExamDate: string): ScoreRecord => ({
+  id: item.student_no || item.studentNo,
+  name: item.name,
+  department: item.department || '',
+  major: item.major || '',
+  classId: item.class_name || item.className || '',
+  batchId: item.batch_id || item.batchId,
+  examLevel: (item.exam_level || item.examLevel) as ExamLevel,
+  examDate: defaultExamDate || item.created_time?.split(' ')[0] || '',
+  campus: item.campus,
+  ticketNumber: item.ticket_number || item.ticketNumber,
+  totalScore: Number(item.total_score || item.totalScore || 0),
+  listeningScore: Number(item.listening_score || item.listeningScore || 0),
+  readingScore: Number(item.reading_score || item.readingScore || 0),
+  writingTranslationScore: Number(
+    item.writing_score || item.writingScore || item.writingTranslationScore || 0,
+  ),
+  passed: item.is_passed === true || item.is_passed === 1 || item.isPassed === true,
+});
 
 /**
  * 成绩管理主页面
@@ -24,34 +47,65 @@ export default function ScoreManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  // 模拟数据状态 (后续可替换为API调用)
   const [scores, setScores] = useState<ScoreRecord[]>([]);
 
-  // 筛选成绩列表
-  const filteredScores = useMemo(() => {
-    return scores.filter((score) => {
-      const matchesBatch = batch ? score.batchId === batch.id : true;
-      const matchesSearch =
-        score.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        score.id.includes(searchTerm);
-      const matchesLevel = levelFilter === 'all' || score.examLevel === levelFilter;
-      return matchesBatch && matchesSearch && matchesLevel;
+  // 获取成绩列表
+  // eslint-disable-next-line consistent-return
+  const { data, loading, refresh, run } = useRequest(async (params) => {
+    if (!batch?.id) return { list: [], total: 0 };
+    const res = await getScoreList({
+      batch_id: batch.id,
+      keyword: searchTerm,
+      exam_level: levelFilter === 'all' ? undefined : levelFilter,
+      current: params?.current || 1,
+      pageSize: params?.pageSize || 10,
     });
-  }, [batch, searchTerm, levelFilter, scores]);
 
-  // 计算统计数据
+    console.log('res', res);
+    const rawRes = res as any;
+    console.log('API Response Raw:', rawRes);
+    const responseData = rawRes?.data || rawRes || {};
+
+    if (responseData?.list) {
+      const defaultExamDate = batch?.exam_date || '';
+      const mappedScores = responseData.list.map((item: any) =>
+        mapScoreItem(item, defaultExamDate),
+      );
+      console.log('Mapped Scores:', mappedScores);
+      setScores(mappedScores);
+    } else {
+      setScores([]);
+    }
+  });
+
+  const scoreData = data as { list: any[]; total: number } | undefined;
+
+  // 移除 scores 的 useMemo
+  // const scores: ScoreRecord[] = useMemo(() => { ... });
+
+  // 计算统计数据 (基于当前页数据，如果需要全量统计需要单独接口)
   const stats = useMemo(() => {
-    if (filteredScores.length === 0) return null;
-    const total = filteredScores.length;
-    const passed = filteredScores.filter((s) => s.passed).length;
+    // 这里暂时使用当前页数据进行统计，实际应用中建议后端返回统计数据
+    // 或者如果数据量不大，可以前端一次性拉取所有数据
+    if (scores.length === 0) return null;
+    const total = scores.length; // 注意：这里只是当前页的数量
+    const passed = scores.filter((s) => s.passed).length;
     const passRate = ((passed / total) * 100).toFixed(1);
-    const totalScoreSum = filteredScores.reduce((sum, s) => sum + s.totalScore, 0);
+    const totalScoreSum = scores.reduce((sum, s) => sum + s.totalScore, 0);
     const avgScore = Math.round(totalScoreSum / total);
-    const maxScore = Math.max(...filteredScores.map((s) => s.totalScore));
-    return { total, passed, passRate, avgScore, maxScore };
-  }, [filteredScores]);
+    const maxScore = Math.max(...scores.map((s) => s.totalScore));
+
+    // 如果后端返回了总数，我们可以显示总人数，但通过率等只能基于当前页计算，这可能不准确。
+    // 为了更好的体验，这里我们只在有数据时显示统计组件，且明确它是基于列表数据的。
+    return {
+      total: scoreData?.total || total,
+      passed,
+      passRate,
+      avgScore,
+      maxScore,
+    };
+  }, [scores, scoreData]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
@@ -59,39 +113,32 @@ export default function ScoreManagement() {
 
   const handleSave = async (values: any) => {
     try {
-      setLoading(true);
-      // 模拟保存延迟
-      // await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!batch?.id) {
+        message.error('未找到考次信息');
+        return;
+      }
 
-      const listening = Number(values.listeningScore) || 0;
-      const reading = Number(values.readingScore) || 0;
-      const writing = Number(values.writingTranslationScore) || 0;
-      const total = listening + reading + writing;
-
-      const newScore: ScoreRecord = {
-        id: values.id,
+      await saveScore({
         name: values.name,
-        department: values.department || '未知学院',
-        major: values.major || '未知专业',
-        classId: values.classId || '未知班级',
-        batchId: batch?.id || 'manual_entry',
-        examLevel: values.examLevel as ExamLevel,
-        examDate: batch?.exam_date || new Date().toISOString().split('T')[0],
-        campus: values.campus || '本部',
-        ticketNumber: values.ticketNumber,
-        totalScore: total,
-        listeningScore: listening,
-        readingScore: reading,
-        writingTranslationScore: writing,
-        passed: total >= 425,
-      };
+        student_no: values.id,
+        department: values.department,
+        major: values.major,
+        class_name: values.classId, // 注意：ScoreModal 需要支持 classId 输入
+        batch_id: batch.id,
+        exam_level: values.examLevel,
+        ticket_number: values.ticketNumber,
+        listening_score: values.listeningScore,
+        reading_score: values.readingScore,
+        writing_score: values.writingTranslationScore,
+        campus: values.campus,
+      });
 
-      setScores((prev) => [newScore, ...prev]);
+      message.success('保存成功');
       setIsModalOpen(false);
+      refresh();
     } catch (error) {
-      console.error('Validation failed:', error);
-    } finally {
-      setLoading(false);
+      console.error('Save failed:', error);
+      // message.error('保存失败'); // httpRequest 可能会自动处理错误提示
     }
   };
 
@@ -123,7 +170,6 @@ export default function ScoreManagement() {
                 </Tag>
               )}
             </div>
-            <Text type="secondary">查询 {batch ? '该批次' : '所有'} 学生考试成绩及详情。</Text>
           </div>
 
           <Space>
@@ -144,6 +190,7 @@ export default function ScoreManagement() {
             style={{ maxWidth: 300 }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            allowClear
           />
 
           <Space>
@@ -160,7 +207,17 @@ export default function ScoreManagement() {
           </Space>
         </div>
 
-        <ScoreTable dataSource={filteredScores} loading={loading} />
+        <ScoreTable
+          dataSource={scores}
+          loading={loading}
+          pagination={{
+            total: scoreData?.total || 0,
+            pageSize: 10,
+            onChange: (page, pageSize) => {
+              run({ current: page, pageSize });
+            },
+          }}
+        />
       </Card>
 
       <ScoreModal

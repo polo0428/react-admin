@@ -1,6 +1,6 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, InputNumber, Modal, Row, Select, Tag, Typography } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ExamLevel } from './types';
 
@@ -20,6 +20,7 @@ interface ScoreModalProps {
  */
 const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batchName }) => {
   const [form] = Form.useForm();
+  const [submitting, setSubmitting] = useState(false);
 
   // 当弹窗打开时重置表单
   useEffect(() => {
@@ -38,9 +39,12 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
+      setSubmitting(true);
       await onFinish(values);
+      setSubmitting(false);
     } catch (error) {
       console.error('Validation failed:', error);
+      setSubmitting(false);
     }
   };
 
@@ -62,7 +66,13 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
         <Button key="cancel" onClick={onCancel}>
           取消
         </Button>,
-        <Button key="submit" type="primary" onClick={handleOk} icon={<SaveOutlined />}>
+        <Button
+          key="submit"
+          type="primary"
+          onClick={handleOk}
+          icon={<SaveOutlined />}
+          loading={submitting}
+        >
           保存成绩
         </Button>,
       ]}
@@ -89,14 +99,19 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <Form.Item name="department" label="学院">
                 <Input placeholder="例如：计算机学院" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <Form.Item name="major" label="专业">
                 <Input placeholder="例如：软件工程" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="classId" label="班级">
+                <Input placeholder="例如：软工2101" />
               </Form.Item>
             </Col>
           </Row>
