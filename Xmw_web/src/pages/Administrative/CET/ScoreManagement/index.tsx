@@ -188,7 +188,7 @@ export default function ScoreManagement() {
   };
 
   return (
-    <div className="space-y-6 p-6 animate-in fade-in duration-500">
+    <div className="space-y-6 p-6 pt-0 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4">
         <Button
           type="link"

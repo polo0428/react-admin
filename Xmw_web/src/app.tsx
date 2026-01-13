@@ -12,7 +12,6 @@ import { history } from '@umijs/max';
 import { assign, eq } from 'lodash-es';
 
 import { BasiLayout } from '@/components/BasiLayout'; // 全局 layout 布局
-import TabsLayout, { TabsLayoutProps } from '@/components/TabsLayout'; // 多标签页配置
 import { getLocalStorageItem, initUserAuthority, setLocalStorageItem } from '@/utils'; // 全局工具函数
 import { LOCAL_STORAGE, ROUTES } from '@/utils/enums';
 import type { InitialStateTypes } from '@/utils/types';
@@ -63,13 +62,6 @@ export async function getInitialState() {
  * @Author: 黄鹏
  */
 export const layout = BasiLayout;
-
-/**
- * @description: 完全覆盖内置的多 Tabs 组件，需要搭配配置 hasCustomTabs:true 使用。
- * @doc https://alitajs.com/zh-CN/docs/guides/tabs#getcustomtabs
- * @Author: 黄鹏
- */
-export const getCustomTabs = () => (props: TabsLayoutProps) => <TabsLayout {...props} />;
 
 /**
  * @description: request 配置，可以配置错误处理，它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
