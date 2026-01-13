@@ -158,7 +158,7 @@ const AnalysisPage: React.FC = () => {
       {/* 图表区域 第二行 */}
       <Row gutter={[24, 24]} className="mt-6">
         <Col xs={24} lg={12}>
-          <Card bordered={false} className="shadow-sm rounded-xl">
+          <Card className="shadow-sm rounded-xl">
             <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
               成绩段分布统计 (CET-4)
             </Title>
@@ -168,7 +168,7 @@ const AnalysisPage: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card bordered={false} className="shadow-sm rounded-xl">
+          <Card className="shadow-sm rounded-xl">
             <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
               成绩段分布统计 (CET-6)
             </Title>
