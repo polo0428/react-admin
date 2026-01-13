@@ -54,6 +54,8 @@ export default function ExamManagement() {
   const onNavigate = (page: string, context?: any) => {
     if (page === 'scores') {
       history.push('/cet/scores', { examItem: context?.examItem });
+    } else if (page === 'analysis') {
+      history.push('/cet/analysis', { examItem: context?.examItem });
     } else {
       message.info(`Navigating to ${page} (Not implemented yet)`);
     }

@@ -22,5 +22,11 @@ export default {
       name: 'scores',
       hideInMenu: true,
     },
+    {
+      path: '/cet/analysis',
+      component: './Administrative/CET/Analysis',
+      name: 'analysis',
+      hideInMenu: true,
+    },
   ],
 };

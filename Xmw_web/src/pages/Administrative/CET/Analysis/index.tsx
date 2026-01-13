@@ -1,0 +1,132 @@
+import {
+  ArrowLeftOutlined,
+  ReadOutlined,
+  RiseOutlined,
+  TeamOutlined,
+  TrophyOutlined,
+} from '@ant-design/icons';
+import { history, useLocation } from '@umijs/max';
+import { Button, Card, Col, Row, Space, Tag, Typography } from 'antd';
+import React from 'react';
+
+import { ExamBatch } from '../components/CreateExamModal';
+import DistributionChart from './components/DistributionChart';
+import RadarChart from './components/RadarChart';
+import StatsCard from './components/StatsCard';
+import TrendChart from './components/TrendChart';
+
+const { Title } = Typography;
+
+const AnalysisPage: React.FC = () => {
+  const location = useLocation();
+  const state = location.state as { examItem?: ExamBatch };
+  const batch = state?.examItem;
+
+  const handleBack = () => {
+    history.back();
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500 p-6">
+      {/* 顶部导航和标题 */}
+      <div className="flex items-center justify-between mb-6">
+        <Space>
+          <Button
+            type="link"
+            onClick={handleBack}
+            icon={<ArrowLeftOutlined />}
+            style={{ padding: 0 }}
+          >
+            返回考次列表
+          </Button>
+        </Space>
+
+        {batch && (
+          <Tag color="indigo" className="px-3 py-1 text-sm rounded-full">
+            {batch.name}
+          </Tag>
+        )}
+      </div>
+
+      {/* 统计卡片区域 */}
+      <Row gutter={[24, 24]}>
+        <Col xs={24} sm={12} lg={6}>
+          <StatsCard
+            title="参考总人数"
+            value="20"
+            subtext="同比去年 +8%"
+            icon={<TeamOutlined />}
+            colorClass="bg-blue-500"
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <StatsCard
+            title="CET-4 通过率"
+            value="78.5%"
+            subtext="同比去年 +3.5%"
+            icon={<RiseOutlined />}
+            colorClass="bg-emerald-500"
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <StatsCard
+            title="CET-6 通过率"
+            value="58.2%"
+            subtext="同比去年 +2.1%"
+            icon={<TrophyOutlined />}
+            colorClass="bg-indigo-500"
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <StatsCard
+            title="平均总分"
+            value="512"
+            subtext="最高分: 685"
+            icon={<ReadOutlined />}
+            colorClass="bg-violet-500"
+          />
+        </Col>
+      </Row>
+
+      {/* 图表区域 第一行 */}
+      <Row gutter={[24, 24]} className="mt-6">
+        <Col xs={24} lg={12}>
+          <Card bordered={false} className="shadow-sm rounded-xl">
+            <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
+              全校历史通过率趋势
+            </Title>
+            <div style={{ height: '450px', width: '100%' }}>
+              <TrendChart />
+            </div>
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card bordered={false} className="shadow-sm rounded-xl">
+            <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
+              单项能力分析 (雷达图)
+            </Title>
+            <div style={{ height: '450px', width: '100%' }}>
+              <RadarChart />
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* 图表区域 第二行 */}
+      <Row className="mt-6">
+        <Col span={24}>
+          <Card bordered={false} className="shadow-sm rounded-xl">
+            <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
+              成绩段分布统计 (CET-4)
+            </Title>
+            <div style={{ height: '350px', width: '100%' }}>
+              <DistributionChart />
+            </div>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default AnalysisPage;
