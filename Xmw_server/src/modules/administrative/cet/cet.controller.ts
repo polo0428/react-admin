@@ -7,9 +7,12 @@ import {
   Post,
   Query,
   Session,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { XmwCet } from '@/models/xmw_cet.model';
@@ -90,5 +93,25 @@ export class CetController {
     @Query() analysisInfo: GetAnalysisDto,
   ): Promise<Response<any>> {
     return this.cetService.getAnalysisDashboard(analysisInfo);
+  }
+
+  @Post('import-registration')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: '导入报名数据' })
+  async importRegistration(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('batch_id') batch_id: string,
+  ): Promise<Response<any>> {
+    return this.cetService.importRegistration(file, batch_id);
+  }
+
+  @Post('import-score')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: '导入成绩数据' })
+  async importScore(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('batch_id') batch_id: string,
+  ): Promise<Response<any>> {
+    return this.cetService.importScore(file, batch_id);
   }
 }

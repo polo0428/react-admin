@@ -1,7 +1,9 @@
 import { FileExcelOutlined, InboxOutlined } from '@ant-design/icons';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
+// eslint-disable-next-line no-duplicate-imports
 import { App, Upload } from 'antd';
 import { useState } from 'react';
+
 import SpreadRestArea from '../SpreadRestArea';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
@@ -53,10 +55,7 @@ const Uploader = ({
   };
 
   return (
-    <SpreadRestArea
-      marginBottom={68}
-      className="flex flex-col items-center justify-center"
-    >
+    <SpreadRestArea marginBottom={68} className="flex flex-col items-center justify-center">
       <Upload.Dragger {...props} className="bg-white w-2/3 h-[400px]">
         <div className="mb-4">
           <InboxOutlined style={{ fontSize: 64, color: '#1677ff' }} />

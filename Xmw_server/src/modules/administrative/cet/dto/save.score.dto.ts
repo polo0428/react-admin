@@ -22,7 +22,11 @@ export class SaveScoreDto {
   @ApiProperty({ description: '考次ID', required: true })
   batch_id: string;
 
-  @ApiProperty({ description: '考试级别', required: true, enum: ['CET-4', 'CET-6'] })
+  @ApiProperty({
+    description: '考试级别',
+    required: true,
+    enum: ['CET-4', 'CET-6'],
+  })
   exam_level: string;
 
   @ApiProperty({ description: '准考证号', required: true })
@@ -40,4 +44,3 @@ export class SaveScoreDto {
   @ApiProperty({ description: '校区' })
   campus?: string;
 }
-

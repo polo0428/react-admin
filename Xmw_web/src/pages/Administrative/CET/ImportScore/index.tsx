@@ -58,4 +58,3 @@ const ImportScore: React.FC = () => {
 };
 
 export default ImportScore;
-

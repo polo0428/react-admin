@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import type { WhereOptions } from 'sequelize/types';
 import { Sequelize } from 'sequelize-typescript';
+import * as XLSX from 'xlsx';
 
 import { XmwCet } from '@/models/xmw_cet.model';
 import { XmwCetScore } from '@/models/xmw_cet_score.model';
@@ -159,6 +160,129 @@ export class CetService {
       result = await this.scoreModel.create(data);
     }
     return responseMessage(result);
+  }
+
+  /**
+   * @description: 导入报名数据
+   */
+  async importRegistration(
+    file: Express.Multer.File,
+    batch_id: string,
+  ): Promise<Response<any>> {
+    if (!file) {
+      return responseMessage(null, '请上传文件', -1);
+    }
+    try {
+      const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      const records = jsonData
+        .map((item: any) => ({
+          batch_id,
+          name: item['姓名'] || item['name'],
+          student_no:
+            item['学号'] || item['student_no'] || String(item['学号'] || ''),
+          department: item['学院'] || item['department'],
+          major: item['专业'] || item['major'],
+          class_name: item['班级'] || item['class_name'],
+          ticket_number:
+            item['准考证号'] ||
+            item['ticket_number'] ||
+            String(item['准考证号'] || ''),
+          exam_level: item['考试等级'] || item['exam_level'], // e.g. CET4
+          campus: item['校区'] || item['campus'],
+          listening_score: 0,
+          reading_score: 0,
+          writing_score: 0,
+          total_score: 0,
+          is_passed: false,
+        }))
+        .filter(
+          (r) => r.name && r.student_no && r.ticket_number && r.exam_level,
+        );
+
+      if (records.length === 0) {
+        return responseMessage(null, '未解析到有效数据，请检查必填项', -1);
+      }
+
+      // 批量创建
+      const result = await this.scoreModel.bulkCreate(records, {
+        updateOnDuplicate: [
+          'name',
+          'department',
+          'major',
+          'class_name',
+          'campus',
+        ], // 如果存在则更新基本信息
+      });
+      return responseMessage({ count: result.length });
+    } catch (error) {
+      console.error('Import Error:', error);
+      return responseMessage(null, '导入失败，请检查文件格式', -1);
+    }
+  }
+
+  /**
+   * @description: 导入成绩数据
+   */
+  async importScore(
+    file: Express.Multer.File,
+    batch_id: string,
+  ): Promise<Response<any>> {
+    if (!file) {
+      return responseMessage(null, '请上传文件', -1);
+    }
+    try {
+      const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      let updatedCount = 0;
+      for (const item of jsonData) {
+        const student_no = item['学号'] || item['student_no'];
+        const ticket_number = item['准考证号'] || item['ticket_number'];
+        const listening_score = Number(
+          item['听力'] || item['listening_score'] || 0,
+        );
+        const reading_score = Number(
+          item['阅读'] || item['reading_score'] || 0,
+        );
+        const writing_score = Number(
+          item['写作'] || item['writing_score'] || 0,
+        );
+        const total_score = listening_score + reading_score + writing_score;
+        const is_passed = total_score >= 425;
+
+        const where: any = { batch_id };
+        if (ticket_number) {
+          where.ticket_number = ticket_number;
+        } else if (student_no) {
+          where.student_no = student_no;
+        } else {
+          continue;
+        }
+
+        const [affected] = await this.scoreModel.update(
+          {
+            listening_score,
+            reading_score,
+            writing_score,
+            total_score,
+            is_passed,
+          },
+          { where },
+        );
+        updatedCount += affected;
+      }
+
+      return responseMessage({ updated: updatedCount });
+    } catch (error) {
+      console.error('Import Score Error:', error);
+      return responseMessage(null, '导入成绩失败', -1);
+    }
   }
 
   /**
