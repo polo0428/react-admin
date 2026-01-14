@@ -1,0 +1,60 @@
+import { LeftOutlined } from '@ant-design/icons';
+import { history, useLocation } from '@umijs/max';
+import { Button, Card, message, Typography } from 'antd';
+import React from 'react';
+
+import Uploader from '@/components/BatchImport/Uploader';
+import { importCetRegistration } from '@/services/administrative/cet';
+
+import { ExamBatch } from '../components/CreateExamModal';
+
+const { Text } = Typography;
+
+const ImportRegistration: React.FC = () => {
+  const location = useLocation();
+  const state = location.state as { examItem?: ExamBatch } | undefined;
+  const examItem = state?.examItem;
+
+  const handleBack = () => {
+    history.push('/cet');
+  };
+
+  const handleImport = async (formData: FormData) => {
+    if (!examItem?.id) {
+      message.error('考次信息丢失，请返回重新进入');
+      throw new Error('No exam item');
+    }
+    formData.append('batch_id', examItem.id);
+    return importCetRegistration(formData);
+  };
+
+  return (
+    <div>
+      <Card
+        title={
+          <div className="flex items-center gap-2">
+            <Button icon={<LeftOutlined />} type="text" onClick={handleBack} />
+            <span>导入报名数据 {examItem && `- ${examItem.name}`}</span>
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-6">
+          <div className="mb-4">
+            <Text type="secondary">
+              请下载模板，按照模板格式填写报名信息后上传。支持 Excel 文件格式。
+            </Text>
+          </div>
+
+          <Uploader
+            run={handleImport}
+            filename="CET报名导入模板.xlsx"
+            url="/template/cet_registration_template.xlsx"
+            downloadName="下载CET报名模板"
+          />
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export default ImportRegistration;

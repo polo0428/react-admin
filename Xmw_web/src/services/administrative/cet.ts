@@ -40,6 +40,20 @@ export const saveCet = (options: SaveCetParams) =>
  */
 export const deleteCet = (id: string) => httpRequest.delete<number>(`${baseURL}/${id}`);
 
+/**
+ * @description: 导入报名数据
+ * @param {FormData} data
+ */
+export const importCetRegistration = (data: FormData) =>
+  httpRequest.post<any>(`${baseURL}/import-registration`, data);
+
+/**
+ * @description: 导入成绩数据
+ * @param {FormData} data
+ */
+export const importCetScore = (data: FormData) =>
+  httpRequest.post<any>(`${baseURL}/import-score`, data);
+
 export interface SaveScoreParams {
   id?: string;
   name: string;

@@ -28,5 +28,17 @@ export default {
       name: 'analysis',
       hideInMenu: true,
     },
+    {
+      path: '/cet/import-reg',
+      component: './Administrative/CET/ImportRegistration',
+      name: 'import-reg',
+      hideInMenu: true,
+    },
+    {
+      path: '/cet/import-score',
+      component: './Administrative/CET/ImportScore',
+      name: 'import-score',
+      hideInMenu: true,
+    },
   ],
 };

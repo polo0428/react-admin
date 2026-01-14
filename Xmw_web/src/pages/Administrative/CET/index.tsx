@@ -56,6 +56,10 @@ export default function ExamManagement() {
       history.push('/cet/scores', { examItem: context?.examItem });
     } else if (page === 'analysis') {
       history.push('/cet/analysis', { examItem: context?.examItem });
+    } else if (page === 'import-reg') {
+      history.push('/cet/import-reg', { examItem: context?.examItem });
+    } else if (page === 'import-score') {
+      history.push('/cet/import-score', { examItem: context?.examItem });
     } else {
       message.info(`Navigating to ${page} (Not implemented yet)`);
     }
