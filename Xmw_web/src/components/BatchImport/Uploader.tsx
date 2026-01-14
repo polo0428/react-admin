@@ -24,13 +24,28 @@ const Uploader = ({
   const [fileList, setFileList] = useState<UploadFile<FileType>[]>([]);
   const { message } = App.useApp();
 
+  const formatSuccessMessage = (res: any) => {
+    const data = res?.data;
+    if (data && typeof data === 'object') {
+      if ('created' in data || 'updated' in data) {
+        return `导入完成：新增${data.created || 0}条，更新${data.updated || 0}条，跳过${
+          data.skipped || 0
+        }条`;
+      }
+      if ('count' in data) {
+        return `导入完成：${data.count || 0}条`;
+      }
+    }
+    return res?.msg || '导入成功';
+  };
+
   const props: UploadProps = {
     beforeUpload(file) {
       if (file.size / 1024 / 1024 > 25) {
         message.error('文件大小不能超过25M');
         return false;
       }
-      setFileList([...fileList, file]);
+      setFileList((prev) => [...prev, file]);
       return true;
     },
     fileList,
@@ -43,7 +58,8 @@ const Uploader = ({
       const reqData = new FormData();
       reqData.append('file', file as FileType);
       try {
-        await run(reqData);
+        const res = await run(reqData);
+        message.success(formatSuccessMessage(res));
         if (onSuccess) onSuccess('ok');
       } catch (e) {
         console.log('e', e);

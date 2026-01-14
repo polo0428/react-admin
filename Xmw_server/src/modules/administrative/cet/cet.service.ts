@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import type { WhereOptions } from 'sequelize/types';
 import { Sequelize } from 'sequelize-typescript';
-import * as XLSX from 'xlsx';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const XLSX = require('xlsx');
 
 import { XmwCet } from '@/models/xmw_cet.model';
 import { XmwCetScore } from '@/models/xmw_cet_score.model';
@@ -18,6 +19,21 @@ import {
   SaveScoreDto,
   ScoreAnalysisDto,
 } from './dto';
+
+const fixMojibake = (input: string) => {
+  if (!input) return input;
+  // 已经是中文就不处理
+  if (/[\u4e00-\u9fff]/.test(input)) return input;
+  // 常见乱码特征（UTF-8 字节被 latin1 解码后出现的高位字符）
+  if (!/[ÃÂåäéèêëìíîïñòóôõöùúûüýÿ]/.test(input)) return input;
+  try {
+    const decoded = Buffer.from(input, 'latin1').toString('utf8');
+    // 反解后出现中文，认为修复成功
+    return /[\u4e00-\u9fff]/.test(decoded) ? decoded : input;
+  } catch {
+    return input;
+  }
+};
 
 @Injectable()
 export class CetService {
@@ -132,7 +148,18 @@ export class CetService {
       order: [['created_time', 'DESC']],
       raw: true,
     });
-    return responseMessage({ list: result, total });
+    const fixStr = (v: any) =>
+      v === undefined || v === null ? v : fixMojibake(String(v));
+    const fixed = (result as any[]).map((r) => ({
+      ...r,
+      name: fixStr(r.name),
+      department: fixStr(r.department),
+      major: fixStr(r.major),
+      class_name: fixStr(r.class_name),
+      exam_level: fixStr(r.exam_level),
+      campus: fixStr(r.campus),
+    }));
+    return responseMessage({ list: fixed, total });
   }
 
   /**
@@ -181,18 +208,18 @@ export class CetService {
       const records = jsonData
         .map((item: any) => ({
           batch_id,
-          name: item['姓名'] || item['name'],
+          name: fixMojibake(item['姓名'] || item['name'] || ''),
           student_no:
             item['学号'] || item['student_no'] || String(item['学号'] || ''),
-          department: item['学院'] || item['department'],
-          major: item['专业'] || item['major'],
-          class_name: item['班级'] || item['class_name'],
+          department: fixMojibake(item['学院'] || item['department'] || ''),
+          major: fixMojibake(item['专业'] || item['major'] || ''),
+          class_name: fixMojibake(item['班级'] || item['class_name'] || ''),
           ticket_number:
             item['准考证号'] ||
             item['ticket_number'] ||
             String(item['准考证号'] || ''),
-          exam_level: item['考试等级'] || item['exam_level'], // e.g. CET4
-          campus: item['校区'] || item['campus'],
+          exam_level: fixMojibake(item['考试等级'] || item['exam_level'] || ''), // e.g. CET4
+          campus: fixMojibake(item['校区'] || item['campus'] || ''),
           listening_score: 0,
           reading_score: 0,
           writing_score: 0,
@@ -238,47 +265,255 @@ export class CetService {
       const workbook = XLSX.read(file.buffer, { type: 'buffer' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-      let updatedCount = 0;
-      for (const item of jsonData) {
-        const student_no = item['学号'] || item['student_no'];
-        const ticket_number = item['准考证号'] || item['ticket_number'];
-        const listening_score = Number(
-          item['听力'] || item['listening_score'] || 0,
-        );
-        const reading_score = Number(
-          item['阅读'] || item['reading_score'] || 0,
-        );
-        const writing_score = Number(
-          item['写作'] || item['writing_score'] || 0,
-        );
-        const total_score = listening_score + reading_score + writing_score;
-        const is_passed = total_score >= 425;
+      // 用 header:1 先拿到“原始二维数组”，避免表头空格/换行/合并单元格导致键名异常
+      const rows = XLSX.utils.sheet_to_json(worksheet, {
+        header: 1,
+        defval: '',
+        raw: false,
+      }) as any[][];
 
-        const where: any = { batch_id };
-        if (ticket_number) {
-          where.ticket_number = ticket_number;
-        } else if (student_no) {
-          where.student_no = student_no;
-        } else {
-          continue;
+      const normalizeKey = (v: any) =>
+        fixMojibake(String(v ?? ''))
+          .replace(/[\r\n\t]/g, '')
+          .replace(/\u00a0/g, ' ') // nbsp
+          .replace(/\s+/g, '') // 去掉所有空白
+          .trim()
+          .toLowerCase();
+
+      // 自动探测表头所在行：避免第一行是标题/空行/合并单元格
+      const headerAliases = [
+        '姓名',
+        '学号',
+        '学生学号',
+        '学院',
+        '专业',
+        '班级',
+        '报考级别',
+        '报考等级',
+        '考试等级',
+        '准考证号',
+        '准考证号码',
+        '准考证',
+        '听力',
+        '阅读',
+        '写作与翻译',
+        '写作与翻译总分',
+        '写作/翻译',
+        '总分',
+      ].map((k) => normalizeKey(k));
+
+      const isRowEmpty = (r: any[]) =>
+        !r || r.every((c) => normalizeKey(c) === '');
+
+      const findHeaderRowIndex = (rs: any[][], maxScan = 10) => {
+        const limit = Math.min(rs.length, maxScan);
+        let bestIdx = 0;
+        let bestScore = -1;
+        for (let i = 0; i < limit; i += 1) {
+          const r = rs[i] || [];
+          if (isRowEmpty(r)) continue;
+          const score = r.reduce((acc, cell) => {
+            const k = normalizeKey(cell);
+            return acc + (k && headerAliases.includes(k) ? 1 : 0);
+          }, 0);
+          if (score > bestScore) {
+            bestScore = score;
+            bestIdx = i;
+          }
         }
+        // 至少命中 2 个关键表头才认为是有效表头行
+        return bestScore >= 2 ? bestIdx : 0;
+      };
 
-        const [affected] = await this.scoreModel.update(
-          {
+      const headerRowIndex = findHeaderRowIndex(rows);
+      const headerRow = rows?.[headerRowIndex] || [];
+      const headerKeys = headerRow.map((h) => normalizeKey(h)).filter(Boolean);
+
+      const pickVal = (row: Record<string, any>, keys: string[]) => {
+        for (const k of keys) {
+          const v = row?.[normalizeKey(k)];
+          if (v !== undefined && v !== null && String(v).trim() !== '') {
+            return v;
+          }
+        }
+        return undefined;
+      };
+      const toStr = (v: any) =>
+        v === undefined || v === null ? '' : fixMojibake(String(v).trim());
+      const toNum = (v: any) => {
+        const n = Number(String(v ?? '').trim());
+        return Number.isFinite(n) ? n : 0;
+      };
+
+      const dataRows = rows
+        .slice(headerRowIndex + 1)
+        .filter((r) => !isRowEmpty(r));
+      const parsed = (dataRows as any[])
+        .map((arrRow) => {
+          const row: Record<string, any> = {};
+          for (let i = 0; i < headerRow.length; i += 1) {
+            const k = normalizeKey(headerRow[i]);
+            if (!k) continue;
+            if (row[k] === undefined || row[k] === '') {
+              row[k] = arrRow?.[i];
+            }
+          }
+
+          const name = toStr(pickVal(row, ['姓名', 'name']));
+          const student_no = toStr(
+            pickVal(row, ['学号', '学生学号', 'student_no']),
+          );
+          const department = toStr(pickVal(row, ['学院', 'department']));
+          const major = toStr(pickVal(row, ['专业', 'major']));
+          const class_name = toStr(pickVal(row, ['班级', 'class_name']));
+          const campus = toStr(pickVal(row, ['校区', 'campus']));
+          const exam_level = toStr(
+            pickVal(row, ['报考级别', '报考等级', '考试等级', 'exam_level']),
+          );
+          const ticket_number = toStr(
+            pickVal(row, ['准考证号', '准考证号码', '准考证', 'ticket_number']),
+          );
+
+          const listening_score = toNum(
+            pickVal(row, ['听力', 'listening_score']),
+          );
+          const reading_score = toNum(pickVal(row, ['阅读', 'reading_score']));
+          const writing_score = toNum(
+            pickVal(row, [
+              '写作与翻译',
+              '写作与翻译总分',
+              '写作/翻译',
+              '写作',
+              'writing_score',
+            ]),
+          );
+          const total_score = listening_score + reading_score + writing_score;
+          const is_passed = total_score >= 425;
+
+          return {
+            batch_id,
+            name,
+            student_no,
+            department,
+            major,
+            class_name,
+            campus,
+            exam_level,
+            ticket_number,
             listening_score,
             reading_score,
             writing_score,
             total_score,
             is_passed,
-          },
-          { where },
+          };
+        })
+        // 至少要能定位到某个考生：准考证号/学号 其一
+        .filter((r) => r.ticket_number || r.student_no);
+
+      if (parsed.length === 0) {
+        return responseMessage(
+          null,
+          `未解析到有效数据，请检查表头与必填项（表头行：${
+            headerRowIndex + 1
+          }，已识别表头：${headerKeys.join(',')}）`,
+          -1,
         );
-        updatedCount += affected;
       }
 
-      return responseMessage({ updated: updatedCount });
+      const ticketNumbers = Array.from(
+        new Set(parsed.map((r) => r.ticket_number).filter(Boolean)),
+      );
+      const studentNos = Array.from(
+        new Set(parsed.map((r) => r.student_no).filter(Boolean)),
+      );
+
+      const existing = await this.scoreModel.findAll({
+        where: {
+          batch_id,
+          [Op.or]: [
+            ticketNumbers.length
+              ? { ticket_number: { [Op.in]: ticketNumbers } }
+              : undefined,
+            studentNos.length
+              ? { student_no: { [Op.in]: studentNos } }
+              : undefined,
+          ].filter(Boolean) as any,
+        },
+        raw: true,
+      });
+
+      const byTicket = new Map(
+        existing
+          .filter((e) => e.ticket_number)
+          .map((e) => [e.ticket_number, e]),
+      );
+      const byStudentNo = new Map(
+        existing.filter((e) => e.student_no).map((e) => [e.student_no, e]),
+      );
+
+      const toCreate: any[] = [];
+      const toUpdate: { where: any; data: any }[] = [];
+      let skipped = 0;
+
+      for (const r of parsed) {
+        const match =
+          (r.ticket_number && byTicket.get(r.ticket_number)) ||
+          (r.student_no && byStudentNo.get(r.student_no));
+
+        if (match) {
+          const baseInfo: any = {};
+          if (r.name) baseInfo.name = r.name;
+          if (r.department) baseInfo.department = r.department;
+          if (r.major) baseInfo.major = r.major;
+          if (r.class_name) baseInfo.class_name = r.class_name;
+          if (r.campus) baseInfo.campus = r.campus;
+          if (r.exam_level) baseInfo.exam_level = r.exam_level;
+          if (r.ticket_number) baseInfo.ticket_number = r.ticket_number;
+          if (r.student_no) baseInfo.student_no = r.student_no;
+
+          toUpdate.push({
+            where: { id: match.id },
+            data: {
+              ...baseInfo,
+              listening_score: r.listening_score,
+              reading_score: r.reading_score,
+              writing_score: r.writing_score,
+              total_score: r.total_score,
+              is_passed: r.is_passed,
+            },
+          });
+          continue;
+        }
+
+        // 新增时需要满足数据库必填：name/student_no/batch_id/exam_level/ticket_number
+        if (r.name && r.student_no && r.exam_level && r.ticket_number) {
+          toCreate.push(r);
+        } else {
+          skipped += 1;
+        }
+      }
+
+      const result = await this.sequelize.transaction(async (t) => {
+        let updated = 0;
+        for (const u of toUpdate) {
+          const [affected] = await this.scoreModel.update(u.data, {
+            where: u.where,
+            transaction: t,
+          });
+          updated += affected;
+        }
+        const createdList = toCreate.length
+          ? await this.scoreModel.bulkCreate(toCreate, { transaction: t })
+          : [];
+        return { updated, created: createdList.length };
+      });
+
+      return responseMessage({
+        total: parsed.length,
+        ...result,
+        skipped,
+      });
     } catch (error) {
       console.error('Import Score Error:', error);
       return responseMessage(null, '导入成绩失败', -1);
