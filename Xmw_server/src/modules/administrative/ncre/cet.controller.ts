@@ -15,9 +15,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { XmwCet } from '@/models/xmw_cet.model';
-import { XmwCetRegistration } from '@/models/xmw_cet_registration.model';
-import { XmwCetScore } from '@/models/xmw_cet_score.model';
+import { XmwNcre } from '@/models/xmw_ncre.model';
+import { XmwNcreRegistration } from '@/models/xmw_ncre_registration.model';
+import { XmwNcreScore } from '@/models/xmw_ncre_score.model';
 import { PageResponse, Response, SessionTypes } from '@/utils/types';
 
 import { CetService } from './cet.service';
@@ -33,8 +33,8 @@ import {
 
 @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth('jwt')
-@ApiTags('行政管理-考次管理')
-@Controller('administrative/cet')
+@ApiTags('行政管理-计算机等级考试')
+@Controller('administrative/ncre')
 export class CetController {
   constructor(private readonly cetService: CetService) {}
 
@@ -42,7 +42,7 @@ export class CetController {
   @ApiOperation({ summary: '获取考次列表' })
   getCetList(
     @Query() cetInfo: ListCetDto,
-  ): Promise<Response<PageResponse<XmwCet>>> {
+  ): Promise<Response<PageResponse<XmwNcre>>> {
     return this.cetService.getCetList(cetInfo);
   }
 
@@ -71,7 +71,7 @@ export class CetController {
   @ApiOperation({ summary: '获取成绩列表' })
   getScoreList(
     @Query() scoreInfo: ListScoreDto,
-  ): Promise<Response<PageResponse<XmwCetScore>>> {
+  ): Promise<Response<PageResponse<XmwNcreScore>>> {
     return this.cetService.getScoreList(scoreInfo);
   }
 
@@ -79,7 +79,7 @@ export class CetController {
   @ApiOperation({ summary: '获取报名列表' })
   getRegistrationList(
     @Query() regInfo: ListRegistrationDto,
-  ): Promise<Response<PageResponse<XmwCetRegistration>>> {
+  ): Promise<Response<PageResponse<XmwNcreRegistration>>> {
     return this.cetService.getRegistrationList(regInfo);
   }
 
@@ -91,7 +91,7 @@ export class CetController {
 
   @Post('score/save')
   @ApiOperation({ summary: '保存成绩' })
-  saveScore(@Body() scoreInfo: SaveScoreDto): Promise<Response<XmwCetScore>> {
+  saveScore(@Body() scoreInfo: SaveScoreDto): Promise<Response<XmwNcreScore>> {
     return this.cetService.saveScore(scoreInfo);
   }
 

@@ -1,7 +1,7 @@
 import { PageResponse } from '@/utils/types';
 import { httpRequest } from '@/utils/umiRequest';
 
-const baseURL = '/administrative/cet';
+const baseURL = '/administrative/ncre';
 
 export interface SaveCetParams {
   id?: string;

@@ -4,7 +4,7 @@ import { Button, Card, message, Result, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import Uploader from '@/components/BatchImport/Uploader';
-import { importCetRegistration } from '@/services/administrative/cet';
+import { importCetRegistration } from '@/services/administrative/ncre';
 
 import { ExamBatch } from '../components/CreateExamModal';
 
@@ -17,11 +17,11 @@ const ImportRegistration: React.FC = () => {
   const [successCount, setSuccessCount] = useState<number | null>(null);
 
   const handleBack = () => {
-    history.push('/cet');
+    history.push('/ncre');
   };
 
   const handleGoToRegistrations = () => {
-    history.push('/cet/registrations', { examItem });
+    history.push('/ncre/registrations', { examItem });
   };
 
   const handleImport = async (formData: FormData) => {
@@ -69,9 +69,9 @@ const ImportRegistration: React.FC = () => {
 
             <Uploader
               run={handleImport}
-              filename="CET报名导入模板.xlsx"
-              url="/template/cet_registration_template.xlsx"
-              downloadName="下载CET报名模板"
+              filename="NCRE报名导入模板.xlsx"
+              url="/template/ncre_registration_template.xlsx"
+              downloadName="下载NCRE报名模板"
             />
           </div>
         )}

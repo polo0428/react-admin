@@ -24,3 +24,10 @@ export type CetAttributes = {
   status: string; // 状态
 } & Times &
   Pick<CommonTypes, 'founder' | 'sort' | 'describe'>;
+
+/**
+ * @description: xmw_ncre Attributes
+ * @author: 黄鹏
+ * @note 字段结构目前与 CET 保持一致，仅用于区分不同业务表
+ */
+export type NcreAttributes = CetAttributes;

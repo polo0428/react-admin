@@ -9,4 +9,5 @@
 
 export default {
   'menu.cet': 'CET Exam Management',
+  'menu.ncre': 'NCRE Management',
 };

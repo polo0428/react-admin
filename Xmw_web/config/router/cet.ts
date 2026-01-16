@@ -23,6 +23,12 @@ export default {
       hideInMenu: true,
     },
     {
+      path: '/cet/registrations',
+      component: './Administrative/CET/RegistrationManagement',
+      name: 'registrations',
+      hideInMenu: true,
+    },
+    {
       path: '/cet/analysis',
       component: './Administrative/CET/Analysis',
       name: 'analysis',

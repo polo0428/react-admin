@@ -9,4 +9,5 @@
 
 export default {
   'menu.cet': 'CET考試管理',
+  'menu.ncre': '計算機等級考試管理',
 };

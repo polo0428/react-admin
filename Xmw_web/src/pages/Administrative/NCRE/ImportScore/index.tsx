@@ -4,24 +4,20 @@ import { Button, Card, message, Result, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import Uploader from '@/components/BatchImport/Uploader';
-import { importCetRegistration } from '@/services/administrative/cet';
+import { importCetScore } from '@/services/administrative/ncre';
 
 import { ExamBatch } from '../components/CreateExamModal';
 
 const { Text } = Typography;
 
-const ImportRegistration: React.FC = () => {
+const ImportScore: React.FC = () => {
   const location = useLocation();
   const state = location.state as { examItem?: ExamBatch } | undefined;
   const examItem = state?.examItem;
   const [successCount, setSuccessCount] = useState<number | null>(null);
 
   const handleBack = () => {
-    history.push('/cet');
-  };
-
-  const handleGoToRegistrations = () => {
-    history.push('/cet/registrations', { examItem });
+    history.push('/ncre');
   };
 
   const handleImport = async (formData: FormData) => {
@@ -30,7 +26,7 @@ const ImportRegistration: React.FC = () => {
       throw new Error('No exam item');
     }
     formData.append('batch_id', examItem.id);
-    const res = await importCetRegistration(formData);
+    const res = await importCetScore(formData);
     const data = (res as any)?.data || {};
     const created = Number(data.created || 0);
     const updated = Number(data.updated || 0);
@@ -39,13 +35,17 @@ const ImportRegistration: React.FC = () => {
     return res;
   };
 
+  const handleGoToScores = () => {
+    history.push('/ncre/scores', { examItem });
+  };
+
   return (
     <div>
       <Card
         title={
           <div className="flex items-center gap-2">
             <Button icon={<LeftOutlined />} type="text" onClick={handleBack} />
-            <span>导入报名数据 {examItem && `- ${examItem.name}`}</span>
+            <span>导入成绩数据 {examItem && `- ${examItem.name}`}</span>
           </div>
         }
       >
@@ -54,7 +54,7 @@ const ImportRegistration: React.FC = () => {
             status="success"
             title={`成功导入${successCount}人`}
             extra={
-              <Button type="primary" onClick={handleGoToRegistrations}>
+              <Button type="primary" onClick={handleGoToScores}>
                 返回查看
               </Button>
             }
@@ -63,15 +63,15 @@ const ImportRegistration: React.FC = () => {
           <div className="flex flex-col gap-6">
             <div className="mb-4">
               <Text type="secondary">
-                请下载模板，按照模板格式填写报名信息后上传。支持 Excel 文件格式。
+                请下载模板，按照模板格式填写成绩信息后上传。支持 Excel 文件格式。
               </Text>
             </div>
 
             <Uploader
               run={handleImport}
-              filename="CET报名导入模板.xlsx"
-              url="/template/cet_registration_template.xlsx"
-              downloadName="下载CET报名模板"
+              filename="NCRE成绩导入模板.xlsx"
+              url="/template/ncre_score_template.xlsx"
+              downloadName="下载NCRE成绩模板"
             />
           </div>
         )}
@@ -80,4 +80,4 @@ const ImportRegistration: React.FC = () => {
   );
 };
 
-export default ImportRegistration;
+export default ImportScore;

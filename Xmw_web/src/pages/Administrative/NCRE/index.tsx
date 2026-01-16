@@ -13,7 +13,7 @@ import { history, useRequest } from '@umijs/max';
 import { App, Button, Card, Col, Row, Tag, Typography } from 'antd';
 import React, { useState } from 'react';
 
-import { deleteCet, getCetList, saveCet } from '@/services/administrative/cet';
+import { deleteCet, getCetList, saveCet } from '@/services/administrative/ncre';
 import { REQUEST_CODE } from '@/utils/enums';
 
 import CreateExamModal, { ExamBatch, ExamBatchStatus } from './components/CreateExamModal';
@@ -54,15 +54,15 @@ export default function ExamManagement() {
   // Navigation
   const onNavigate = (page: string, context?: any) => {
     if (page === 'scores') {
-      history.push('/cet/scores', { examItem: context?.examItem });
+      history.push('/ncre/scores', { examItem: context?.examItem });
     } else if (page === 'registrations') {
-      history.push('/cet/registrations', { examItem: context?.examItem });
+      history.push('/ncre/registrations', { examItem: context?.examItem });
     } else if (page === 'analysis') {
-      history.push('/cet/analysis', { examItem: context?.examItem });
+      history.push('/ncre/analysis', { examItem: context?.examItem });
     } else if (page === 'import-reg') {
-      history.push('/cet/import-reg', { examItem: context?.examItem });
+      history.push('/ncre/import-reg', { examItem: context?.examItem });
     } else if (page === 'import-score') {
-      history.push('/cet/import-score', { examItem: context?.examItem });
+      history.push('/ncre/import-score', { examItem: context?.examItem });
     } else {
       message.info(`Navigating to ${page} (Not implemented yet)`);
     }
@@ -161,7 +161,7 @@ export default function ExamManagement() {
       <div className="flex justify-between items-center">
         <div>
           <Title level={3} style={{ margin: 0 }}>
-            CET考试管理
+            计算机等级考试管理
           </Title>
           <Text type="secondary">管理各学期考试批次，执行报名与成绩录入操作。</Text>
         </div>

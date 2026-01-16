@@ -6,9 +6,9 @@ import { Sequelize } from 'sequelize-typescript';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const XLSX = require('xlsx');
 
-import { XmwCet } from '@/models/xmw_cet.model';
-import { XmwCetRegistration } from '@/models/xmw_cet_registration.model';
-import { XmwCetScore } from '@/models/xmw_cet_score.model';
+import { XmwNcre } from '@/models/xmw_ncre.model';
+import { XmwNcreRegistration } from '@/models/xmw_ncre_registration.model';
+import { XmwNcreScore } from '@/models/xmw_ncre_score.model';
 import { responseMessage } from '@/utils';
 import { PageResponse, Response, SessionTypes } from '@/utils/types';
 
@@ -40,12 +40,12 @@ const fixMojibake = (input: string) => {
 @Injectable()
 export class CetService {
   constructor(
-    @InjectModel(XmwCet)
-    private readonly cetModel: typeof XmwCet,
-    @InjectModel(XmwCetScore)
-    private readonly scoreModel: typeof XmwCetScore,
-    @InjectModel(XmwCetRegistration)
-    private readonly registrationModel: typeof XmwCetRegistration,
+    @InjectModel(XmwNcre)
+    private readonly cetModel: typeof XmwNcre,
+    @InjectModel(XmwNcreScore)
+    private readonly scoreModel: typeof XmwNcreScore,
+    @InjectModel(XmwNcreRegistration)
+    private readonly registrationModel: typeof XmwNcreRegistration,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -55,7 +55,7 @@ export class CetService {
    */
   async getCetList(
     cetInfo: ListCetDto,
-  ): Promise<Response<PageResponse<XmwCet>>> {
+  ): Promise<Response<PageResponse<XmwNcre>>> {
     const { name, status, pageSize = 20, current = 1 } = cetInfo;
     const where: WhereOptions = {};
     if (name) where.name = { [Op.substring]: name };
@@ -125,7 +125,7 @@ export class CetService {
    */
   async getScoreList(
     scoreInfo: ListScoreDto,
-  ): Promise<Response<PageResponse<XmwCetScore>>> {
+  ): Promise<Response<PageResponse<XmwNcreScore>>> {
     const {
       batch_id,
       keyword,
@@ -179,7 +179,7 @@ export class CetService {
    */
   async getRegistrationList(
     regInfo: ListRegistrationDto,
-  ): Promise<Response<PageResponse<XmwCetRegistration>>> {
+  ): Promise<Response<PageResponse<XmwNcreRegistration>>> {
     const {
       batch_id,
       keyword,
@@ -235,7 +235,7 @@ export class CetService {
    * @description: 保存成绩
    * @author: 黄鹏
    */
-  async saveScore(scoreInfo: SaveScoreDto): Promise<Response<XmwCetScore>> {
+  async saveScore(scoreInfo: SaveScoreDto): Promise<Response<XmwNcreScore>> {
     const { id, listening_score, reading_score, writing_score, ...rest } =
       scoreInfo;
     const total_score = listening_score + reading_score + writing_score;
@@ -871,7 +871,7 @@ export class CetService {
     });
 
     // 4. 获取上一次考次所有成绩
-    let previousScores: XmwCetScore[] = [];
+    let previousScores: XmwNcreScore[] = [];
     if (previousBatch) {
       previousScores = await this.scoreModel.findAll({
         where: { batch_id: previousBatch.id },
@@ -893,16 +893,16 @@ export class CetService {
     const totalCandidatesYoY = totalCandidatesDiff;
 
     // 辅助函数：计算通过率
-    const calcPassRate = (scores: XmwCetScore[]) => {
+    const calcPassRate = (scores: XmwNcreScore[]) => {
       if (scores.length === 0) return 0;
       const passed = scores.filter((s) => s.total_score >= 425).length;
       return (passed / scores.length) * 100;
     };
 
     // 筛选 CET4/CET6
-    const isCet4 = (s: XmwCetScore) =>
+    const isCet4 = (s: XmwNcreScore) =>
       s.exam_level === 'CET4' || s.exam_level === 'CET-4';
-    const isCet6 = (s: XmwCetScore) =>
+    const isCet6 = (s: XmwNcreScore) =>
       s.exam_level === 'CET6' || s.exam_level === 'CET-6';
 
     const cet4Scores = currentScores.filter(isCet4);
@@ -968,7 +968,7 @@ export class CetService {
     });
 
     // --- 雷达图 (Radar Chart) ---
-    const calcAvg = (scores: XmwCetScore[], field: keyof XmwCetScore) => {
+    const calcAvg = (scores: XmwNcreScore[], field: keyof XmwNcreScore) => {
       if (scores.length === 0) return 0;
       const sum = scores.reduce((acc, s) => acc + (Number(s[field]) || 0), 0);
       return Math.round(sum / scores.length);
@@ -989,7 +989,7 @@ export class CetService {
     ];
 
     // --- 分布图 (Distribution Chart) - 分别统计 CET4 和 CET6 ---
-    const getDistData = (scores: XmwCetScore[]) => [
+    const getDistData = (scores: XmwNcreScore[]) => [
       {
         range: '<425',
         count: scores.filter((s) => s.total_score < 425).length,

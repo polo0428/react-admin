@@ -11,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { CetModule } from '@/modules/administrative/cet/cet.module'; // 智能行政-CET考试
+import { CetModule as NcreModule } from '@/modules/administrative/ncre/cet.module'; // 智能行政-计算机等级考试
 import { AuthModule } from '@/modules/auth/auth.module'; // 用户鉴权
 import { CommonModule } from '@/modules/common/common.module';
 import { FilesModule } from '@/modules/files/files.module'; // 文件上传
@@ -46,6 +47,7 @@ import DatabaseConfig from './config/database'; // 数据库配置
     AuthModule,
     CommonModule,
     CetModule,
+    NcreModule,
   ],
 })
 export class AppModule {}

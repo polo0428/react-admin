@@ -11,7 +11,7 @@
  * 如想要配置图标为 <StepBackwardOutlined /> 则取值应为 stepBackward 或 StepBackward，如想要配置图标为 <UserOutlined /> 则取值应为 user 或者 User
  * @doc https://umijs.org/docs/guides/routes
  */
-import { cet } from './router'
+import { cet, ncre } from './router'
 export default [
   {
     path: '/user',
@@ -25,6 +25,7 @@ export default [
     ],
   },
   cet,
+  ncre,
   {
     path: '/',
     redirect: '/cet',

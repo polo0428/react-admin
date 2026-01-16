@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 
-import { XmwCet } from '@/models/xmw_cet.model';
-import { XmwCetRegistration } from '@/models/xmw_cet_registration.model';
-import { XmwCetScore } from '@/models/xmw_cet_score.model';
+import { XmwNcre } from '@/models/xmw_ncre.model';
+import { XmwNcreRegistration } from '@/models/xmw_ncre_registration.model';
+import { XmwNcreScore } from '@/models/xmw_ncre_score.model';
 
 import { CetController } from './cet.controller';
 import { CetService } from './cet.service';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([XmwCet, XmwCetScore, XmwCetRegistration]),
+    SequelizeModule.forFeature([XmwNcre, XmwNcreScore, XmwNcreRegistration]),
   ],
   controllers: [CetController],
   providers: [CetService],
