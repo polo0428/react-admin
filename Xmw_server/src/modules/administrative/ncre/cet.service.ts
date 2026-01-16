@@ -137,7 +137,8 @@ export class CetService {
     const andWhere: WhereOptions[] = [];
 
     if (batch_id) where.batch_id = { [Op.eq]: batch_id };
-    if (exam_level) where.exam_level = { [Op.eq]: exam_level };
+    // 兼容 exam_level 中存储 “级别|科目” 的情况：按包含匹配来筛选级别
+    if (exam_level) where.exam_level = { [Op.substring]: exam_level };
 
     if (keyword) {
       andWhere.push({
@@ -192,7 +193,8 @@ export class CetService {
     const andWhere: WhereOptions[] = [];
 
     if (batch_id) where.batch_id = { [Op.eq]: batch_id };
-    if (exam_level) where.exam_level = { [Op.eq]: exam_level };
+    // 兼容 exam_level 中存储 “级别|科目” 的情况：按包含匹配来筛选级别
+    if (exam_level) where.exam_level = { [Op.substring]: exam_level };
 
     if (keyword) {
       andWhere.push({
@@ -239,7 +241,8 @@ export class CetService {
     const { id, listening_score, reading_score, writing_score, ...rest } =
       scoreInfo;
     const total_score = listening_score + reading_score + writing_score;
-    const is_passed = total_score >= 425;
+    // NCRE 总分 100，及格线一般为 60（前端录入同样按 60 判定）
+    const is_passed = total_score >= 60;
     const data = {
       ...rest,
       listening_score,

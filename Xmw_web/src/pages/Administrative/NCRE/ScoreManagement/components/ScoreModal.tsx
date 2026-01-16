@@ -7,6 +7,30 @@ import { ExamLevel } from './types';
 const { Text } = Typography;
 const { Option } = Select;
 
+const PASS_SCORE = 60;
+
+const SUBJECTS_BY_LEVEL: Record<ExamLevel, string[]> = {
+  [ExamLevel.NCRE1]: [
+    '计算机基础及MS Office应用',
+    '计算机基础及WPS Office应用',
+    '计算机基础及Photoshop应用',
+    '网络安全素质教育',
+  ],
+  [ExamLevel.NCRE2]: [
+    'C语言程序设计',
+    'Java语言程序设计',
+    'Python语言程序设计',
+    'C++语言程序设计',
+    'Web程序设计',
+    'MS Office高级应用与设计',
+  ],
+  [ExamLevel.NCRE3]: ['网络技术', '数据库技术', '信息安全技术', '嵌入式系统开发技术'],
+  [ExamLevel.NCRE4]: ['网络工程师', '数据库工程师', '信息安全工程师', '嵌入式系统开发工程师'],
+};
+
+const encodeExamLevel = (level: string, subject?: string) =>
+  subject ? `${level}|${subject}` : level;
+
 interface ScoreModalProps {
   open: boolean;
   onCancel: () => void;
@@ -21,26 +45,44 @@ interface ScoreModalProps {
 const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batchName }) => {
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
+  const examLevel = Form.useWatch('examLevel', form) as ExamLevel | undefined;
 
   // 当弹窗打开时重置表单
   useEffect(() => {
     if (open) {
       form.resetFields();
+      const defaultLevel = ExamLevel.NCRE2;
+      const defaultSubject = SUBJECTS_BY_LEVEL[defaultLevel]?.[0];
       form.setFieldsValue({
-        examLevel: ExamLevel.CET4,
-        listeningScore: 0,
-        readingScore: 0,
-        writingTranslationScore: 0,
-        campus: '北校区',
+        examLevel: defaultLevel,
+        examSubject: defaultSubject,
+        theoryScore: 0,
+        practiceScore: 0,
       });
     }
   }, [open, form]);
 
+  // 级别变化时，动态调整科目（保持科目在可选项内）
+  useEffect(() => {
+    if (!open || !examLevel) return;
+    const options = SUBJECTS_BY_LEVEL[examLevel] || [];
+    if (options.length === 0) return;
+    const cur = form.getFieldValue('examSubject');
+    if (!cur || !options.includes(cur)) {
+      form.setFieldsValue({ examSubject: options[0] });
+    }
+  }, [open, examLevel, form]);
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
+      const payload = {
+        ...values,
+        // 兼容后端现有字段：把“级别|科目”编码进 examLevel
+        examLevel: encodeExamLevel(values.examLevel, values.examSubject),
+      };
       setSubmitting(true);
-      await onFinish(values);
+      await onFinish(payload);
       setSubmitting(false);
     } catch (error) {
       console.error('Validation failed:', error);
@@ -99,19 +141,14 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={12}>
               <Form.Item name="department" label="学院">
                 <Input placeholder="例如：计算机学院" />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={12}>
               <Form.Item name="major" label="专业">
                 <Input placeholder="例如：软件工程" />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name="classId" label="班级">
-                <Input placeholder="例如：软工2101" />
               </Form.Item>
             </Col>
           </Row>
@@ -123,20 +160,44 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
           </Text>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="examLevel" label="报考级别">
+              <Form.Item
+                name="examLevel"
+                label="报考级别"
+                rules={[{ required: true, message: '请选择报考级别' }]}
+              >
                 <Select>
-                  <Option value={ExamLevel.CET4}>CET-4</Option>
-                  <Option value={ExamLevel.CET6}>CET-6</Option>
+                  <Option value={ExamLevel.NCRE1}>计算机一级</Option>
+                  <Option value={ExamLevel.NCRE2}>计算机二级</Option>
+                  <Option value={ExamLevel.NCRE3}>计算机三级</Option>
+                  <Option value={ExamLevel.NCRE4}>计算机四级</Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
+                name="examSubject"
+                label="考试科目"
+                rules={[{ required: true, message: '请选择考试科目' }]}
+              >
+                <Select placeholder="请选择考试科目" disabled={!examLevel}>
+                  {(examLevel ? SUBJECTS_BY_LEVEL[examLevel] : []).map((s) => (
+                    <Option key={s} value={s}>
+                      {s}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
                 name="ticketNumber"
                 label="准考证号"
-                rules={[{ required: true, message: '请输入准考证号' }]}
+                rules={[
+                  { required: true, message: '请输入准考证号' },
+                  { pattern: /^\d{15}$/, message: '准考证号应为15位数字' },
+                ]}
               >
-                <Input placeholder="15位准考证号" max={15} />
+                <Input placeholder="15位准考证号" maxLength={15} />
               </Form.Item>
             </Col>
           </Row>
@@ -147,19 +208,14 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
             成绩详情
           </Text>
           <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item name="listeningScore" label="听力">
-                <InputNumber min={0} style={{ width: '100%' }} />
+            <Col span={12}>
+              <Form.Item name="theoryScore" label="理论/选择题">
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item name="readingScore" label="阅读">
-                <InputNumber min={0} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name="writingTranslationScore" label="写作与翻译">
-                <InputNumber min={0} style={{ width: '100%' }} />
+            <Col span={12}>
+              <Form.Item name="practiceScore" label="操作/编程题">
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
@@ -169,23 +225,25 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ open, onCancel, onFinish, batch
             <Form.Item
               noStyle
               shouldUpdate={(prev, current) =>
-                prev.listeningScore !== current.listeningScore ||
-                prev.readingScore !== current.readingScore ||
-                prev.writingTranslationScore !== current.writingTranslationScore
+                prev.theoryScore !== current.theoryScore ||
+                prev.practiceScore !== current.practiceScore
               }
             >
               {({ getFieldValue }) => {
-                const listening = getFieldValue('listeningScore') || 0;
-                const reading = getFieldValue('readingScore') || 0;
-                const writing = getFieldValue('writingTranslationScore') || 0;
-                const total = listening + reading + writing;
-                const passed = total >= 425;
+                const theory = getFieldValue('theoryScore') || 0;
+                const practice = getFieldValue('practiceScore') || 0;
+                const total = theory + practice;
+                const passed = total >= PASS_SCORE;
+                const gradeText = passed ? '及格' : '不及格';
 
                 return (
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <span className="block text-xs text-gray-500">总分</span>
-                      <span className="text-2xl font-bold text-gray-900">{total}</span>
+                      <span className="block text-xs text-gray-500">总分 / 等级</span>
+                      <div className="flex items-baseline justify-end gap-2">
+                        <span className="text-2xl font-bold text-gray-900">{total}</span>
+                        <span className="text-sm text-gray-500">{gradeText}</span>
+                      </div>
                     </div>
                     <Tag
                       color={passed ? 'success' : 'error'}

@@ -25,20 +25,21 @@ export class SaveScoreDto {
   @ApiProperty({
     description: '考试级别',
     required: true,
-    enum: ['CET-4', 'CET-6'],
+    // 兼容 “级别|科目” 的存储方式
+    enum: ['计算机一级', '计算机二级', '计算机三级', '计算机四级'],
   })
   exam_level: string;
 
   @ApiProperty({ description: '准考证号', required: true })
   ticket_number: string;
 
-  @ApiProperty({ description: '听力成绩', required: true })
+  @ApiProperty({ description: '理论/选择题（复用 listening_score 字段）', required: true })
   listening_score: number;
 
-  @ApiProperty({ description: '阅读成绩', required: true })
+  @ApiProperty({ description: '操作/编程题（复用 reading_score 字段）', required: true })
   reading_score: number;
 
-  @ApiProperty({ description: '写作与翻译成绩', required: true })
+  @ApiProperty({ description: '兼容字段（当前固定为 0）', required: true })
   writing_score: number;
 
   @ApiProperty({ description: '校区' })

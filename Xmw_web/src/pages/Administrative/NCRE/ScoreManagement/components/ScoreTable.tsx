@@ -32,7 +32,7 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
           <div>
             <div className="text-sm font-medium text-gray-900">{record.name}</div>
             <div className="text-xs text-gray-500">
-              {record.id} • {record.classId}
+              {record.id}
             </div>
           </div>
         </div>
@@ -43,7 +43,12 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
       key: 'examInfo',
       render: (_, record) => (
         <>
-          <div className="text-sm text-gray-900 font-medium">{record.examLevel}</div>
+          <div className="text-sm text-gray-900 font-medium">
+            {record.examLevel}
+            {record.examSubject ? (
+              <span className="text-xs text-gray-500 font-normal"> • {record.examSubject}</span>
+            ) : null}
+          </div>
           <div className="text-xs text-gray-500">{record.examDate}</div>
         </>
       ),
@@ -55,9 +60,8 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
         <>
           <div className="text-sm font-bold text-gray-900">{record.totalScore}</div>
           <div className="text-xs text-gray-500 flex gap-2">
-            <span title="听力">听: {record.listeningScore}</span>
-            <span title="阅读">读: {record.readingScore}</span>
-            <span title="写作与翻译">写译: {record.writingTranslationScore}</span>
+            <span title="理论/选择题">理: {record.theoryScore}</span>
+            <span title="操作/编程题">操: {record.practiceScore}</span>
           </div>
         </>
       ),

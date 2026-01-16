@@ -20,26 +20,35 @@ const { Title } = Typography;
 const { Option } = Select;
 
 // eslint-disable-next-line
-const mapScoreItem = (item: any, defaultExamDate: string): ScoreRecord => ({
+const parseExamLevel = (raw: any): { level: ExamLevel; subject?: string } => {
+  const s = String(raw ?? '');
+  const [level, subject] = s.split('|');
+  return { level: (level as ExamLevel) || (s as ExamLevel), subject: subject || undefined };
+};
+
+// eslint-disable-next-line
+const mapScoreItem = (item: any, defaultExamDate: string): ScoreRecord => {
+  const parsed = parseExamLevel(item.exam_level || item.examLevel);
+  const theoryScore = Number(item.listening_score || item.listeningScore || 0);
+  const practiceScore = Number(item.reading_score || item.readingScore || 0);
+  const totalScore = Number(item.total_score || item.totalScore || theoryScore + practiceScore || 0);
+  return {
   recordId: item.id,
   id: item.student_no || item.studentNo,
   name: item.name,
   department: item.department || '',
   major: item.major || '',
-  classId: item.class_name || item.className || '',
   batchId: item.batch_id || item.batchId,
-  examLevel: (item.exam_level || item.examLevel) as ExamLevel,
+  examLevel: parsed.level,
+  examSubject: parsed.subject,
   examDate: defaultExamDate || item.created_time?.split(' ')[0] || '',
-  campus: item.campus,
   ticketNumber: item.ticket_number || item.ticketNumber,
-  totalScore: Number(item.total_score || item.totalScore || 0),
-  listeningScore: Number(item.listening_score || item.listeningScore || 0),
-  readingScore: Number(item.reading_score || item.readingScore || 0),
-  writingTranslationScore: Number(
-    item.writing_score || item.writingScore || item.writingTranslationScore || 0,
-  ),
+  totalScore,
+  theoryScore,
+  practiceScore,
   passed: item.is_passed === true || item.is_passed === 1 || item.isPassed === true,
-});
+  };
+};
 
 /**
  * 成绩管理主页面
@@ -154,14 +163,13 @@ export default function ScoreManagement() {
         student_no: values.id,
         department: values.department,
         major: values.major,
-        class_name: values.classId, // 注意：ScoreModal 需要支持 classId 输入
         batch_id: batch.id,
         exam_level: values.examLevel,
         ticket_number: values.ticketNumber,
-        listening_score: values.listeningScore,
-        reading_score: values.readingScore,
-        writing_score: values.writingTranslationScore,
-        campus: values.campus,
+        // 兼容后端现有字段：理论/操作分别落到 listening/readng，writing 固定 0
+        listening_score: values.theoryScore,
+        reading_score: values.practiceScore,
+        writing_score: 0,
       });
 
       message.success('保存成功');
@@ -242,8 +250,10 @@ export default function ScoreManagement() {
               style={{ width: 120 }}
             >
               <Option value="all">所有级别</Option>
-              <Option value={ExamLevel.CET4}>CET-4</Option>
-              <Option value={ExamLevel.CET6}>CET-6</Option>
+              <Option value={ExamLevel.NCRE1}>计算机一级</Option>
+              <Option value={ExamLevel.NCRE2}>计算机二级</Option>
+              <Option value={ExamLevel.NCRE3}>计算机三级</Option>
+              <Option value={ExamLevel.NCRE4}>计算机四级</Option>
             </Select>
           </Space>
         </div>

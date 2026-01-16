@@ -62,10 +62,16 @@ export interface SaveScoreParams {
   major?: string;
   class_name?: string;
   batch_id: string;
+  /**
+   * 考试级别（前端会用 `级别|科目` 形式编码，便于在不改库的情况下保存科目）
+   */
   exam_level: string;
   ticket_number: string;
+  /** 理论/选择题（复用后端字段 listening_score） */
   listening_score: number;
+  /** 操作/编程题（复用后端字段 reading_score） */
   reading_score: number;
+  /** 兼容字段，当前固定传 0 */
   writing_score: number;
   campus?: string;
 }
