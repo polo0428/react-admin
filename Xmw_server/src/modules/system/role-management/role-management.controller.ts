@@ -17,13 +17,9 @@ import {
   Put,
   Query,
   Session,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiBearerAuth,
-  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -43,14 +39,7 @@ import { RoleManagementService } from './role-management.service'; // RoleManage
 
 /* swagger 文档 */
 @ApiTags('系统设置-角色管理')
-@ApiHeader({
-  name: 'Authorization',
-  required: true,
-  description: 'token令牌',
-})
-@ApiBearerAuth()
 @UseInterceptors(LoggerInterceptor)
-@UseGuards(AuthGuard('jwt'))
 @Controller('system/role-management')
 export class RoleManagementController {
   constructor(private readonly roleManagementService: RoleManagementService) {}

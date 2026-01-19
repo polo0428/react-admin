@@ -9,7 +9,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'; // swagger 接口文档
 import * as express from 'express';
-import * as session from 'express-session';
 import { join } from 'path';
 
 import { HttpReqTransformInterceptor } from '@/interceptor/http-req.interceptor'; // 全局响应拦截器
@@ -32,17 +31,8 @@ async function bootstrap() {
   //日志相关
   app.use(logger); // 所有请求都打印日志
 
-  // 启动cors跨域
-  app.enableCors();
-
-  // 配置 session
-  app.use(
-    session({
-      secret: 'baiwumm', // 签名
-      resave: false, // 强制保存 sseion 即使它并没有变化，默认为true
-      saveUninitialized: false, // 强制将未初始化的 session 存储
-    }),
-  );
+  // 无登录/无 session 的纯 CRUD 场景：仅开启基础 CORS（不携带 credentials）
+  app.enableCors({ origin: true });
 
   // 全局参数校验
   app.useGlobalPipes(new ValidationPipe());
@@ -68,7 +58,6 @@ async function bootstrap() {
   // 构建swagger文档
   const options = new DocumentBuilder()
     .setTitle(process.env.SWAGGER_UI_TITLE)
-    .addBearerAuth()
     .setDescription(process.env.SWAGGER_UI_DESC)
     .setVersion(process.env.SWAGGER_API_VERSION)
     .build();

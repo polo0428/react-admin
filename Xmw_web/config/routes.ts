@@ -13,17 +13,6 @@
  */
 import { cet, ncre } from './router'
 export default [
-  {
-    path: '/user',
-    layout: false,
-    routes: [
-      {
-        name: 'login',
-        path: '/user/login',
-        component: './User/Login',
-      },
-    ],
-  },
   cet,
   ncre,
   {

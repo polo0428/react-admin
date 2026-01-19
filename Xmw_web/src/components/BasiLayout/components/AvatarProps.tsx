@@ -8,12 +8,10 @@
  */
 import { HeaderProps } from '@ant-design/pro-components';
 import { history, Icon, useIntl, useModel } from '@umijs/max';
-import { useRequest } from 'ahooks';
 import { App, Dropdown, MenuProps } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 
-import { Logout } from '@/services/logic/login';
-import { isSuccess, logoutToLogin, removeLocalStorageItem } from '@/utils';
+import { removeLocalStorageItem } from '@/utils';
 import { INTERNATION, LOCAL_STORAGE, ROUTES } from '@/utils/enums';
 import type { InitialStateTypes } from '@/utils/types';
 
@@ -25,25 +23,6 @@ export default function AvatarProps(openLockScreen: () => void): HeaderProps['av
   // 获取全局状态
   const { initialState, setInitialState } = useModel('@@initialState');
   /**
-   * @description: 退出登录，并且将当前的 url 保存
-   * @author: 黄鹏
-   */
-  const { run: loginOut } = useRequest(Logout, {
-    manual: true,
-    onSuccess: async ({ code }) => {
-      if (isSuccess(code)) {
-        setInitialState((s: InitialStateTypes) => ({
-          ...s,
-          CurrentUser: undefined,
-          Access_token: undefined,
-        }));
-        removeLocalStorageItem(LOCAL_STORAGE.ACCESS_TOKEN);
-        // 退出登录返回登录页
-        logoutToLogin();
-      }
-    },
-  });
-  /**
    * @description: 退出登录
    * @author: 黄鹏
    */
@@ -52,7 +31,15 @@ export default function AvatarProps(openLockScreen: () => void): HeaderProps['av
       title: formatMessage({ id: INTERNATION.WARM_TIPS }),
       content: formatMessage({ id: 'pages.logout.tip' }),
       onOk: async () => {
-        loginOut();
+        // 需求变更：系统不需要登录校验；退出仅清理本地缓存并回到首页
+        setInitialState((s: InitialStateTypes) => ({
+          ...s,
+          CurrentUser: undefined,
+          Access_token: undefined,
+          Permissions: [],
+        }));
+        removeLocalStorageItem(LOCAL_STORAGE.ACCESS_TOKEN);
+        history.push('/');
       },
     });
   };

@@ -14,13 +14,9 @@ import {
   Req,
   Res,
   Session,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiBearerAuth,
-  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -43,13 +39,7 @@ import {
 } from './dto';
 
 @ApiTags('用户登录模块')
-@ApiHeader({
-  name: 'Authorization',
-  required: true,
-  description: 'token令牌',
-})
 @UseInterceptors(LoggerInterceptor)
-@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -78,7 +68,6 @@ export class AuthController {
    * @description: 用户退出登录
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @Post('/logout')
   @ApiOkResponse({ type: ResponseDto })
   @ApiOperation({ summary: '退出登录' })
@@ -91,7 +80,6 @@ export class AuthController {
    * @description: 获取当前用户信息
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @Get('/user-info')
   @ApiOkResponse({ type: UserInfoResponseDto })
   @ApiOperation({ summary: '获取当前用户信息' })
@@ -103,7 +91,6 @@ export class AuthController {
    * @description: 获取用户按钮权限
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @Get('/permissions')
   @ApiOkResponse({ type: PermissionResponseDto })
   @ApiOperation({ summary: '获取用户按钮权限' })
@@ -116,7 +103,6 @@ export class AuthController {
    * @description: 获取用户权限菜单
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @Get('/routes-menu')
   @ApiOkResponse({ type: RoutesMenuResponseDto })
   @ApiOperation({ summary: '获取用户权限菜单' })

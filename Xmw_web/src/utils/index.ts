@@ -7,7 +7,6 @@
  * @LastEditTime: 2024-10-29 14:32:15
  */
 import type { ColumnsState, RequestData } from '@ant-design/pro-components';
-import { history } from '@umijs/max';
 import { message } from 'antd';
 import CryptoJS from 'crypto-js'; // AES/DES加密
 import {
@@ -23,10 +22,7 @@ import {
   startsWith,
   toLower,
 } from 'lodash-es';
-import { stringify } from 'querystring';
-
-import { getPermissions, getUserInfo } from '@/services/logic/login'; // 登录相关接口
-import { LOCAL_STORAGE, REQUEST_CODE, ROUTES } from '@/utils/enums';
+import { LOCAL_STORAGE, REQUEST_CODE } from '@/utils/enums';
 import type { InitialStateTypes, LockSleepTypes, PageResponse, Response } from '@/utils/types';
 
 /**
@@ -34,19 +30,11 @@ import type { InitialStateTypes, LockSleepTypes, PageResponse, Response } from '
  * @author: 黄鹏
  */
 export const initUserAuthority = async (): Promise<InitialStateTypes> => {
-  try {
-    // 获取用户信息和菜单按钮权限
-    const [userInfo, permissionInfo] = await Promise.all([getUserInfo(), getPermissions()]);
-    // 初始化全局状态
-    return {
-      CurrentUser: get(userInfo, 'data', {}),
-      // RouteMenu: get(routeMenuInfo, 'data', []),
-      Permissions: get(permissionInfo, 'data', []),
-    };
-  } catch (error) {
-    history.push(ROUTES.LOGIN);
-    return {};
-  }
+  // 需求变更：系统不需要登录校验；不再拉取用户信息/权限，也不做登录页跳转
+  return {
+    CurrentUser: {} as API.USERMANAGEMENT,
+    Permissions: [],
+  };
 };
 
 /**
@@ -157,34 +145,6 @@ export const decryptionAesPsd = (password: string): string => {
     padding: CryptoJS.pad.Pkcs7,
   });
   return decrypted.toString(CryptoJS.enc.Utf8); // 返回的是解密后的字符串
-};
-
-/**
- * @description: 退出登录返回到登录页
- * @Author: 黄鹏
- */
-export const logoutToLogin = () => {
-  const { search, pathname } = window.location;
-  // 获取 LOCK_SLEEP 信息
-  const LOCK_SLEEP = getLocalStorageItem<LockSleepTypes>(LOCAL_STORAGE.LOCK_SLEEP);
-  const urlParams = new URL(window.location.href).searchParams;
-  /** 此方法会跳转到 redirect 参数所在的位置 */
-  const redirect = urlParams.get('redirect');
-  // 移除 token
-  removeLocalStorageItem(LOCAL_STORAGE.ACCESS_TOKEN);
-  // 取消睡眠弹窗
-  if (LOCK_SLEEP) {
-    setLocalStorageItem(LOCAL_STORAGE.LOCK_SLEEP, { ...LOCK_SLEEP, isSleep: false });
-  }
-  // 重定向地址
-  if (window.location.pathname !== ROUTES.LOGIN && !redirect) {
-    history.replace({
-      pathname: ROUTES.LOGIN,
-      search: stringify({
-        redirect: pathname + search,
-      }),
-    });
-  }
 };
 
 /**

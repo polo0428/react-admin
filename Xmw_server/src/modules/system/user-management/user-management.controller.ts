@@ -17,13 +17,9 @@ import {
   Put,
   Query,
   Session,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiBearerAuth,
-  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -43,14 +39,7 @@ import { UserManagementService } from './user-management.service'; // UserManage
 
 /* swagger 文档 */
 @ApiTags('系统设置-用户管理')
-@ApiHeader({
-  name: 'Authorization',
-  required: true,
-  description: 'token令牌',
-})
-@ApiBearerAuth()
 @UseInterceptors(LoggerInterceptor)
-@UseGuards(AuthGuard('jwt'))
 @Controller('system/user-management')
 export class UserManagementController {
   constructor(private readonly userManagementService: UserManagementService) {}

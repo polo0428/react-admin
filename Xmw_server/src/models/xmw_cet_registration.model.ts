@@ -51,5 +51,3 @@ export class XmwCetRegistration extends Model<XmwCetRegistration> {
   @Column({ comment: '校区', defaultValue: '本部' })
   campus: string;
 }
-
-

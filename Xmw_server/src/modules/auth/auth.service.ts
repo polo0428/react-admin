@@ -125,7 +125,13 @@ export class AuthService {
       // 用户名登录
       case 'account':
         // 根据用户信息不同，返回相应的信息
-        if (session.verifyCode.toUpperCase() !== verifyCode.toUpperCase()) {
+        if (!session?.verifyCode) {
+          return responseMessage({}, '验证码已过期，请刷新验证码!', -1);
+        } else if (!verifyCode) {
+          return responseMessage({}, '请输入验证码!', -1);
+        } else if (
+          session.verifyCode.toUpperCase() !== verifyCode.toUpperCase()
+        ) {
           return responseMessage({}, '验证码不正确!', -1);
         } else if (!userInfo) {
           return responseMessage({}, '用户不存在!', -1);

@@ -6,19 +6,16 @@ import {
   Param,
   Post,
   Query,
-  Session,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { XmwNcre } from '@/models/xmw_ncre.model';
 import { XmwNcreRegistration } from '@/models/xmw_ncre_registration.model';
 import { XmwNcreScore } from '@/models/xmw_ncre_score.model';
-import { PageResponse, Response, SessionTypes } from '@/utils/types';
+import { PageResponse, Response } from '@/utils/types';
 
 import { CetService } from './cet.service';
 import {
@@ -31,8 +28,6 @@ import {
   ScoreAnalysisDto,
 } from './dto';
 
-@UseGuards(AuthGuard('jwt'))
-@ApiBearerAuth('jwt')
 @ApiTags('行政管理-计算机等级考试')
 @Controller('administrative/ncre')
 export class CetController {
@@ -48,11 +43,8 @@ export class CetController {
 
   @Post('save')
   @ApiOperation({ summary: '保存考次' })
-  saveCet(
-    @Body() cetInfo: SaveCetDto,
-    @Session() session: SessionTypes,
-  ): Promise<Response<SaveCetDto>> {
-    return this.cetService.saveCet(cetInfo, session);
+  saveCet(@Body() cetInfo: SaveCetDto): Promise<Response<SaveCetDto>> {
+    return this.cetService.saveCet(cetInfo);
   }
 
   @Delete(':id')

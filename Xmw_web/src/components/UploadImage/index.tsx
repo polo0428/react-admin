@@ -20,8 +20,8 @@ import ImgCrop, { ImgCropProps } from 'antd-img-crop';
 import { get, isEmpty } from 'lodash-es';
 import { FC, useEffect, useState } from 'react';
 
-import { formatPerfix, getLocalStorageItem, isHttpLink } from '@/utils';
-import { INTERNATION, LOCAL_STORAGE, ROUTES } from '@/utils/enums';
+import { formatPerfix, isHttpLink } from '@/utils';
+import { INTERNATION, ROUTES } from '@/utils/enums';
 
 const { Text } = Typography;
 
@@ -50,8 +50,6 @@ const UploadImage: FC<UploadImageProps> = ({
   const { formatMessage } = useIntl();
   // hooks 调用
   const { message } = App.useApp();
-  // 获取 Token
-  const ACCESS_TOKEN = getLocalStorageItem<string>(LOCAL_STORAGE.ACCESS_TOKEN);
   // 上传图片loading
   const [uploadLoading, { setTrue: setUploadLoadingTrue, setFalse: setUploadLoadingFalse }] =
     useBoolean(false);
@@ -112,8 +110,6 @@ const UploadImage: FC<UploadImageProps> = ({
       ...fieldProps,
       // 上传地址
       action: '/api/upload/single-file',
-      // 请求头添加token
-      headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
       // 上传前校验
       beforeUpload,
       // 上传图片回调

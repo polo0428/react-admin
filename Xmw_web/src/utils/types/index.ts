@@ -124,15 +124,6 @@ export type AppLocalCacheTypes = {
 };
 
 /**
- * @description: 用户登录
- * @author: 黄鹏
- */
-export type LoginTypes = {
-  access_token: string;
-  login_last_time: Date;
-};
-
-/**
  * @description: 用户休眠
  * @author: 黄鹏
  */

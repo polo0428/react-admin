@@ -10,16 +10,12 @@ import {
   Controller,
   Post,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
-  ApiHeader,
   ApiTags,
 } from '@nestjs/swagger'; // swagger 接口文档
 import * as OSS from 'ali-oss'; // oss sdk
@@ -35,12 +31,6 @@ import type { Response } from '@/utils/types';
 import { UploadFileDto } from './dto';
 
 @ApiTags('文件上传')
-@ApiHeader({
-  name: 'Authorization',
-  required: true,
-  description: 'token令牌',
-})
-@ApiBearerAuth()
 @Controller('upload')
 export class FilesController {
   ossClient: OSS;
@@ -53,7 +43,6 @@ export class FilesController {
    * @description: 上传单个文件
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
   @Post('single-file')
   @ApiConsumes('multipart/form-data')
@@ -74,7 +63,6 @@ export class FilesController {
    * @description: 阿里云 oss 上传
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @Post('single-file-oss')
   @UseInterceptors(
     FileInterceptor('file', {

@@ -81,9 +81,9 @@ export class CetService {
    */
   async saveCet(
     { id, ...cetInfo }: SaveCetDto,
-    session: SessionTypes,
+    session?: SessionTypes,
   ): Promise<Response<SaveCetDto>> {
-    const founder = session?.currentUserInfo?.user_id;
+    const founder = session?.currentUserInfo?.user_id || null;
     let result;
     if (id) {
       result = await this.cetModel.update(cetInfo, { where: { id } });

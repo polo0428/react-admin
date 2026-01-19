@@ -16,5 +16,3 @@ export class ListRegistrationDto {
   @ApiProperty({ description: '每页数量', required: false, default: 20 })
   pageSize?: number;
 }
-
-

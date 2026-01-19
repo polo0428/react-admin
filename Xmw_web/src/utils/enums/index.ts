@@ -47,7 +47,6 @@ export enum LOCAL_STORAGE {
  * @author: 黄鹏
  */
 export enum ROUTES {
-  LOGIN = '/user/login', // 登录页
   DASHBOARD = '/dashboard', // 指示面板
   WORKBENCH = '/dashboard/work-bench', // 指示面板-工作台
   DEPENDENCE = '/dashboard/environmental-dependence', // 指示面板-环境依赖
@@ -125,15 +124,6 @@ export enum OPERATION {
   DELETE = 'delete', // 删除
   ADDCHILD = 'add-child', // 添加子级
   BATCHDELETE = 'batch-delete', // 批量删除
-}
-
-/**
- * @description: 登录类型
- * @author: 黄鹏
- */
-export enum LOGIN_TYPE {
-  MOBILE = 'mobile', // 手机登录
-  ACCOUNT = 'account', // 账号登录
 }
 
 /**

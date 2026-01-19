@@ -12,9 +12,7 @@ import {
   Delete,
   Get,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'; // swagger 接口文档
 
 import { DeleteResponseDto } from '@/dto/response.dto'; // 响应体 Dto
@@ -33,7 +31,6 @@ export class OperationLogsController {
    * @description: 获取操作日志列表
    * @author: 黄鹏
    */
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOkResponse({ type: ResponseOperationLogsDto })
   @ApiOperation({ summary: '获取操作日志列表' })

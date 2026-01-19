@@ -12,9 +12,9 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
 import { isEmpty } from 'lodash-es';
 import { FC, useEffect } from 'react';
 
-import { formatPerfix, getLocalStorageItem } from '@/utils';
+import { formatPerfix } from '@/utils';
 import { AnnouncementTypeEnum } from '@/utils/const';
-import { BASEURL, EVENTBUS_TYPE, LOCAL_STORAGE, ROUTES } from '@/utils/enums';
+import { BASEURL, EVENTBUS_TYPE, ROUTES } from '@/utils/enums';
 import eventBus from '@/utils/eventBus';
 
 const EventSourceNotice: FC = () => {
@@ -24,13 +24,8 @@ const EventSourceNotice: FC = () => {
   const { notification } = App.useApp();
 
   useEffect(() => {
-    // 获取 ACCESS_TOKEN
-    const ACCESS_TOKEN = getLocalStorageItem<string>(LOCAL_STORAGE.ACCESS_TOKEN);
     // 创建 EventSource 实例
     const eventSource = new EventSourcePolyfill(`${BASEURL.API}${ROUTES.ANNOUNCEMENT}/sse`, {
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
       heartbeatTimeout: 60 * 60 * 1000, // 这是自定义配置请求超时时间  默认是45000ms
     });
     // 监听事件

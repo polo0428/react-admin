@@ -19,8 +19,8 @@ import { message, Modal } from 'antd';
 import { debounce } from 'lodash-es'; // lodash 工具函数
 import Nprogress from 'nprogress';
 
-import { getLocalStorageItem, isSuccess, logoutToLogin } from '@/utils'; // 全局工具函数
-import { BASEURL, LOCAL_STORAGE, REQUEST_CODE } from '@/utils/enums';
+import { isSuccess } from '@/utils'; // 全局工具函数
+import { BASEURL, REQUEST_CODE } from '@/utils/enums';
 import type { Response } from '@/utils/types';
 
 /**
@@ -39,6 +39,8 @@ const debounceError = debounce((content: string, duration = 3) => {
 const umiRequest: RequestConfig = {
   baseURL: BASEURL.API, // 请求前缀
   timeout: 30 * 1000, // 超时时间，默认 30 s
+  // 需求变更：系统不需要登录校验；所有请求不携带 cookie/session
+  withCredentials: false,
   // 错误处理： umi@3 的错误处理方案。
   errorConfig: {
     // 错误抛出
@@ -59,17 +61,12 @@ const umiRequest: RequestConfig = {
       if (response) {
         const { data } = response;
         switch (data.code) {
-          // token令牌校验，如果出现这个返回码则退出登录到登录页面
+          // 不做登录校验：401 仅提示
           case REQUEST_CODE.UNAUTHORIZED:
-            // 这里加一个防抖
-            Modal.success({
-              title: '登录已失效,请重新登录!',
+            Modal.warning({
+              title: '未授权',
               content: data.msg,
-              onOk: () => {
-                // 退出登录返回到登录页
-                logoutToLogin();
-                Modal.destroyAll();
-              },
+              onOk: () => Modal.destroyAll(),
             });
             break;
           default:
@@ -89,12 +86,6 @@ const umiRequest: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: RequestOptions) => {
-      // 获取 ACCESS_TOKEN
-      const ACCESS_TOKEN = getLocalStorageItem<string>(LOCAL_STORAGE.ACCESS_TOKEN);
-      // 判断是否登录存在token，有就请求头携带token
-      if (ACCESS_TOKEN && config?.headers) {
-        config.headers.Authorization = `Bearer ${ACCESS_TOKEN}`;
-      }
       // 进度条开始
       Nprogress.start();
       return { ...config };
@@ -119,8 +110,6 @@ const umiRequest: RequestConfig = {
             break;
           // 登录信息失效
           case REQUEST_CODE.UNAUTHORIZED:
-            // 退出登录返回到登录页
-            logoutToLogin();
             Modal.destroyAll();
             break;
         }
