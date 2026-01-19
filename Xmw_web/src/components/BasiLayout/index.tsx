@@ -7,7 +7,14 @@
  * @LastEditTime: 2024-10-21 17:45:47
  */
 import { ProConfigProvider, Settings as LayoutSettings } from '@ant-design/pro-components';
-import { Icon, InitDataType, Link, RunTimeLayoutConfig, useIntl } from '@umijs/max';
+import {
+  Icon,
+  InitDataType,
+  Link,
+  RunTimeLayoutConfig,
+  useIntl,
+  useSearchParams,
+} from '@umijs/max';
 import { Space, Typography } from 'antd';
 import { toString } from 'lodash-es';
 
@@ -23,8 +30,14 @@ export const BasiLayout: RunTimeLayoutConfig = ({
   setInitialState,
 }: InitDataType) => {
   const { formatMessage } = useIntl();
+  const [searchParams] = useSearchParams();
   /* 获取 LAYOUT 的值 */
   const LAYOUT = getLocalStorageItem<LayoutSettings>(LOCAL_STORAGE.LAYOUT);
+
+  // 从 URL 查询参数中读取是否显示菜单，默认为 true（显示）
+  // 支持 showMenu 或 menu 参数，值为 'false' 或 '0' 时隐藏菜单
+  const showMenuParam = searchParams.get('showMenu') || searchParams.get('menu');
+  const showMenu = showMenuParam !== 'false' && showMenuParam !== '0';
 
   // 渲染菜单图标
   const renderMenuicon = (icon: any) => (
@@ -33,6 +46,8 @@ export const BasiLayout: RunTimeLayoutConfig = ({
   return {
     // 需求变更：系统不需要登录页/登录态；同时隐藏顶部 Header
     headerRender: false,
+    // 根据 URL 参数控制菜单显示/隐藏
+    menuRender: showMenu ? undefined : false,
     /* 水印 */
     waterMarkProps: {
       content: initialState?.CurrentUser?.cn_name,

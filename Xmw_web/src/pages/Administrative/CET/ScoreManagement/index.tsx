@@ -1,5 +1,5 @@
 import { LeftOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { history, useLocation, useRequest } from '@umijs/max';
+import { useLocation, useRequest } from '@umijs/max';
 import { Button, Card, Input, message, Select, Space, Tag, Typography } from 'antd';
 import React, { useMemo, useState } from 'react';
 
@@ -9,6 +9,7 @@ import {
   getScoreList,
   saveScore,
 } from '@/services/administrative/cet';
+import { navigateWithMenuParam } from '@/utils';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import ScoreModal from './components/ScoreModal';
@@ -184,7 +185,7 @@ export default function ScoreManagement() {
   };
 
   const handleBack = () => {
-    history.push('/cet');
+    navigateWithMenuParam('/cet');
   };
 
   return (

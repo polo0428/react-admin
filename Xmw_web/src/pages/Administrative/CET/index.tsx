@@ -9,16 +9,17 @@ import {
   SolutionOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import { history, useRequest } from '@umijs/max';
+import { useRequest } from '@umijs/max';
 import { App, Button, Card, Col, Row, Tag, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import { deleteCet, getCetList, saveCet } from '@/services/administrative/cet';
+import { navigateWithMenuParam } from '@/utils';
 import { REQUEST_CODE } from '@/utils/enums';
 
 import CreateExamModal, { ExamBatch, ExamBatchStatus } from './components/CreateExamModal';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 export default function ExamManagement() {
   const { message } = App.useApp();
   const [examList, setExamList] = useState<ExamBatch[]>([]);
@@ -54,15 +55,15 @@ export default function ExamManagement() {
   // Navigation
   const onNavigate = (page: string, context?: any) => {
     if (page === 'scores') {
-      history.push('/cet/scores', { examItem: context?.examItem });
+      navigateWithMenuParam('/cet/scores', { examItem: context?.examItem });
     } else if (page === 'registrations') {
-      history.push('/cet/registrations', { examItem: context?.examItem });
+      navigateWithMenuParam('/cet/registrations', { examItem: context?.examItem });
     } else if (page === 'analysis') {
-      history.push('/cet/analysis', { examItem: context?.examItem });
+      navigateWithMenuParam('/cet/analysis', { examItem: context?.examItem });
     } else if (page === 'import-reg') {
-      history.push('/cet/import-reg', { examItem: context?.examItem });
+      navigateWithMenuParam('/cet/import-reg', { examItem: context?.examItem });
     } else if (page === 'import-score') {
-      history.push('/cet/import-score', { examItem: context?.examItem });
+      navigateWithMenuParam('/cet/import-score', { examItem: context?.examItem });
     } else {
       message.info(`Navigating to ${page} (Not implemented yet)`);
     }
@@ -157,14 +158,8 @@ export default function ExamManagement() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 relative p-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <Title level={3} style={{ margin: 0 }}>
-            CET考试管理
-          </Title>
-          <Text type="secondary">管理各学期考试批次，执行报名与成绩录入操作。</Text>
-        </div>
+    <div className="space-y-6 animate-in fade-in duration-500 relative p-6 pt-0">
+      <div className="flex justify-end items-center">
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
           新建考次
         </Button>

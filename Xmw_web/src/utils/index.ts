@@ -7,6 +7,7 @@
  * @LastEditTime: 2024-10-29 14:32:15
  */
 import type { ColumnsState, RequestData } from '@ant-design/pro-components';
+import { history } from '@umijs/max';
 import { message } from 'antd';
 import CryptoJS from 'crypto-js'; // AES/DES加密
 import {
@@ -22,8 +23,10 @@ import {
   startsWith,
   toLower,
 } from 'lodash-es';
-import { LOCAL_STORAGE, REQUEST_CODE } from '@/utils/enums';
-import type { InitialStateTypes, LockSleepTypes, PageResponse, Response } from '@/utils/types';
+import { stringify } from 'querystring';
+
+import { REQUEST_CODE } from '@/utils/enums';
+import type { InitialStateTypes, PageResponse, Response } from '@/utils/types';
 
 /**
  * @description: 获取用户信息、菜单和权限
@@ -319,4 +322,27 @@ export const OsIconMap = (text: string): string | undefined => {
     }
   }
   return undefined;
+};
+
+/**
+ * @description: 获取当前 URL 的 showMenu 参数
+ * @author: 黄鹏
+ */
+export const getShowMenuParam = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('showMenu') || urlParams.get('menu');
+};
+
+/**
+ * @description: 导航到指定路径，保留 showMenu 参数
+ * @param {string} path 目标路径
+ * @param {any} state 路由状态
+ * @author: 黄鹏
+ */
+export const navigateWithMenuParam = (path: string, state?: any) => {
+  const showMenu = getShowMenuParam();
+  const search = showMenu ? stringify({ showMenu }) : '';
+  const targetPath = search ? `${path}?${search}` : path;
+  history.push(targetPath, state);
 };
