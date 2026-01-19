@@ -1,5 +1,5 @@
 import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
-import { history, useLocation, useRequest } from '@umijs/max';
+import { useLocation, useRequest } from '@umijs/max';
 import {
   Button,
   Card,
@@ -15,6 +15,7 @@ import {
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { deleteRegistration, getRegistrationList } from '@/services/administrative/ncre';
+import { navigateWithMenuParam } from '@/utils';
 
 import { ExamBatch } from '../components/CreateExamModal';
 
@@ -88,7 +89,7 @@ export default function RegistrationManagement() {
   }, [searchTerm, levelFilter]);
 
   const handleBack = () => {
-    history.push('/ncre');
+    navigateWithMenuParam('/ncre');
   };
 
   const handleDelete = useCallback(

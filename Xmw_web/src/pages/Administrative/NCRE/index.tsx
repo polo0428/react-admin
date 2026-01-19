@@ -9,11 +9,12 @@ import {
   SolutionOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import { history, useRequest } from '@umijs/max';
+import { useRequest } from '@umijs/max';
 import { App, Button, Card, Col, Row, Tag, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import { deleteCet, getCetList, saveCet } from '@/services/administrative/ncre';
+import { navigateWithMenuParam } from '@/utils';
 import { REQUEST_CODE } from '@/utils/enums';
 
 import CreateExamModal, { ExamBatch, ExamBatchStatus } from './components/CreateExamModal';
@@ -54,15 +55,15 @@ export default function ExamManagement() {
   // Navigation
   const onNavigate = (page: string, context?: any) => {
     if (page === 'scores') {
-      history.push('/ncre/scores', { examItem: context?.examItem });
+      navigateWithMenuParam('/ncre/scores', { examItem: context?.examItem });
     } else if (page === 'registrations') {
-      history.push('/ncre/registrations', { examItem: context?.examItem });
+      navigateWithMenuParam('/ncre/registrations', { examItem: context?.examItem });
     } else if (page === 'analysis') {
-      history.push('/ncre/analysis', { examItem: context?.examItem });
+      navigateWithMenuParam('/ncre/analysis', { examItem: context?.examItem });
     } else if (page === 'import-reg') {
-      history.push('/ncre/import-reg', { examItem: context?.examItem });
+      navigateWithMenuParam('/ncre/import-reg', { examItem: context?.examItem });
     } else if (page === 'import-score') {
-      history.push('/ncre/import-score', { examItem: context?.examItem });
+      navigateWithMenuParam('/ncre/import-score', { examItem: context?.examItem });
     } else {
       message.info(`Navigating to ${page} (Not implemented yet)`);
     }

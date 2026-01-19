@@ -1,5 +1,5 @@
 import { LeftOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { history, useLocation, useRequest } from '@umijs/max';
+import { useLocation, useRequest } from '@umijs/max';
 import { Button, Card, Input, message, Select, Space, Tag, Typography } from 'antd';
 import React, { useMemo, useState } from 'react';
 
@@ -9,6 +9,7 @@ import {
   getScoreList,
   saveScore,
 } from '@/services/administrative/ncre';
+import { navigateWithMenuParam } from '@/utils';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import ScoreModal from './components/ScoreModal';
@@ -31,22 +32,24 @@ const mapScoreItem = (item: any, defaultExamDate: string): ScoreRecord => {
   const parsed = parseExamLevel(item.exam_level || item.examLevel);
   const theoryScore = Number(item.listening_score || item.listeningScore || 0);
   const practiceScore = Number(item.reading_score || item.readingScore || 0);
-  const totalScore = Number(item.total_score || item.totalScore || theoryScore + practiceScore || 0);
+  const totalScore = Number(
+    item.total_score || item.totalScore || theoryScore + practiceScore || 0,
+  );
   return {
-  recordId: item.id,
-  id: item.student_no || item.studentNo,
-  name: item.name,
-  department: item.department || '',
-  major: item.major || '',
-  batchId: item.batch_id || item.batchId,
-  examLevel: parsed.level,
-  examSubject: parsed.subject,
-  examDate: defaultExamDate || item.created_time?.split(' ')[0] || '',
-  ticketNumber: item.ticket_number || item.ticketNumber,
-  totalScore,
-  theoryScore,
-  practiceScore,
-  passed: item.is_passed === true || item.is_passed === 1 || item.isPassed === true,
+    recordId: item.id,
+    id: item.student_no || item.studentNo,
+    name: item.name,
+    department: item.department || '',
+    major: item.major || '',
+    batchId: item.batch_id || item.batchId,
+    examLevel: parsed.level,
+    examSubject: parsed.subject,
+    examDate: defaultExamDate || item.created_time?.split(' ')[0] || '',
+    ticketNumber: item.ticket_number || item.ticketNumber,
+    totalScore,
+    theoryScore,
+    practiceScore,
+    passed: item.is_passed === true || item.is_passed === 1 || item.isPassed === true,
   };
 };
 
@@ -192,7 +195,7 @@ export default function ScoreManagement() {
   };
 
   const handleBack = () => {
-    history.push('/ncre');
+    navigateWithMenuParam('/ncre');
   };
 
   return (

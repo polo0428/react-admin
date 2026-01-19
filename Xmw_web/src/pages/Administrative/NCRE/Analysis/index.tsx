@@ -6,11 +6,12 @@ import {
   TeamOutlined,
   TrophyOutlined,
 } from '@ant-design/icons';
-import { history, useLocation, useRequest } from '@umijs/max';
+import { useLocation, useRequest } from '@umijs/max';
 import { Button, Card, Col, Row, Space, Spin, Tag, Typography } from 'antd';
 import React from 'react';
 
 import { getAnalysisDashboard } from '@/services/administrative/ncre';
+import { navigateWithMenuParam } from '@/utils';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import DistributionChart from './components/DistributionChart';
@@ -45,7 +46,7 @@ const AnalysisPage: React.FC = () => {
   });
 
   const handleBack = () => {
-    history.back();
+    navigateWithMenuParam('/ncre');
   };
 
   if (!batch) {

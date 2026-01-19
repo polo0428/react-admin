@@ -1,10 +1,11 @@
 import { LeftOutlined } from '@ant-design/icons';
-import { history, useLocation } from '@umijs/max';
+import { useLocation } from '@umijs/max';
 import { Button, Card, message, Result, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import Uploader from '@/components/BatchImport/Uploader';
 import { importCetRegistration } from '@/services/administrative/ncre';
+import { navigateWithMenuParam } from '@/utils';
 
 import { ExamBatch } from '../components/CreateExamModal';
 
@@ -17,11 +18,11 @@ const ImportRegistration: React.FC = () => {
   const [successCount, setSuccessCount] = useState<number | null>(null);
 
   const handleBack = () => {
-    history.push('/ncre');
+    navigateWithMenuParam('/ncre');
   };
 
   const handleGoToRegistrations = () => {
-    history.push('/ncre/registrations', { examItem });
+    navigateWithMenuParam('/ncre/registrations', { examItem });
   };
 
   const handleImport = async (formData: FormData) => {
