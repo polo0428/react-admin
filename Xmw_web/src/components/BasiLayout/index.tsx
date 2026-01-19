@@ -8,7 +8,6 @@
  */
 import { ProConfigProvider, Settings as LayoutSettings } from '@ant-design/pro-components';
 import { Icon, InitDataType, Link, RunTimeLayoutConfig, useIntl } from '@umijs/max';
-import { useBoolean } from 'ahooks';
 import { Space, Typography } from 'antd';
 import { toString } from 'lodash-es';
 
@@ -16,8 +15,6 @@ import { formatPerfix, getLocalStorageItem } from '@/utils';
 import { MenuRemixIconMap } from '@/utils/const';
 import { LOCAL_STORAGE, ROUTES } from '@/utils/enums';
 import type { InitialStateTypes } from '@/utils/types';
-
-import { actionsRender, avatarProps } from './components';
 
 const { Paragraph } = Typography;
 
@@ -28,22 +25,18 @@ export const BasiLayout: RunTimeLayoutConfig = ({
   const { formatMessage } = useIntl();
   /* 获取 LAYOUT 的值 */
   const LAYOUT = getLocalStorageItem<LayoutSettings>(LOCAL_STORAGE.LAYOUT);
-  /* 是否显示锁屏弹窗 */
-  const [, { setTrue: setLockModalTrue }] = useBoolean(false);
 
   // 渲染菜单图标
   const renderMenuicon = (icon: any) => (
     <Icon icon={toString(icon)} style={{ fontSize: 16, display: 'flex' }} />
   );
   return {
+    // 需求变更：系统不需要登录页/登录态；同时隐藏顶部 Header
+    headerRender: false,
     /* 水印 */
     waterMarkProps: {
       content: initialState?.CurrentUser?.cn_name,
     },
-    /* 用户头像 */
-    avatarProps: avatarProps(setLockModalTrue),
-    /* 自定义操作列表 */
-    actionsRender,
     /* 页面切换时触发 */
     onPageChange: () => {
       // 需求变更：系统不需要登录校验；不做路由级登录拦截
