@@ -7,8 +7,14 @@ export class SaveScoreDto {
   @ApiProperty({ description: '学生姓名', required: true })
   name: string;
 
-  @ApiProperty({ description: '学号', required: true })
-  student_no: string;
+  @ApiProperty({ description: '学号', required: false })
+  student_no?: string;
+
+  @ApiProperty({ description: '证件号码', required: false })
+  id_card?: string;
+
+  @ApiProperty({ description: '年级', required: false })
+  grade?: string;
 
   @ApiProperty({ description: '学院' })
   department?: string;
@@ -18,6 +24,18 @@ export class SaveScoreDto {
 
   @ApiProperty({ description: '班级' })
   class_name?: string;
+
+  @ApiProperty({ description: '教学班', required: false })
+  teaching_class?: string;
+
+  @ApiProperty({ description: '学员大队', required: false })
+  brigade?: string;
+
+  @ApiProperty({ description: '学员队', required: false })
+  squadron?: string;
+
+  @ApiProperty({ description: '学员类型', required: false })
+  student_type?: string;
 
   @ApiProperty({ description: '考次ID', required: true })
   batch_id: string;
@@ -29,17 +47,20 @@ export class SaveScoreDto {
   })
   exam_level: string;
 
-  @ApiProperty({ description: '准考证号', required: true })
-  ticket_number: string;
+  @ApiProperty({ description: '准考证号', required: false })
+  ticket_number?: string;
 
-  @ApiProperty({ description: '听力成绩', required: true })
-  listening_score: number;
+  @ApiProperty({ description: '听力成绩', required: false })
+  listening_score?: number;
 
-  @ApiProperty({ description: '阅读成绩', required: true })
-  reading_score: number;
+  @ApiProperty({ description: '阅读成绩', required: false })
+  reading_score?: number;
 
-  @ApiProperty({ description: '写作与翻译成绩', required: true })
-  writing_score: number;
+  @ApiProperty({ description: '写作与翻译成绩', required: false })
+  writing_score?: number;
+
+  @ApiProperty({ description: '总分', required: false })
+  total_score?: number;
 
   @ApiProperty({ description: '校区' })
   campus?: string;

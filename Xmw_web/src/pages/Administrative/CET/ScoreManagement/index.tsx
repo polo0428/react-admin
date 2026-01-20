@@ -23,16 +23,22 @@ const { Option } = Select;
 // eslint-disable-next-line
 const mapScoreItem = (item: any, defaultExamDate: string): ScoreRecord => ({
   recordId: item.id,
-  id: item.student_no || item.studentNo,
+  id: item.student_no || item.studentNo || '',
   name: item.name,
   department: item.department || '',
   major: item.major || '',
-  classId: item.class_name || item.className || '',
+  classId: item.class_name || item.className || item.teaching_class || item.teachingClass || '',
+  idCard: item.id_card || item.idCard || '',
+  grade: item.grade || '',
+  teachingClass: item.teaching_class || item.teachingClass || '',
+  brigade: item.brigade || '',
+  squadron: item.squadron || '',
+  studentType: item.student_type || item.studentType || '',
   batchId: item.batch_id || item.batchId,
   examLevel: (item.exam_level || item.examLevel) as ExamLevel,
   examDate: defaultExamDate || item.created_time?.split(' ')[0] || '',
-  campus: item.campus,
-  ticketNumber: item.ticket_number || item.ticketNumber,
+  campus: item.campus || '',
+  ticketNumber: item.ticket_number || item.ticketNumber || '',
   totalScore: Number(item.total_score || item.totalScore || 0),
   listeningScore: Number(item.listening_score || item.listeningScore || 0),
   readingScore: Number(item.reading_score || item.readingScore || 0),
@@ -54,6 +60,7 @@ export default function ScoreManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<ScoreRecord | undefined>(undefined);
 
   const [scores, setScores] = useState<ScoreRecord[]>([]);
 
@@ -140,6 +147,12 @@ export default function ScoreManagement() {
   }, [statsData]);
 
   const handleAddClick = () => {
+    setEditingRecord(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (record: ScoreRecord) => {
+    setEditingRecord(record);
     setIsModalOpen(true);
   };
 
@@ -151,17 +164,24 @@ export default function ScoreManagement() {
       }
 
       await saveScore({
+        id: values.id, // 编辑时回传 id
         name: values.name,
-        student_no: values.id,
+        id_card: values.idCard,
         department: values.department,
         major: values.major,
-        class_name: values.classId, // 注意：ScoreModal 需要支持 classId 输入
+        class_name: values.classId,
+        teaching_class: values.teachingClass,
+        grade: values.grade,
+        brigade: values.brigade,
+        squadron: values.squadron,
+        student_type: values.studentType,
         batch_id: batch.id,
         exam_level: values.examLevel,
         ticket_number: values.ticketNumber,
         listening_score: values.listeningScore,
         reading_score: values.readingScore,
         writing_score: values.writingTranslationScore,
+        total_score: values.totalScore, // 传递总分
         campus: values.campus,
       });
 
@@ -228,7 +248,7 @@ export default function ScoreManagement() {
         <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row gap-4 justify-between bg-gray-50/50">
           <Input
             prefix={<SearchOutlined className="text-gray-400" />}
-            placeholder="搜索学生姓名或学号..."
+            placeholder="搜索学生姓名/学号/证件号码/准考证号/教学班..."
             style={{ maxWidth: 300 }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -253,6 +273,7 @@ export default function ScoreManagement() {
           dataSource={scores}
           loading={loading}
           onDelete={handleDelete}
+          onEdit={handleEdit}
           pagination={{
             total: totalCount || 0,
             current,
@@ -272,6 +293,7 @@ export default function ScoreManagement() {
         onCancel={() => setIsModalOpen(false)}
         onFinish={handleSave}
         batchName={batch?.name}
+        initialValues={editingRecord}
       />
     </div>
   );

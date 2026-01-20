@@ -144,7 +144,13 @@ export class CetService {
       andWhere.push({
         [Op.or]: [
           { name: { [Op.substring]: keyword } },
+          // 兼容新旧模板：学号/证件号码/准考证号/教学班 任选其一可搜索到
           { student_no: { [Op.substring]: keyword } },
+          { id_card: { [Op.substring]: keyword } },
+          { ticket_number: { [Op.substring]: keyword } },
+          { teaching_class: { [Op.substring]: keyword } },
+          { brigade: { [Op.substring]: keyword } },
+          { squadron: { [Op.substring]: keyword } },
         ],
       });
     }
@@ -171,6 +177,12 @@ export class CetService {
       class_name: fixStr(r.class_name),
       exam_level: fixStr(r.exam_level),
       campus: fixStr(r.campus),
+      id_card: fixStr(r.id_card),
+      grade: fixStr(r.grade),
+      teaching_class: fixStr(r.teaching_class),
+      brigade: fixStr(r.brigade),
+      squadron: fixStr(r.squadron),
+      student_type: fixStr(r.student_type),
     }));
     return responseMessage({ list: fixed, total });
   }
@@ -264,15 +276,33 @@ export class CetService {
    * @author: 黄鹏
    */
   async saveScore(scoreInfo: SaveScoreDto): Promise<Response<XmwCetScore>> {
-    const { id, listening_score, reading_score, writing_score, ...rest } =
-      scoreInfo;
-    const total_score = listening_score + reading_score + writing_score;
-    const is_passed = total_score >= 425;
-    const data = {
-      ...rest,
+    const {
+      id,
       listening_score,
       reading_score,
       writing_score,
+      total_score: total_score_input,
+      ...rest
+    } = scoreInfo;
+
+    const l = Number(listening_score ?? 0) || 0;
+    const r = Number(reading_score ?? 0) || 0;
+    const w = Number(writing_score ?? 0) || 0;
+
+    const partsSum = l + r + w;
+    const totalFromInput = Number(total_score_input ?? NaN);
+    const total_score =
+      partsSum > 0
+        ? partsSum
+        : Number.isFinite(totalFromInput)
+          ? totalFromInput
+          : 0;
+    const is_passed = total_score >= 425;
+    const data = {
+      ...rest,
+      listening_score: l,
+      reading_score: r,
+      writing_score: w,
       total_score,
       is_passed,
     };
@@ -644,9 +674,19 @@ export class CetService {
         '姓名',
         '学号',
         '学生学号',
+        '证件号码',
+        '证件号',
+        '身份证号',
+        '身份证号码',
+        '证件编号',
+        '年级',
         '学院',
         '专业',
         '班级',
+        '教学班',
+        '学员大队',
+        '学员队',
+        '学员类型',
         '报考级别',
         '报考等级',
         '考试等级',
@@ -658,7 +698,12 @@ export class CetService {
         '写作与翻译',
         '写作与翻译总分',
         '写作/翻译',
+        // 新模板可能只有“考试成绩/总分”
+        '考试成绩',
+        '成绩',
+        '分数',
         '总分',
+        '校区',
       ].map((k) => normalizeKey(k));
 
       const isRowEmpty = (r: any[]) =>
@@ -722,6 +767,18 @@ export class CetService {
           const student_no = toStr(
             pickVal(row, ['学号', '学生学号', 'student_no']),
           );
+          const id_card = toStr(
+            pickVal(row, [
+              '证件号码',
+              '证件号',
+              '身份证号',
+              '身份证号码',
+              '证件编号',
+              'id_card',
+              'idcard',
+            ]),
+          );
+          const grade = toStr(pickVal(row, ['年级', 'grade']));
           const department = toStr(pickVal(row, ['学院', 'department']));
           const major = toStr(pickVal(row, ['专业', 'major']));
           const class_name = toStr(
@@ -738,6 +795,22 @@ export class CetService {
               '所在班级',
               'class_name',
             ]),
+          );
+          const teaching_class = toStr(
+            pickVal(row, [
+              '教学班',
+              '教学班名称',
+              '教学班级',
+              '所在教学班',
+              'teaching_class',
+            ]),
+          );
+          const brigade = toStr(pickVal(row, ['学员大队', '大队', 'brigade']));
+          const squadron = toStr(
+            pickVal(row, ['学员队', '队', '中队', 'squadron']),
+          );
+          const student_type = toStr(
+            pickVal(row, ['学员类型', '类型', 'student_type']),
           );
           const campus = toStr(pickVal(row, ['校区', 'campus']));
           const exam_level = toStr(
@@ -761,25 +834,47 @@ export class CetService {
             ]),
           );
 
+          const total_score_from_cell = pickVal(row, [
+            '考试成绩',
+            '总分',
+            '成绩',
+            '分数',
+            'total_score',
+          ]);
+          const total_score_from_total = toNum(total_score_from_cell);
+          const total_score_from_parts =
+            listening_score + reading_score + writing_score;
+          // 如果有分项成绩，则以分项求和为准；否则优先使用“考试成绩/总分”
+          const total_score =
+            total_score_from_parts > 0
+              ? total_score_from_parts
+              : total_score_from_total;
+
           return {
             batch_id,
             name,
             student_no,
+            id_card,
+            grade,
             department,
             major,
             class_name,
+            teaching_class,
+            brigade,
+            squadron,
+            student_type,
             campus,
             exam_level,
             ticket_number,
             listening_score,
             reading_score,
             writing_score,
-            total_score: listening_score + reading_score + writing_score,
-            is_passed: listening_score + reading_score + writing_score >= 425,
+            total_score,
+            is_passed: total_score >= 425,
           };
         })
-        // 至少要能定位到某个考生：准考证号/学号 其一
-        .filter((r) => r.ticket_number || r.student_no);
+        // 至少要能定位到某个考生：准考证号/学号/证件号码 其一
+        .filter((r) => r.ticket_number || r.student_no || r.id_card);
 
       if (parsed.length === 0) {
         return responseMessage(
@@ -797,6 +892,9 @@ export class CetService {
       const studentNos = Array.from(
         new Set(parsed.map((r) => r.student_no).filter(Boolean)),
       );
+      const idCards = Array.from(
+        new Set(parsed.map((r) => r.id_card).filter(Boolean)),
+      );
 
       const existing = await this.scoreModel.findAll({
         where: {
@@ -808,6 +906,7 @@ export class CetService {
             studentNos.length
               ? { student_no: { [Op.in]: studentNos } }
               : undefined,
+            idCards.length ? { id_card: { [Op.in]: idCards } } : undefined,
           ].filter(Boolean) as any,
         },
         raw: true,
@@ -821,6 +920,9 @@ export class CetService {
       const byStudentNo = new Map(
         existing.filter((e) => e.student_no).map((e) => [e.student_no, e]),
       );
+      const byIdCard = new Map(
+        existing.filter((e) => e.id_card).map((e) => [e.id_card, e]),
+      );
 
       const toCreate: any[] = [];
       const toUpdate: { where: any; data: any }[] = [];
@@ -829,7 +931,8 @@ export class CetService {
       for (const r of parsed) {
         const match =
           (r.ticket_number && byTicket.get(r.ticket_number)) ||
-          (r.student_no && byStudentNo.get(r.student_no));
+          (r.student_no && byStudentNo.get(r.student_no)) ||
+          (r.id_card && byIdCard.get(r.id_card));
 
         if (match) {
           const baseInfo: any = {};
@@ -841,6 +944,12 @@ export class CetService {
           if (r.exam_level) baseInfo.exam_level = r.exam_level;
           if (r.ticket_number) baseInfo.ticket_number = r.ticket_number;
           if (r.student_no) baseInfo.student_no = r.student_no;
+          if (r.id_card) baseInfo.id_card = r.id_card;
+          if (r.grade) baseInfo.grade = r.grade;
+          if (r.teaching_class) baseInfo.teaching_class = r.teaching_class;
+          if (r.brigade) baseInfo.brigade = r.brigade;
+          if (r.squadron) baseInfo.squadron = r.squadron;
+          if (r.student_type) baseInfo.student_type = r.student_type;
 
           toUpdate.push({
             where: { id: match.id },
@@ -856,8 +965,8 @@ export class CetService {
           continue;
         }
 
-        // 新增时需要满足数据库必填：name/student_no/batch_id/exam_level/ticket_number
-        if (r.name && r.student_no && r.exam_level && r.ticket_number) {
+        // 新模板：允许不提供准考证号/分项成绩，至少要有 name + exam_level + (student_no 或 id_card)
+        if (r.name && r.exam_level && (r.student_no || r.id_card)) {
           toCreate.push(r);
         } else {
           skipped += 1;
@@ -886,7 +995,9 @@ export class CetService {
       });
     } catch (error) {
       console.error('Import Score Error:', error);
-      return responseMessage(null, '导入成绩失败', -1);
+      // 透出具体错误信息给前端，方便排查（如数据库字段缺失、格式错误等）
+      const msg = error instanceof Error ? error.message : String(error);
+      return responseMessage(null, `导入成绩失败: ${msg}`, -1);
     }
   }
 

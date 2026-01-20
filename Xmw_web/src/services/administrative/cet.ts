@@ -57,16 +57,30 @@ export const importCetScore = (data: FormData) =>
 export interface SaveScoreParams {
   id?: string;
   name: string;
-  student_no: string;
+  // 新模板：学号不再强制，允许为空
+  student_no?: string;
+  // 新模板：证件号码
+  id_card?: string;
+  // 新模板：年级
+  grade?: string;
   department?: string;
   major?: string;
   class_name?: string;
+  // 新模板：教学班/学员大队/学员队/学员类型
+  teaching_class?: string;
+  brigade?: string;
+  squadron?: string;
+  student_type?: string;
   batch_id: string;
   exam_level: string;
-  ticket_number: string;
-  listening_score: number;
-  reading_score: number;
-  writing_score: number;
+  // 新模板：准考证号允许为空
+  ticket_number?: string;
+  // 分项成绩不再必填（但后端仍支持）
+  listening_score?: number;
+  reading_score?: number;
+  writing_score?: number;
+  // 新模板：总分直接录入
+  total_score?: number;
   campus?: string;
 }
 

@@ -23,8 +23,14 @@ export class XmwCetScore extends Model<XmwCetScore> {
   @Column({ comment: '学生姓名', allowNull: false })
   name: string;
 
-  @Column({ comment: '学号', allowNull: false })
+  @Column({ comment: '学号', allowNull: true })
   student_no: string;
+
+  @Column({ comment: '证件号码' })
+  id_card: string;
+
+  @Column({ comment: '年级' })
+  grade: string;
 
   @Column({ comment: '学院' })
   department: string;
@@ -34,6 +40,18 @@ export class XmwCetScore extends Model<XmwCetScore> {
 
   @Column({ comment: '班级' })
   class_name: string;
+
+  @Column({ comment: '教学班' })
+  teaching_class: string;
+
+  @Column({ comment: '学员大队' })
+  brigade: string;
+
+  @Column({ comment: '学员队' })
+  squadron: string;
+
+  @Column({ comment: '学员类型' })
+  student_type: string;
 
   @ForeignKey(() => XmwCet)
   @Column({ type: DataType.UUID, comment: '考次ID', allowNull: false })
@@ -45,7 +63,8 @@ export class XmwCetScore extends Model<XmwCetScore> {
   @Column({ comment: '考试级别', allowNull: false })
   exam_level: string;
 
-  @Column({ comment: '准考证号', allowNull: false })
+  // 兼容新模板：允许不提供准考证号
+  @Column({ comment: '准考证号', allowNull: true })
   ticket_number: string;
 
   @Column({ type: DataType.FLOAT, comment: '听力成绩', defaultValue: 0 })

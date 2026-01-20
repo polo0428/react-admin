@@ -48,11 +48,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
       destroyOnClose
     >
       <Form form={form} layout="vertical">
-        <Form.Item
-          name="name"
-          label="姓名"
-          rules={[{ required: true, message: '请输入姓名' }]}
-        >
+        <Form.Item name="name" label="姓名" rules={[{ required: true, message: '请输入姓名' }]}>
           <Input placeholder="请输入姓名" />
         </Form.Item>
 
@@ -94,14 +90,9 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
             <Select.Option value="CET-6">CET-6</Select.Option>
           </Select>
         </Form.Item>
-
-        <Form.Item name="student_no" label="学号 (旧字段)">
-          <Input placeholder="兼容旧数据，选填" />
-        </Form.Item>
       </Form>
     </Modal>
   );
 };
 
 export default RegistrationModal;
-

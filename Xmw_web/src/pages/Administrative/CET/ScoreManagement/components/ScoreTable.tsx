@@ -10,61 +10,88 @@ interface ScoreTableProps {
   loading?: boolean;
   pagination?: TablePaginationConfig;
   onDelete?: (id: string) => void;
+  onEdit?: (record: ScoreRecord) => void;
 }
 
 /**
  * 成绩列表表格组件
  * 展示学生基本信息、考试信息、成绩详情及状态
  */
-const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination, onDelete }) => {
+const ScoreTable: React.FC<ScoreTableProps> = ({
+  dataSource,
+  loading,
+  pagination,
+  onDelete,
+  onEdit,
+}) => {
   const columns: ColumnsType<ScoreRecord> = [
     {
-      title: '学生信息',
-      key: 'studentInfo',
-      render: (_, record) => (
-        <div className="flex items-center">
-          <div
-            className="h-9 w-9 rounded-full bg-indigo-100 flex items-center
-           justify-center text-indigo-700 font-bold text-xs mr-3"
-          >
-            {record.name.substring(0, 1)}
-          </div>
-          <div>
-            <div className="text-sm font-medium text-gray-900">{record.name}</div>
-            <div className="text-xs text-gray-500">
-              {record.id} • {record.classId}
-            </div>
-          </div>
-        </div>
-      ),
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
+      width: 100,
+      render: (text) => <span className="font-medium text-gray-900">{text}</span>,
     },
     {
-      title: '考试信息',
-      key: 'examInfo',
-      render: (_, record) => (
-        <>
-          <div className="text-sm text-gray-900 font-medium">{record.examLevel}</div>
-          <div className="text-xs text-gray-500">{record.examDate}</div>
-        </>
-      ),
+      title: '证件号码',
+      dataIndex: 'idCard',
+      key: 'idCard',
+      width: 160,
+      render: (text) =>
+        text ? <span className="text-gray-500 font-mono text-xs">{text}</span> : '-',
     },
     {
-      title: '成绩详情',
-      key: 'scoreDetails',
-      render: (_, record) => (
-        <>
-          <div className="text-sm font-bold text-gray-900">{record.totalScore}</div>
-          <div className="text-xs text-gray-500 flex gap-2">
-            <span title="听力">听: {record.listeningScore}</span>
-            <span title="阅读">读: {record.readingScore}</span>
-            <span title="写作与翻译">写译: {record.writingTranslationScore}</span>
-          </div>
-        </>
-      ),
+      title: '年级',
+      dataIndex: 'grade',
+      key: 'grade',
+      width: 80,
+      render: (text) => text || '-',
+    },
+    {
+      title: '专业',
+      dataIndex: 'major',
+      key: 'major',
+      width: 120,
+      render: (text) => text || '-',
+    },
+    {
+      title: '班级',
+      key: 'classInfo',
+      width: 120,
+      render: (_, record) => record.teachingClass || record.classId || '-',
+    },
+    {
+      title: '学员大队',
+      dataIndex: 'brigade',
+      key: 'brigade',
+      width: 120,
+      render: (text) => text || '-',
+    },
+    {
+      title: '学员队',
+      dataIndex: 'squadron',
+      key: 'squadron',
+      width: 100,
+      render: (text) => text || '-',
+    },
+    {
+      title: '总分',
+      dataIndex: 'totalScore',
+      key: 'totalScore',
+      width: 80,
+      align: 'right',
+      render: (val) => <span className="font-bold text-gray-900">{val}</span>,
+    },
+    {
+      title: '级别',
+      dataIndex: 'examLevel',
+      key: 'examLevel',
+      width: 80,
     },
     {
       title: '状态',
       key: 'status',
+      width: 80,
       render: (_, record) => (
         <Tag color={record.passed ? 'success' : 'error'}>{record.passed ? '通过' : '未通过'}</Tag>
       ),
@@ -72,17 +99,24 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
     {
       title: '操作',
       key: 'action',
+      width: 120,
+      fixed: 'right',
       render: (_, record) => (
-        <Popconfirm
-          title="确定要删除这条成绩记录吗？"
-          onConfirm={() => onDelete?.(record.recordId)}
-          okText="确定"
-          cancelText="取消"
-        >
-          <Button type="link" danger size="small">
-            删除
+        <div className="flex gap-2">
+          <Button type="link" size="small" onClick={() => onEdit?.(record)}>
+            编辑
           </Button>
-        </Popconfirm>
+          <Popconfirm
+            title="确定要删除这条成绩记录吗？"
+            onConfirm={() => onDelete?.(record.recordId)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button type="link" danger size="small">
+              删除
+            </Button>
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -117,6 +151,7 @@ const ScoreTable: React.FC<ScoreTableProps> = ({ dataSource, loading, pagination
           },
         }
       }
+      scroll={{ x: 1600 }}
     />
   );
 };
