@@ -16,6 +16,16 @@ export default {
       component: './Administrative/CET',
       exact: true,
     },
+    /**
+     * CET 成绩管理（班级维度统计 + 学生历史成绩明细）
+     * 注意：这是一个独立页面，不依赖具体“考次”选择（先用 mock 数据，后续再接后端接口）
+     */
+    {
+      path: '/cet/score-dashboard',
+      component: './Administrative/CET/ScoreDashboard',
+      name: 'scoreDashboard',
+      icon: 'barChart',
+    },
     {
       path: '/cet/scores',
       component: './Administrative/CET/ScoreManagement',

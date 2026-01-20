@@ -9,5 +9,6 @@
 
 export default {
   'menu.cet': 'CET Exam Management',
+  'menu.cet.scoreDashboard': 'CET Score Dashboard',
   'menu.ncre': 'NCRE Management',
 };
