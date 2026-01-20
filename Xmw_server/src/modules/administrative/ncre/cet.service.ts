@@ -18,6 +18,7 @@ import {
   ListRegistrationDto,
   ListScoreDto,
   SaveCetDto,
+  SaveRegistrationDto,
   SaveScoreDto,
   ScoreAnalysisDto,
 } from './dto';
@@ -231,6 +232,22 @@ export class CetService {
     }));
 
     return responseMessage({ list: fixed, total });
+  }
+
+  /**
+   * @description: 保存报名信息
+   */
+  async saveRegistration(
+    regInfo: SaveRegistrationDto,
+  ): Promise<Response<XmwNcreRegistration>> {
+    const { id, ...data } = regInfo;
+    let result;
+    if (id) {
+      result = await this.registrationModel.update(data, { where: { id } });
+    } else {
+      result = await this.registrationModel.create(data);
+    }
+    return responseMessage(result);
   }
 
   /**

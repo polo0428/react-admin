@@ -112,11 +112,30 @@ export interface RegistrationListParams {
   pageSize?: number;
 }
 
+export interface SaveRegistrationParams {
+  id?: string;
+  batch_id: string;
+  name: string;
+  student_no: string;
+  department?: string;
+  major?: string;
+  class_name?: string;
+  exam_level?: string;
+  ticket_number?: string;
+  campus?: string;
+}
+
 /**
  * @description: 获取报名列表
  */
 export const getRegistrationList = (options?: RegistrationListParams) =>
   httpRequest.get<PageResponse<any>>(`${baseURL}/registration`, options);
+
+/**
+ * @description: 保存报名信息
+ */
+export const saveRegistration = (options: SaveRegistrationParams) =>
+  httpRequest.post<any>(`${baseURL}/registration/save`, options);
 
 /**
  * @description: 删除报名

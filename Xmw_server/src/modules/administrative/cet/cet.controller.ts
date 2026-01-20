@@ -24,6 +24,7 @@ import {
   ListRegistrationDto,
   ListScoreDto,
   SaveCetDto,
+  SaveRegistrationDto,
   SaveScoreDto,
   ScoreAnalysisDto,
 } from './dto';
@@ -73,6 +74,14 @@ export class CetController {
     @Query() regInfo: ListRegistrationDto,
   ): Promise<Response<PageResponse<XmwCetRegistration>>> {
     return this.cetService.getRegistrationList(regInfo);
+  }
+
+  @Post('registration/save')
+  @ApiOperation({ summary: '保存报名信息' })
+  saveRegistration(
+    @Body() regInfo: SaveRegistrationDto,
+  ): Promise<Response<XmwCetRegistration>> {
+    return this.cetService.saveRegistration(regInfo);
   }
 
   @Delete('registration/:id')

@@ -1,4 +1,4 @@
-import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
+import { LeftOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useLocation, useRequest } from '@umijs/max';
 import {
   Button,
@@ -14,10 +14,17 @@ import {
 } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { deleteRegistration, getRegistrationList } from '@/services/administrative/ncre';
+import {
+  deleteRegistration,
+  getRegistrationList,
+  saveRegistration,
+  SaveRegistrationParams,
+} from '@/services/administrative/ncre';
 import { navigateWithMenuParam } from '@/utils';
+import { REQUEST_CODE } from '@/utils/enums';
 
 import { ExamBatch } from '../components/CreateExamModal';
+import RegistrationModal from './components/RegistrationModal';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -58,7 +65,15 @@ export default function RegistrationManagement() {
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
 
-  const { loading, refresh, run } = useRequest(
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<SaveRegistrationParams | null>(null);
+
+  const {
+    loading,
+    refresh,
+    run: fetchList,
+  } = useRequest(
     async (params) => {
       if (!batch?.id) return { list: [], total: 0 };
       const res = await getRegistrationList({
@@ -84,12 +99,47 @@ export default function RegistrationManagement() {
 
   React.useEffect(() => {
     setCurrent(1);
-    run({ current: 1, pageSize });
+    fetchList({ current: 1, pageSize });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, levelFilter]);
 
   const handleBack = () => {
     navigateWithMenuParam('/ncre');
+  };
+
+  const handleCreate = () => {
+    setEditingRecord(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (record: RegistrationRecord) => {
+    setEditingRecord({
+      id: record.recordId,
+      batch_id: batch?.id || '',
+      name: record.name,
+      student_no: record.studentNo,
+      department: record.department,
+      major: record.major,
+      class_name: record.className,
+      exam_level: record.examLevel,
+      ticket_number: record.ticketNumber,
+      campus: record.campus,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (values: SaveRegistrationParams) => {
+    if (!batch?.id) return;
+    try {
+      const res = await saveRegistration({ ...values, batch_id: batch.id });
+      if (res.code === REQUEST_CODE.SUCCESS) {
+        message.success(editingRecord ? '更新成功' : '创建成功');
+        setIsModalOpen(false);
+        refresh();
+      }
+    } catch (error) {
+      console.error('Save failed:', error);
+    }
   };
 
   const handleDelete = useCallback(
@@ -122,16 +172,21 @@ export default function RegistrationManagement() {
         title: '操作',
         key: 'action',
         render: (_: any, record: RegistrationRecord) => (
-          <Popconfirm
-            title="确定要删除这条成绩记录吗？"
-            onConfirm={() => handleDelete?.(record.recordId)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button type="link" danger size="small">
-              删除
+          <Space>
+            <Button type="link" size="small" onClick={() => handleEdit(record)}>
+              编辑
             </Button>
-          </Popconfirm>
+            <Popconfirm
+              title="确定要删除这条记录吗？"
+              onConfirm={() => handleDelete?.(record.recordId)}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button type="link" danger size="small">
+                删除
+              </Button>
+            </Popconfirm>
+          </Space>
         ),
       },
     ],
@@ -159,6 +214,9 @@ export default function RegistrationManagement() {
               {batch && <Tag color="geekblue">{batch.name}</Tag>}
             </div>
           </div>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            新增报名
+          </Button>
         </div>
       </div>
 
@@ -181,8 +239,10 @@ export default function RegistrationManagement() {
               style={{ width: 120 }}
             >
               <Option value="all">所有级别</Option>
-              <Option value="CET-4">CET-4</Option>
-              <Option value="CET-6">CET-6</Option>
+              <Option value="一级">一级</Option>
+              <Option value="二级">二级</Option>
+              <Option value="三级">三级</Option>
+              <Option value="四级">四级</Option>
             </Select>
           </Space>
         </div>
@@ -200,12 +260,19 @@ export default function RegistrationManagement() {
             onChange: (page, size) => {
               setCurrent(page);
               setPageSize(size);
-              run({ current: page, pageSize: size });
+              fetchList({ current: page, pageSize: size });
             },
             showTotal: (total, range) => `显示第 ${range[0]} 到 ${range[1]} 条，共 ${total} 条结果`,
           }}
         />
       </Card>
+
+      <RegistrationModal
+        open={isModalOpen}
+        initialValues={editingRecord}
+        onCancel={() => setIsModalOpen(false)}
+        onSave={handleSave}
+      />
     </div>
   );
 }
