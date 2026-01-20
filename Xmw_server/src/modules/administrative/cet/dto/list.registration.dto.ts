@@ -4,7 +4,10 @@ export class ListRegistrationDto {
   @ApiProperty({ description: '考次ID', required: false })
   batch_id?: string;
 
-  @ApiProperty({ description: '学生姓名或学号', required: false })
+  @ApiProperty({
+    description: '关键词：姓名/证件号码/学号/准考证号/教学班（兼容新旧模板）',
+    required: false,
+  })
   keyword?: string;
 
   @ApiProperty({ description: '报考级别', required: false })

@@ -198,7 +198,11 @@ export class CetService {
       andWhere.push({
         [Op.or]: [
           { name: { [Op.substring]: keyword } },
+          // 兼容新旧模板：学号/证件号码/准考证号 任选其一可搜索到
           { student_no: { [Op.substring]: keyword } },
+          { id_card: { [Op.substring]: keyword } },
+          { ticket_number: { [Op.substring]: keyword } },
+          { teaching_class: { [Op.substring]: keyword } },
         ],
       });
     }
@@ -226,6 +230,12 @@ export class CetService {
       class_name: fixStr(r.class_name),
       exam_level: fixStr(r.exam_level),
       campus: fixStr(r.campus),
+      id_card: fixStr(r.id_card),
+      grade: fixStr(r.grade),
+      teaching_class: fixStr(r.teaching_class),
+      brigade: fixStr(r.brigade),
+      squadron: fixStr(r.squadron),
+      student_type: fixStr(r.student_type),
     }));
 
     return responseMessage({ list: fixed, total });
@@ -294,9 +304,19 @@ export class CetService {
         '姓名',
         '学号',
         '学生学号',
+        '证件号码',
+        '证件号',
+        '身份证号',
+        '身份证号码',
+        '证件编号',
+        '年级',
         '学院',
         '专业',
         '班级',
+        '教学班',
+        '学员大队',
+        '学员队',
+        '学员类型',
         '报考级别',
         '报考等级',
         '考试等级',
@@ -364,9 +384,23 @@ export class CetService {
           return {
             batch_id,
             name: toStr(getByAliases(row, ['姓名', 'name'])),
+            // 兼容旧模板
             student_no: toStr(
               getByAliases(row, ['学号', '学生学号', 'student_no']),
             ),
+            // 新模板：证件号码
+            id_card: toStr(
+              getByAliases(row, [
+                '证件号码',
+                '证件号',
+                '身份证号',
+                '身份证号码',
+                '证件编号',
+                'id_card',
+                'idcard',
+              ]),
+            ),
+            grade: toStr(getByAliases(row, ['年级', 'grade'])),
             department: toStr(getByAliases(row, ['学院', 'department'])),
             major: toStr(getByAliases(row, ['专业', 'major'])),
             class_name: toStr(
@@ -383,6 +417,22 @@ export class CetService {
                 '所在班级',
                 'class_name',
               ]),
+            ),
+            teaching_class: toStr(
+              getByAliases(row, [
+                '教学班',
+                '教学班名称',
+                '教学班级',
+                '所在教学班',
+                'teaching_class',
+              ]),
+            ),
+            brigade: toStr(getByAliases(row, ['学员大队', '大队', 'brigade'])),
+            squadron: toStr(
+              getByAliases(row, ['学员队', '队', '中队', 'squadron']),
+            ),
+            student_type: toStr(
+              getByAliases(row, ['学员类型', '类型', 'student_type']),
             ),
             exam_level: toStr(
               getByAliases(row, [
@@ -403,7 +453,8 @@ export class CetService {
             campus: toStr(getByAliases(row, ['校区', 'campus'])),
           };
         })
-        .filter((r) => r.name && r.student_no);
+        // 新模板至少需要：姓名 + 证件号码（或兼容旧模板的 学号）
+        .filter((r) => r.name && (r.id_card || r.student_no));
 
       if (parsed.length === 0) {
         return responseMessage(
@@ -421,11 +472,15 @@ export class CetService {
       const studentNos = Array.from(
         new Set(parsed.map((r) => r.student_no).filter(Boolean)),
       );
+      const idCards = Array.from(
+        new Set(parsed.map((r) => r.id_card).filter(Boolean)),
+      );
 
       const existing = await this.registrationModel.findAll({
         where: {
           batch_id,
           [Op.or]: [
+            idCards.length ? { id_card: { [Op.in]: idCards } } : undefined,
             ticketNumbers.length
               ? { ticket_number: { [Op.in]: ticketNumbers } }
               : undefined,
@@ -437,6 +492,9 @@ export class CetService {
         raw: true,
       });
 
+      const byIdCard = new Map(
+        existing.filter((e) => e.id_card).map((e) => [e.id_card, e]),
+      );
       const byTicket = new Map(
         existing
           .filter((e) => e.ticket_number)
@@ -452,6 +510,7 @@ export class CetService {
 
       for (const r of parsed) {
         const match =
+          (r.id_card && byIdCard.get(r.id_card)) ||
           (r.ticket_number && byTicket.get(r.ticket_number)) ||
           (r.student_no && byStudentNo.get(r.student_no));
 
@@ -459,9 +518,15 @@ export class CetService {
           const data: any = {};
           if (r.name) data.name = r.name;
           if (r.student_no) data.student_no = r.student_no;
+          if (r.id_card) data.id_card = r.id_card;
+          if (r.grade) data.grade = r.grade;
           if (r.department) data.department = r.department;
           if (r.major) data.major = r.major;
           if (r.class_name) data.class_name = r.class_name;
+          if (r.teaching_class) data.teaching_class = r.teaching_class;
+          if (r.brigade) data.brigade = r.brigade;
+          if (r.squadron) data.squadron = r.squadron;
+          if (r.student_type) data.student_type = r.student_type;
           if (r.exam_level) data.exam_level = r.exam_level;
           if (r.ticket_number) data.ticket_number = r.ticket_number;
           if (r.campus) data.campus = r.campus;
@@ -472,8 +537,16 @@ export class CetService {
           continue;
         }
 
-        if (r.name && r.student_no) {
-          toCreate.push(r);
+        // 新增时：姓名 + (证件号码 或 学号) 必须
+        if (r.name && (r.id_card || r.student_no)) {
+          // 为了兼容旧页面字段：如果没填学院/班级，则用新字段回填一份
+          const fallback: any = { ...r };
+          if (!fallback.department && fallback.brigade) {
+            fallback.department = fallback.brigade;
+          }
+          if (!fallback.class_name && fallback.teaching_class)
+            fallback.class_name = fallback.teaching_class;
+          toCreate.push(fallback);
         } else {
           skipped += 1;
         }
@@ -508,7 +581,11 @@ export class CetService {
       });
     } catch (error) {
       console.error('Import Error:', error);
-      return responseMessage(null, '导入失败，请检查文件格式', -1);
+      return responseMessage(
+        null,
+        `导入失败: ${error.message || '请检查文件格式'}`,
+        -1,
+      );
     }
   }
 

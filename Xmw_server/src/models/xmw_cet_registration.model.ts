@@ -23,8 +23,15 @@ export class XmwCetRegistration extends Model<XmwCetRegistration> {
   @Column({ comment: '学生姓名', allowNull: false })
   name: string;
 
-  @Column({ comment: '学号', allowNull: false })
+  // 兼容旧模板：学号（新模板可能不再提供，故改为可空）
+  @Column({ comment: '学号', allowNull: true })
   student_no: string;
+
+  @Column({ comment: '证件号码' })
+  id_card: string;
+
+  @Column({ comment: '年级' })
+  grade: string;
 
   @Column({ comment: '学院' })
   department: string;
@@ -34,6 +41,18 @@ export class XmwCetRegistration extends Model<XmwCetRegistration> {
 
   @Column({ comment: '班级' })
   class_name: string;
+
+  @Column({ comment: '教学班' })
+  teaching_class: string;
+
+  @Column({ comment: '学员大队' })
+  brigade: string;
+
+  @Column({ comment: '学员队' })
+  squadron: string;
+
+  @Column({ comment: '学员类型' })
+  student_type: string;
 
   @ForeignKey(() => XmwCet)
   @Column({ type: DataType.UUID, comment: '考次ID', allowNull: false })

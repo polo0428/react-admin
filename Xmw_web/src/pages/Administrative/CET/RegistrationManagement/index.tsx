@@ -25,26 +25,49 @@ const { Option } = Select;
 type RegistrationRecord = {
   recordId: string;
   name: string;
-  studentNo: string;
-  department: string;
+  idCard: string;
+  studentNo?: string;
+  grade: string;
   major: string;
-  className: string;
+  teachingClass: string;
+  brigade: string;
+  squadron: string;
+  studentType: string;
   examLevel: string;
-  ticketNumber: string;
-  campus: string;
+  // 兼容旧数据字段（可能为空）
+  department?: string;
+  className?: string;
+  ticketNumber?: string;
+  campus?: string;
 };
 
-const mapRow = (item: any): RegistrationRecord => ({
-  recordId: item.id,
-  name: item.name,
-  studentNo: item.student_no || item.studentNo,
-  department: item.department || '',
-  major: item.major || '',
-  className: item.class_name || item.className || '',
-  examLevel: item.exam_level || item.examLevel || '',
-  ticketNumber: item.ticket_number || item.ticketNumber || '',
-  campus: item.campus || '',
-});
+const pickStr = (obj: any, keys: string[], fallback = '') => {
+  for (const k of keys) {
+    const v = obj?.[k];
+    if (v !== undefined && v !== null && String(v).trim() !== '') return String(v);
+  }
+  return fallback;
+};
+
+const mapRow = (item: any): RegistrationRecord => {
+  return {
+    recordId: String(item?.id ?? ''),
+    name: pickStr(item, ['name']),
+    idCard: pickStr(item, ['id_card', 'idCard']),
+    studentNo: pickStr(item, ['student_no', 'studentNo']) || undefined,
+    grade: pickStr(item, ['grade']),
+    major: pickStr(item, ['major']),
+    teachingClass: pickStr(item, ['teaching_class', 'teachingClass']),
+    brigade: pickStr(item, ['brigade']),
+    squadron: pickStr(item, ['squadron']),
+    studentType: pickStr(item, ['student_type', 'studentType']),
+    examLevel: pickStr(item, ['exam_level', 'examLevel']),
+    department: pickStr(item, ['department']) || undefined,
+    className: pickStr(item, ['class_name', 'className']) || undefined,
+    ticketNumber: pickStr(item, ['ticket_number', 'ticketNumber']) || undefined,
+    campus: pickStr(item, ['campus']) || undefined,
+  };
+};
 
 export default function RegistrationManagement() {
   const location = useLocation();
@@ -108,10 +131,13 @@ export default function RegistrationManagement() {
   const columns = useMemo(
     () => [
       { title: '姓名', dataIndex: 'name', key: 'name' },
-      { title: '学号', dataIndex: 'studentNo', key: 'studentNo' },
-      { title: '学院', dataIndex: 'department', key: 'department' },
+      { title: '证件号码', dataIndex: 'idCard', key: 'idCard' },
       { title: '专业', dataIndex: 'major', key: 'major' },
-      { title: '班级', dataIndex: 'className', key: 'className' },
+      { title: '年级', dataIndex: 'grade', key: 'grade' },
+      { title: '教学班', dataIndex: 'teachingClass', key: 'teachingClass' },
+      { title: '学员大队', dataIndex: 'brigade', key: 'brigade' },
+      { title: '学员队', dataIndex: 'squadron', key: 'squadron' },
+      { title: '学员类型', dataIndex: 'studentType', key: 'studentType' },
       {
         title: '报考级别',
         dataIndex: 'examLevel',
@@ -166,7 +192,7 @@ export default function RegistrationManagement() {
         <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row gap-4 justify-between bg-gray-50/50">
           <Input
             prefix={<SearchOutlined className="text-gray-400" />}
-            placeholder="搜索学生姓名或学号..."
+            placeholder="搜索姓名/证件号码/学号/准考证号..."
             style={{ maxWidth: 300 }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
