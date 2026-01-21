@@ -1,12 +1,11 @@
 import { DownloadOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, Card, message, Table, Tooltip, Typography } from 'antd';
+import { Button, Card, Table, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React from 'react';
 
 import { downloadCSV } from '../utils/csv';
 import { getMaxScore } from '../utils/score';
 import { PASS_SCORE } from './constants';
-import ExportDropdown from './ExportDropdown';
 import type { ClassScoreGroup } from './types';
 
 const { Text } = Typography;
@@ -59,39 +58,6 @@ export default function ClassListView({
       passRate:
         participants.length > 0 ? Math.round((passed.length / participants.length) * 100) : 0,
     };
-  };
-
-  // 导出全部班级的统计
-  const handleExportAllStats = () => {
-    const headers = [
-      `${groupLabelText},学期,年级,培养层次,总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数`,
-    ];
-    const rows = classes.map((cls) => {
-      const total = cls.students.length;
-      const cet4 = calcLevelStats(cls.students, 'cet4Scores');
-      const cet6 = calcLevelStats(cls.students, 'cet6Scores');
-      return [
-        cls.name,
-        formatSemester(cls),
-        cls.grade || '-',
-        formatCultivationLevel(cls.cultivationLevel),
-        total,
-        cet4.participantsTotal,
-        `${cet4.passRate}%`,
-        cet4.passedTotal,
-        cet4.failedTotal,
-        cet6.participantsTotal,
-        `${cet6.passRate}%`,
-        cet6.passedTotal,
-        cet6.failedTotal,
-      ].join(',');
-    });
-    downloadCSV([headers, ...rows].join('\n'), `全校${groupLabelText}成绩统计.csv`);
-  };
-
-  // 导出全部班级的明细（模拟）
-  const handleExportAllDetails = () => {
-    message.info('此处将导出所有班级所有学生的详细成绩 CSV');
   };
 
   // 单个班级导出逻辑
@@ -250,12 +216,6 @@ export default function ClassListView({
             各{groupLabelText} CET-4 / CET-6 综合数据报表
           </Text>
         </div>
-
-        {/* 顶部导出按钮 */}
-        <ExportDropdown
-          onExportDetailed={handleExportAllDetails}
-          onExportStats={handleExportAllStats}
-        />
       </div>
 
       <Card bodyStyle={{ padding: 0 }} className="overflow-hidden border-gray-200">

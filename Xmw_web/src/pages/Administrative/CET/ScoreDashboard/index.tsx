@@ -1,12 +1,16 @@
 import { useRequest } from '@umijs/max';
-import { Empty, Select, Spin, Tabs } from 'antd';
+import { Empty, message, Select, Spin, Tabs } from 'antd';
 import React, { useMemo, useState } from 'react';
 
 import { getCetList, getScoreGroups } from '@/services/administrative/cet';
 
 import ClassListView from './components/ClassListView';
+import { PASS_SCORE } from './components/constants';
+import ExportDropdown from './components/ExportDropdown';
 import StudentListView from './components/StudentListView';
 import type { ClassScoreGroup } from './components/types';
+import { downloadCSV } from './utils/csv';
+import { getMaxScore } from './utils/score';
 
 /**
  * CET 成绩综合看板
@@ -199,6 +203,54 @@ export default function ScoreDashboard() {
     setView('classes');
   };
 
+  const calcLevelStats = (
+    students: ClassScoreGroup['students'],
+    level: 'cet4Scores' | 'cet6Scores',
+  ) => {
+    const participants = students.filter((s) => getMaxScore(s[level]) > 0);
+    const passed = participants.filter((s) => getMaxScore(s[level]) >= PASS_SCORE);
+    return {
+      participantsTotal: participants.length,
+      passedTotal: passed.length,
+      failedTotal: participants.length - passed.length,
+      passRate:
+        participants.length > 0 ? Math.round((passed.length / participants.length) * 100) : 0,
+    };
+  };
+
+  // 导出全部班级的统计
+  const handleExportAllStats = () => {
+    const headers = [
+      `${groupLabel},学期,年级,培养层次,总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数`,
+    ];
+    const rows = filteredClasses.map((cls) => {
+      const total = cls.students.length;
+      const cet4 = calcLevelStats(cls.students, 'cet4Scores');
+      const cet6 = calcLevelStats(cls.students, 'cet6Scores');
+      return [
+        cls.name,
+        formatSemesterLabel(cls),
+        cls.grade || '-',
+        formatCultivationLabel(cls.cultivationLevel),
+        total,
+        cet4.participantsTotal,
+        `${cet4.passRate}%`,
+        cet4.passedTotal,
+        cet4.failedTotal,
+        cet6.participantsTotal,
+        `${cet6.passRate}%`,
+        cet6.passedTotal,
+        cet6.failedTotal,
+      ].join(',');
+    });
+    downloadCSV([headers, ...rows].join('\n'), `全校${groupLabel}成绩统计.csv`);
+  };
+
+  // 导出全部班级的明细（模拟）
+  const handleExportAllDetails = () => {
+    message.info('此处将导出所有班级所有学生的详细成绩 CSV');
+  };
+
   return (
     <div className="space-y-6 p-6">
       <div className="mx-auto">
@@ -250,6 +302,10 @@ export default function ScoreDashboard() {
                 options={cultivationOptions}
                 disabled={cultivationOptions.length === 0}
                 style={{ width: 140 }}
+              />
+              <ExportDropdown
+                onExportDetailed={handleExportAllDetails}
+                onExportStats={handleExportAllStats}
               />
             </div>
           </>
