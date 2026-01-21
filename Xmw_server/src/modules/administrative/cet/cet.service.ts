@@ -291,12 +291,13 @@ export class CetService {
 
     const partsSum = l + r + w;
     const totalFromInput = Number(total_score_input ?? NaN);
-    const total_score =
-      partsSum > 0
+    // 新模板支持“直接输入总分”，因此只要传了 total_score，就优先使用它；
+    // 若未传 total_score，则在分项存在时用分项求和兜底
+    const total_score = Number.isFinite(totalFromInput)
+      ? totalFromInput
+      : partsSum > 0
         ? partsSum
-        : Number.isFinite(totalFromInput)
-          ? totalFromInput
-          : 0;
+        : 0;
     const is_passed = total_score >= 425;
     const data = {
       ...rest,
@@ -1234,5 +1235,89 @@ export class CetService {
       distributionData: distData,
       cet6DistributionData: cet6DistData,
     });
+  }
+
+  /**
+   * @description: 获取所有班级成绩聚合数据
+   * @author: 黄鹏
+   */
+  async getAllClassScores(): Promise<Response<any>> {
+    // 1. 获取所有考次，按时间排序，用于确定成绩数组的索引顺序
+    const batches = await this.cetModel.findAll({
+      order: [['exam_date', 'ASC']],
+      raw: true,
+    });
+
+    const batchIdToIndex = new Map<string, number>();
+    batches.forEach((b, index) => {
+      batchIdToIndex.set(b.id, index);
+    });
+
+    const totalBatches = batches.length;
+
+    // 2. 获取所有成绩数据
+    const allScores = await this.scoreModel.findAll({
+      raw: true,
+    });
+
+    // 3. 聚合数据: Class -> Student -> Scores
+    const classMap = new Map<string, Map<string, any>>();
+
+    const fixStr = (v: any) =>
+      v === undefined || v === null ? v : fixMojibake(String(v));
+
+    for (const score of allScores) {
+      // 新模板/导入可能只填“教学班”，因此班级字段需兼容：class_name / teaching_class
+      const className =
+        fixStr(score.class_name) ||
+        fixStr(score.teaching_class) ||
+        '未分类班级';
+      // 优先使用学号作为唯一标识，其次证件号
+      const studentId =
+        fixStr(score.student_no) || fixStr(score.id_card) || fixStr(score.name);
+      const studentName = fixStr(score.name);
+
+      if (!classMap.has(className)) {
+        classMap.set(className, new Map());
+      }
+      const studentMap = classMap.get(className);
+
+      if (!studentMap.has(studentId)) {
+        studentMap.set(studentId, {
+          id: studentId,
+          name: studentName,
+          classId: className,
+          // 初始化数组，长度为考次总数 (或者固定8，视前端需求，这里动态适配)
+          // 前端类型定义是 ScoreValue[]，这里为了兼容前端可能的固定索引访问，
+          // 我们填充到当前考次数量，前端若只取前8个会自动截断/不足补0
+          cet4Scores: new Array(totalBatches).fill(0),
+          cet6Scores: new Array(totalBatches).fill(0),
+        });
+      }
+
+      const student = studentMap.get(studentId);
+      const batchIndex = batchIdToIndex.get(score.batch_id);
+
+      if (batchIndex !== undefined) {
+        const examLevel = fixStr(score.exam_level);
+        if (examLevel === 'CET4' || examLevel === 'CET-4') {
+          student.cet4Scores[batchIndex] = Number(score.total_score) || 0;
+        } else if (examLevel === 'CET6' || examLevel === 'CET-6') {
+          student.cet6Scores[batchIndex] = Number(score.total_score) || 0;
+        }
+      }
+    }
+
+    // 4. 转换为数组格式
+    const result = [];
+    for (const [className, studentMap] of classMap) {
+      result.push({
+        id: className, // 班级ID暂用名称代替
+        name: className,
+        students: Array.from(studentMap.values()),
+      });
+    }
+
+    return responseMessage(result);
   }
 }

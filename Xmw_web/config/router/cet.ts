@@ -13,8 +13,13 @@ export default {
   routes: [
     {
       path: '/cet',
-      component: './Administrative/CET',
+      redirect: '/cet/list',
       exact: true,
+    },
+    {
+      path: '/cet/list',
+      component: './Administrative/CET',
+      name: 'examList',
     },
     /**
      * CET 成绩管理（班级维度统计 + 学生历史成绩明细）

@@ -9,6 +9,7 @@
 
 export default {
   'menu.cet': 'CET試験管理',
+  'menu.cet.examList': '試験リスト',
   'menu.cet.scoreDashboard': 'CET成績ダッシュボード',
   'menu.ncre': 'NCRE管理',
 };

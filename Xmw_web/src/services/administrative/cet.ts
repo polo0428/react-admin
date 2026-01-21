@@ -170,3 +170,9 @@ export const getScoreAnalysis = (options: { batch_id: string }) =>
  */
 export const getAnalysisDashboard = (options: { batch_id: string }) =>
   httpRequest.get<any>(`${baseURL}/analysis/dashboard`, options);
+
+/**
+ * @description: 获取所有班级成绩聚合数据
+ */
+export const getAllClassScores = () =>
+  httpRequest.get<any[]>(`${baseURL}/score/all-classes`);

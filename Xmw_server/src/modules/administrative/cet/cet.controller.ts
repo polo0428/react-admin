@@ -112,6 +112,12 @@ export class CetController {
     return this.cetService.getAnalysisDashboard(analysisInfo);
   }
 
+  @Get('score/all-classes')
+  @ApiOperation({ summary: '获取所有班级成绩聚合数据' })
+  getAllClassScores(): Promise<Response<any>> {
+    return this.cetService.getAllClassScores();
+  }
+
   @Post('import-registration')
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: '导入报名数据' })

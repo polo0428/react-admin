@@ -1,17 +1,19 @@
-import React from 'react';
 import { BarChartOutlined, DownloadOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, Card, Table, Tooltip, Typography, message } from 'antd';
+import { Button, Card, message, Table, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import type { ClassScoreGroup } from './types';
-import { PASS_SCORE } from './constants';
-import { getMaxScore } from '../utils/score';
+import React from 'react';
+
 import { downloadCSV } from '../utils/csv';
+import { getMaxScore } from '../utils/score';
+import { PASS_SCORE } from './constants';
 import ExportDropdown from './ExportDropdown';
+import type { ClassScoreGroup } from './types';
 
 const { Title, Text } = Typography;
 
 interface ClassListViewProps {
   classes: ClassScoreGroup[];
+  loading?: boolean;
   onSelectClass: (cls: ClassScoreGroup) => void;
 }
 
@@ -19,25 +21,42 @@ interface ClassListViewProps {
  * 班级列表视图 (双层表头表格形式)
  * 展示各班级 CET-4 / CET-6 通过率及汇总数据
  */
-export default function ClassListView({ classes, onSelectClass }: ClassListViewProps) {
+export default function ClassListView({ classes, loading, onSelectClass }: ClassListViewProps) {
+  const calcLevelStats = (
+    students: ClassScoreGroup['students'],
+    level: 'cet4Scores' | 'cet6Scores',
+  ) => {
+    const participants = students.filter((s) => getMaxScore(s[level]) > 0);
+    const passed = participants.filter((s) => getMaxScore(s[level]) >= PASS_SCORE);
+    return {
+      participantsTotal: participants.length,
+      passedTotal: passed.length,
+      failedTotal: participants.length - passed.length,
+      passRate:
+        participants.length > 0 ? Math.round((passed.length / participants.length) * 100) : 0,
+    };
+  };
+
   // 导出全部班级的统计
   const handleExportAllStats = () => {
     const headers = [
-      '班级名称,总人数,CET4通过率,CET4通过人数,CET4未过人数,CET6通过率,CET6通过人数,CET6未过人数',
+      '班级名称,总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数',
     ];
     const rows = classes.map((cls) => {
       const total = cls.students.length;
-      const pass4 = cls.students.filter((s) => getMaxScore(s.cet4Scores) >= PASS_SCORE).length;
-      const pass6 = cls.students.filter((s) => getMaxScore(s.cet6Scores) >= PASS_SCORE).length;
+      const cet4 = calcLevelStats(cls.students, 'cet4Scores');
+      const cet6 = calcLevelStats(cls.students, 'cet6Scores');
       return [
         cls.name,
         total,
-        `${Math.round((pass4 / total) * 100)}%`,
-        pass4,
-        total - pass4,
-        `${Math.round((pass6 / total) * 100)}%`,
-        pass6,
-        total - pass6,
+        cet4.participantsTotal,
+        `${cet4.passRate}%`,
+        cet4.passedTotal,
+        cet4.failedTotal,
+        cet6.participantsTotal,
+        `${cet6.passRate}%`,
+        cet6.passedTotal,
+        cet6.failedTotal,
       ].join(',');
     });
     downloadCSV([headers, ...rows].join('\n'), '全校班级成绩统计.csv');
@@ -53,22 +72,17 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
     e.stopPropagation();
     const headers = ['姓名,学号,CET-4最高分,CET-6最高分'];
     const rows = cls.students.map((s) =>
-      [
-        s.name,
-        s.id,
-        getMaxScore(s.cet4Scores) || 0,
-        getMaxScore(s.cet6Scores) || 0,
-      ].join(','),
+      [s.name, s.id, getMaxScore(s.cet4Scores) || 0, getMaxScore(s.cet6Scores) || 0].join(','),
     );
     downloadCSV([headers, ...rows].join('\n'), `${cls.name}_简要成绩单.csv`);
   };
 
   const columns: ColumnsType<ClassScoreGroup> = [
     {
-      title: '班级名称',
+      title: '教学班',
       dataIndex: 'name',
       key: 'name',
-      fixed: 'left',
+      align: 'center',
       width: 200,
       render: (text) => <span className="font-medium text-blue-600">{text}</span>,
     },
@@ -89,10 +103,8 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           align: 'center',
           width: 100,
           render: (_, record) => {
-            const total = record.students.length;
-            const pass = record.students.filter((s) => getMaxScore(s.cet4Scores) >= PASS_SCORE).length;
-            const rate = total > 0 ? Math.round((pass / total) * 100) : 0;
-            return <span className="font-bold text-blue-600">{rate}%</span>;
+            const { passRate } = calcLevelStats(record.students, 'cet4Scores');
+            return <span className="font-bold text-blue-600">{passRate}%</span>;
           },
         },
         {
@@ -101,8 +113,8 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           align: 'center',
           width: 100,
           render: (_, record) => {
-            const pass = record.students.filter((s) => getMaxScore(s.cet4Scores) >= PASS_SCORE).length;
-            return <span className="text-green-600">{pass}</span>;
+            const { passedTotal } = calcLevelStats(record.students, 'cet4Scores');
+            return <span className="text-green-600">{passedTotal}</span>;
           },
         },
         {
@@ -111,9 +123,8 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           align: 'center',
           width: 100,
           render: (_, record) => {
-            const total = record.students.length;
-            const pass = record.students.filter((s) => getMaxScore(s.cet4Scores) >= PASS_SCORE).length;
-            return <span className="text-gray-400">{total - pass}</span>;
+            const { failedTotal } = calcLevelStats(record.students, 'cet4Scores');
+            return <span className="text-gray-400">{failedTotal}</span>;
           },
         },
       ],
@@ -128,10 +139,8 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           align: 'center',
           width: 100,
           render: (_, record) => {
-            const total = record.students.length;
-            const pass = record.students.filter((s) => getMaxScore(s.cet6Scores) >= PASS_SCORE).length;
-            const rate = total > 0 ? Math.round((pass / total) * 100) : 0;
-            return <span className="font-bold text-purple-600">{rate}%</span>;
+            const { passRate } = calcLevelStats(record.students, 'cet6Scores');
+            return <span className="font-bold text-purple-600">{passRate}%</span>;
           },
         },
         {
@@ -140,8 +149,8 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           align: 'center',
           width: 100,
           render: (_, record) => {
-            const pass = record.students.filter((s) => getMaxScore(s.cet6Scores) >= PASS_SCORE).length;
-            return <span className="text-green-600">{pass}</span>;
+            const { passedTotal } = calcLevelStats(record.students, 'cet6Scores');
+            return <span className="text-green-600">{passedTotal}</span>;
           },
         },
         {
@@ -150,9 +159,8 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           align: 'center',
           width: 100,
           render: (_, record) => {
-            const total = record.students.length;
-            const pass = record.students.filter((s) => getMaxScore(s.cet6Scores) >= PASS_SCORE).length;
-            return <span className="text-gray-400">{total - pass}</span>;
+            const { failedTotal } = calcLevelStats(record.students, 'cet6Scores');
+            return <span className="text-gray-400">{failedTotal}</span>;
           },
         },
       ],
@@ -208,6 +216,7 @@ export default function ClassListView({ classes, onSelectClass }: ClassListViewP
           dataSource={classes}
           columns={columns}
           rowKey="id"
+          loading={loading}
           pagination={false}
           onRow={(record) => ({
             onClick: () => onSelectClass(record),
