@@ -1242,6 +1242,19 @@ export class CetService {
    * @author: 黄鹏
    */
   async getAllClassScores(): Promise<Response<any>> {
+    // 兼容旧接口：默认按“教学班”维度聚合
+    return this.getScoreGroups('teaching_class');
+  }
+
+  /**
+   * @description: 按维度获取成绩聚合数据
+   * @param groupBy teaching_class | squadron | brigade | major | student_type
+   */
+  async getScoreGroups(
+    groupBy: string = 'teaching_class',
+  ): Promise<Response<any>> {
+    const groupByKey = (groupBy || 'teaching_class').toLowerCase();
+
     // 1. 获取所有考次，按时间排序，用于确定成绩数组的索引顺序
     const batches = await this.cetModel.findAll({
       order: [['exam_date', 'ASC']],
@@ -1261,32 +1274,48 @@ export class CetService {
     });
 
     // 3. 聚合数据: Class -> Student -> Scores
-    const classMap = new Map<string, Map<string, any>>();
+    const groupMap = new Map<string, Map<string, any>>();
 
     const fixStr = (v: any) =>
       v === undefined || v === null ? v : fixMojibake(String(v));
 
     for (const score of allScores) {
-      // 新模板/导入可能只填“教学班”，因此班级字段需兼容：class_name / teaching_class
-      const className =
-        fixStr(score.class_name) ||
-        fixStr(score.teaching_class) ||
-        '未分类班级';
+      const groupName = (() => {
+        switch (groupByKey) {
+          case 'squadron':
+            return fixStr(score.squadron) || '未填写学员队';
+          case 'brigade':
+            return fixStr(score.brigade) || '未填写学员大队';
+          case 'major':
+            return fixStr(score.major) || '未填写专业';
+          case 'student_type':
+            return fixStr(score.student_type) || '未填写学员类型';
+          case 'teaching_class':
+          default:
+            // 新模板/导入可能只填“教学班”，因此班级字段需兼容：class_name / teaching_class
+            return (
+              fixStr(score.class_name) ||
+              fixStr(score.teaching_class) ||
+              '未分类教学班'
+            );
+        }
+      })();
+
       // 优先使用学号作为唯一标识，其次证件号
       const studentId =
         fixStr(score.student_no) || fixStr(score.id_card) || fixStr(score.name);
       const studentName = fixStr(score.name);
 
-      if (!classMap.has(className)) {
-        classMap.set(className, new Map());
+      if (!groupMap.has(groupName)) {
+        groupMap.set(groupName, new Map());
       }
-      const studentMap = classMap.get(className);
+      const studentMap = groupMap.get(groupName);
 
       if (!studentMap.has(studentId)) {
         studentMap.set(studentId, {
           id: studentId,
           name: studentName,
-          classId: className,
+          classId: groupName,
           // 初始化数组，长度为考次总数 (或者固定8，视前端需求，这里动态适配)
           // 前端类型定义是 ScoreValue[]，这里为了兼容前端可能的固定索引访问，
           // 我们填充到当前考次数量，前端若只取前8个会自动截断/不足补0
@@ -1310,10 +1339,10 @@ export class CetService {
 
     // 4. 转换为数组格式
     const result = [];
-    for (const [className, studentMap] of classMap) {
+    for (const [groupName, studentMap] of groupMap) {
       result.push({
-        id: className, // 班级ID暂用名称代替
-        name: className,
+        id: groupName, // 维度ID暂用名称代替
+        name: groupName,
         students: Array.from(studentMap.values()),
       });
     }

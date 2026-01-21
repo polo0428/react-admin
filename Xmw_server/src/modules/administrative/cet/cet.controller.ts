@@ -118,6 +118,15 @@ export class CetController {
     return this.cetService.getAllClassScores();
   }
 
+  @Get('score/groups')
+  @ApiOperation({
+    summary:
+      '按维度获取成绩聚合数据（group_by=teaching_class|squadron|brigade|major|student_type）',
+  })
+  getScoreGroups(@Query('group_by') groupBy?: string): Promise<Response<any>> {
+    return this.cetService.getScoreGroups(groupBy);
+  }
+
   @Post('import-registration')
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: '导入报名数据' })

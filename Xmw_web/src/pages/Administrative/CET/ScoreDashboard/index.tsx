@@ -1,8 +1,8 @@
 import { useRequest } from '@umijs/max';
-import { Empty, Spin } from 'antd';
+import { Empty, Spin, Tabs } from 'antd';
 import React, { useMemo, useState } from 'react';
 
-import { getAllClassScores } from '@/services/administrative/cet';
+import { getScoreGroups } from '@/services/administrative/cet';
 
 import ClassListView from './components/ClassListView';
 import StudentListView from './components/StudentListView';
@@ -17,21 +17,15 @@ import type { ClassScoreGroup } from './components/types';
 export default function ScoreDashboard() {
   const [view, setView] = useState<'classes' | 'students'>('classes');
   const [selectedClass, setSelectedClass] = useState<ClassScoreGroup | null>(null);
+  const [dimension, setDimension] = useState<
+    'teaching_class' | 'squadron' | 'brigade' | 'major' | 'student_type'
+  >('teaching_class');
 
   const {
     data: resp,
     loading,
     error,
-  } = useRequest(getAllClassScores, {
-    onSuccess: (res) => {
-      // eslint-disable-next-line no-console
-      console.log('[ScoreDashboard] getAllClassScores success:', res);
-    },
-    onError: (e) => {
-      // eslint-disable-next-line no-console
-      console.error('[ScoreDashboard] getAllClassScores error:', e);
-    },
-  });
+  } = useRequest(() => getScoreGroups({ group_by: dimension }), { refreshDeps: [dimension] });
 
   const classes: ClassScoreGroup[] = useMemo(() => {
     const ensureLen8 = (arr: number[] | undefined) => {
@@ -55,6 +49,22 @@ export default function ScoreDashboard() {
     }));
   }, [resp]);
 
+  const groupLabel = useMemo(() => {
+    switch (dimension) {
+      case 'squadron':
+        return '学员队';
+      case 'brigade':
+        return '学员大队';
+      case 'major':
+        return '专业';
+      case 'student_type':
+        return '学员类型';
+      case 'teaching_class':
+      default:
+        return '教学班';
+    }
+  }, [dimension]);
+
   const handleSelectClass = (cls: ClassScoreGroup) => {
     setSelectedClass(cls);
     setView('students');
@@ -69,6 +79,23 @@ export default function ScoreDashboard() {
     <div className="space-y-6 p-6">
       <div className="mx-auto">
         {view === 'classes' && (
+          <Tabs
+            activeKey={dimension}
+            onChange={(key) => {
+              setDimension(key as any);
+              setSelectedClass(null);
+              setView('classes');
+            }}
+            items={[
+              { key: 'teaching_class', label: '教学班' },
+              { key: 'squadron', label: '学员队' },
+              { key: 'brigade', label: '学员大队' },
+              { key: 'major', label: '专业' },
+              { key: 'student_type', label: '学员类型' },
+            ]}
+          />
+        )}
+        {view === 'classes' && (
           <Spin spinning={loading}>
             {!loading && classes.length === 0 ? (
               <Empty description={error ? '加载失败（请看控制台/Network）' : '暂无成绩数据'} />
@@ -76,6 +103,7 @@ export default function ScoreDashboard() {
               <ClassListView
                 classes={classes}
                 loading={loading}
+                groupLabel={groupLabel}
                 onSelectClass={handleSelectClass}
               />
             )}
@@ -83,7 +111,11 @@ export default function ScoreDashboard() {
         )}
 
         {view === 'students' && selectedClass && (
-          <StudentListView classData={selectedClass} onBack={handleBackToClasses} />
+          <StudentListView
+            classData={selectedClass}
+            groupLabel={groupLabel}
+            onBack={handleBackToClasses}
+          />
         )}
       </div>
     </div>

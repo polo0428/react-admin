@@ -1,4 +1,4 @@
-import { BarChartOutlined, DownloadOutlined, RightOutlined } from '@ant-design/icons';
+import { DownloadOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, Card, message, Table, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React from 'react';
@@ -9,11 +9,12 @@ import { PASS_SCORE } from './constants';
 import ExportDropdown from './ExportDropdown';
 import type { ClassScoreGroup } from './types';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 interface ClassListViewProps {
   classes: ClassScoreGroup[];
   loading?: boolean;
+  groupLabel?: string;
   onSelectClass: (cls: ClassScoreGroup) => void;
 }
 
@@ -21,7 +22,13 @@ interface ClassListViewProps {
  * 班级列表视图 (双层表头表格形式)
  * 展示各班级 CET-4 / CET-6 通过率及汇总数据
  */
-export default function ClassListView({ classes, loading, onSelectClass }: ClassListViewProps) {
+export default function ClassListView({
+  classes,
+  loading,
+  groupLabel,
+  onSelectClass,
+}: ClassListViewProps) {
+  const groupLabelText = groupLabel || '教学班';
   const calcLevelStats = (
     students: ClassScoreGroup['students'],
     level: 'cet4Scores' | 'cet6Scores',
@@ -40,7 +47,7 @@ export default function ClassListView({ classes, loading, onSelectClass }: Class
   // 导出全部班级的统计
   const handleExportAllStats = () => {
     const headers = [
-      '班级名称,总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数',
+      `${groupLabelText},总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数`,
     ];
     const rows = classes.map((cls) => {
       const total = cls.students.length;
@@ -59,7 +66,7 @@ export default function ClassListView({ classes, loading, onSelectClass }: Class
         cet6.failedTotal,
       ].join(',');
     });
-    downloadCSV([headers, ...rows].join('\n'), '全校班级成绩统计.csv');
+    downloadCSV([headers, ...rows].join('\n'), `全校${groupLabelText}成绩统计.csv`);
   };
 
   // 导出全部班级的明细（模拟）
@@ -79,7 +86,7 @@ export default function ClassListView({ classes, loading, onSelectClass }: Class
 
   const columns: ColumnsType<ClassScoreGroup> = [
     {
-      title: '教学班',
+      title: groupLabelText,
       dataIndex: 'name',
       key: 'name',
       align: 'center',
@@ -195,12 +202,8 @@ export default function ClassListView({ classes, loading, onSelectClass }: Class
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <Title level={3} style={{ marginBottom: 0 }} className="flex items-center gap-2">
-            <BarChartOutlined className="text-blue-600" />
-            英语等级考试成绩统计
-          </Title>
           <Text type="secondary" className="mt-1 block">
-            各班级 CET-4 / CET-6 综合数据报表
+            各{groupLabelText} CET-4 / CET-6 综合数据报表
           </Text>
         </div>
 

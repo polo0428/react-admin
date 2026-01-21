@@ -16,6 +16,7 @@ const { Search } = Input;
 
 interface StudentListViewProps {
   classData: ClassScoreGroup;
+  groupLabel?: string;
   onBack: () => void;
 }
 
@@ -23,8 +24,13 @@ interface StudentListViewProps {
  * 学生列表视图 (双层表头 + 展开详情)
  * 展示某班级全部学生的 CET4/CET6 最高分和通过状态，可展开查看历次成绩
  */
-export default function StudentListView({ classData, onBack }: StudentListViewProps) {
+export default function StudentListView({
+  classData,
+  groupLabel,
+  onBack,
+}: StudentListViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const groupLabelText = groupLabel || '教学班';
 
   const filteredStudents = classData.students.filter(
     (s) => s.name.includes(searchTerm) || s.id.includes(searchTerm),
@@ -46,7 +52,10 @@ export default function StudentListView({ classData, onBack }: StudentListViewPr
       }
       return [...basicInfo, ...details].join(',');
     });
-    downloadCSV([headers.join(','), ...rows].join('\n'), `${classData.name}_详细成绩表.csv`);
+    downloadCSV(
+      [headers.join(','), ...rows].join('\n'),
+      `${groupLabelText}_${classData.name}_详细成绩表.csv`,
+    );
   };
 
   // 导出该班级统计
@@ -64,7 +73,10 @@ export default function StudentListView({ classData, onBack }: StudentListViewPr
         s6 >= PASS_SCORE ? '通过' : '未通过',
       ].join(',');
     });
-    downloadCSV([headers, ...rows].join('\n'), `${classData.name}_统计表.csv`);
+    downloadCSV(
+      [headers, ...rows].join('\n'),
+      `${groupLabelText}_${classData.name}_统计表.csv`,
+    );
   };
 
   const renderStatus = (score: number) => {
@@ -218,7 +230,7 @@ export default function StudentListView({ classData, onBack }: StudentListViewPr
           </Button>
           <Divider type="vertical" className="hidden xl:block h-6 bg-slate-200" />
           <Title level={4} style={{ margin: 0 }} className="hidden md:block">
-            {classData.name}
+            {groupLabelText}：{classData.name}
           </Title>
 
           <Search
