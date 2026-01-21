@@ -105,10 +105,6 @@ export default function RegistrationManagement() {
 
   const handleBack = () => {
     navigateWithMenuParam('/ncre');
-    // 强制刷新页面，避免路由状态残留导致无限刷新
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   };
 
   const handleCreate = () => {
