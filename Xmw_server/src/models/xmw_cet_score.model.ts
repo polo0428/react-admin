@@ -53,6 +53,13 @@ export class XmwCetScore extends Model<XmwCetScore> {
   @Column({ comment: '学员类型' })
   student_type: string;
 
+  @Column({
+    type: DataType.TINYINT,
+    comment: '培养层次(1大专/2本科/3研究生)',
+    allowNull: true,
+  })
+  cultivation_level: number;
+
   @ForeignKey(() => XmwCet)
   @Column({ type: DataType.UUID, comment: '考次ID', allowNull: false })
   batch_id: string;

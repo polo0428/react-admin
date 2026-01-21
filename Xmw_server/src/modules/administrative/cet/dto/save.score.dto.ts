@@ -37,6 +37,13 @@ export class SaveScoreDto {
   @ApiProperty({ description: '学员类型', required: false })
   student_type?: string;
 
+  @ApiProperty({
+    description: '培养层次(1大专/2本科/3研究生)',
+    required: false,
+    enum: [1, 2, 3],
+  })
+  cultivation_level?: number;
+
   @ApiProperty({ description: '考次ID', required: true })
   batch_id: string;
 

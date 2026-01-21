@@ -23,6 +23,18 @@ export interface ClassScoreGroup {
   id: string;
   /** 班级名称 */
   name: string;
+  /** 学年（来自最近一次有成绩的考次） */
+  year?: string;
+  /** 学期（来自最近一次有成绩的考次） */
+  semester?: string;
+  /** 年级（若该分组内不唯一，后端会返回“混合”） */
+  grade?: string;
+  /**
+   * 培养层次：
+   * - 1 大专 / 2 本科 / 3 研究生
+   * - 0 表示“混合”（后端聚合）
+   */
+  cultivationLevel?: number;
   /** 班级学生成绩 */
   students: StudentScore[];
 }

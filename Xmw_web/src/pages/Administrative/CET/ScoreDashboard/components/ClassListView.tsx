@@ -29,6 +29,23 @@ export default function ClassListView({
   onSelectClass,
 }: ClassListViewProps) {
   const groupLabelText = groupLabel || '教学班';
+  const formatSemester = (record: ClassScoreGroup) => {
+    const year = (record.year || '').trim();
+    const semester = (record.semester || '').trim();
+    if (!year && !semester) return '-';
+    if (year && semester) {
+      // semester 可能是 “1/2”，也可能是 “上/下/第一学期”等
+      return /^\d+$/.test(semester) ? `${year} 第${semester}学期` : `${year} ${semester}`;
+    }
+    return year || semester;
+  };
+  const formatCultivationLevel = (level?: number) => {
+    if (level === 0) return '混合';
+    if (level === 1) return '大专';
+    if (level === 2) return '本科';
+    if (level === 3) return '研究生';
+    return '-';
+  };
   const calcLevelStats = (
     students: ClassScoreGroup['students'],
     level: 'cet4Scores' | 'cet6Scores',
@@ -47,7 +64,7 @@ export default function ClassListView({
   // 导出全部班级的统计
   const handleExportAllStats = () => {
     const headers = [
-      `${groupLabelText},总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数`,
+      `${groupLabelText},学期,年级,培养层次,总人数,CET4参加人数,CET4通过率,CET4通过人数,CET4未过人数,CET6参加人数,CET6通过率,CET6通过人数,CET6未过人数`,
     ];
     const rows = classes.map((cls) => {
       const total = cls.students.length;
@@ -55,6 +72,9 @@ export default function ClassListView({
       const cet6 = calcLevelStats(cls.students, 'cet6Scores');
       return [
         cls.name,
+        formatSemester(cls),
+        cls.grade || '-',
+        formatCultivationLevel(cls.cultivationLevel),
         total,
         cet4.participantsTotal,
         `${cet4.passRate}%`,
@@ -92,6 +112,30 @@ export default function ClassListView({
       align: 'center',
       width: 200,
       render: (text) => <span className="font-medium text-blue-600">{text}</span>,
+    },
+    {
+      title: '学期',
+      key: 'semester',
+      align: 'center',
+      width: 160,
+      render: (_, record) => <Text type="secondary">{formatSemester(record)}</Text>,
+    },
+    {
+      title: '年级',
+      dataIndex: 'grade',
+      key: 'grade',
+      align: 'center',
+      width: 120,
+      render: (text) => <Text type="secondary">{text || '-'}</Text>,
+    },
+    {
+      title: '培养层次',
+      key: 'cultivationLevel',
+      align: 'center',
+      width: 120,
+      render: (_, record) => (
+        <Text type="secondary">{formatCultivationLevel(record.cultivationLevel)}</Text>
+      ),
     },
     {
       title: '人数',
@@ -225,7 +269,7 @@ export default function ClassListView({
             onClick: () => onSelectClass(record),
             className: 'cursor-pointer hover:bg-slate-50 transition-colors',
           })}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 1400 }}
           bordered
           size="middle"
         />

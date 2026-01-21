@@ -16,6 +16,7 @@ export interface ScoreRecord {
   brigade?: string; // 学员大队
   squadron?: string; // 学员队
   studentType?: string; // 学员类型
+  cultivationLevel?: number; // 培养层次：1大专/2本科/3研究生
   batchId: string; // 批次ID
   examLevel: ExamLevel; // 报考级别
   examDate: string; // 考试日期

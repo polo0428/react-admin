@@ -71,6 +71,8 @@ export interface SaveScoreParams {
   brigade?: string;
   squadron?: string;
   student_type?: string;
+  // 培养层次：1大专/2本科/3研究生
+  cultivation_level?: number;
   batch_id: string;
   exam_level: string;
   // 新模板：准考证号允许为空

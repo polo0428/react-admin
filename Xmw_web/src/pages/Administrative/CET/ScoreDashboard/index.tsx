@@ -33,12 +33,25 @@ export default function ScoreDashboard() {
       const last8 = list.length > 8 ? list.slice(-8) : list;
       return [...last8, ...new Array(Math.max(0, 8 - last8.length)).fill(0)];
     };
+    const toMaybeStr = (v: any) => {
+      const s = v === undefined || v === null ? '' : String(v);
+      const t = s.trim();
+      return t ? t : undefined;
+    };
+    const toMaybeNum = (v: any) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : undefined;
+    };
 
     const raw = (resp as any)?.data ?? resp ?? [];
     const list = Array.isArray(raw) ? raw : [];
     return list.map((cls: any) => ({
       id: String(cls?.id ?? cls?.name ?? ''),
       name: String(cls?.name ?? ''),
+      year: toMaybeStr(cls?.year),
+      semester: toMaybeStr(cls?.semester),
+      grade: toMaybeStr(cls?.grade),
+      cultivationLevel: toMaybeNum(cls?.cultivation_level),
       students: (cls?.students || []).map((s: any) => ({
         id: String(s?.id ?? ''),
         name: String(s?.name ?? ''),

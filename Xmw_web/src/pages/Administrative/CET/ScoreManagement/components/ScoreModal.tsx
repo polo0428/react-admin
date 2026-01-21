@@ -41,6 +41,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
           readingScore: initialValues.readingScore || 0,
           writingTranslationScore: initialValues.writingTranslationScore || 0,
           totalScore: initialValues.totalScore || 0, // 回显总分
+          cultivationLevel: initialValues.cultivationLevel || undefined,
         });
       } else {
         form.setFieldsValue({
@@ -49,6 +50,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
           readingScore: 0,
           writingTranslationScore: 0,
           totalScore: 0, // 初始总分为0
+          cultivationLevel: undefined,
         });
       }
     }
@@ -157,6 +159,17 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
             <Col span={8}>
               <Form.Item name="studentType" label="学员类型">
                 <Input placeholder="例如：青年学员" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item name="cultivationLevel" label="培养层次">
+                <Select placeholder="请选择培养层次" allowClear>
+                  <Option value={1}>大专</Option>
+                  <Option value={2}>本科</Option>
+                  <Option value={3}>研究生</Option>
+                </Select>
               </Form.Item>
             </Col>
           </Row>

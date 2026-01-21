@@ -99,7 +99,19 @@ export class CetService {
    * @author: 黄鹏
    */
   async deleteCet(id: string): Promise<Response<number>> {
-    const result = await this.cetModel.destroy({ where: { id } });
+    // 注意：xmw_cet_registration / xmw_cet_score 的 batch_id 外键引用 xmw_cet.id
+    // 数据库未设置 ON DELETE CASCADE 时，需要先删除子表数据，否则会触发外键约束错误
+    const result = await this.sequelize.transaction(async (t) => {
+      await this.scoreModel.destroy({
+        where: { batch_id: id },
+        transaction: t,
+      });
+      await this.registrationModel.destroy({
+        where: { batch_id: id },
+        transaction: t,
+      });
+      return await this.cetModel.destroy({ where: { id }, transaction: t });
+    });
     return responseMessage(result);
   }
 
@@ -1275,6 +1287,28 @@ export class CetService {
 
     // 3. 聚合数据: Class -> Student -> Scores
     const groupMap = new Map<string, Map<string, any>>();
+    // 3.1 聚合维度的“展示字段”元数据（学期/年级/培养层次）
+    // - 学期：取该分组“最近一次有成绩”的考次（按 exam_date 升序后的最大索引）
+    // - 年级 / 培养层次：若出现多个不同值，则返回“混合”
+    const groupMetaMap = new Map<
+      string,
+      {
+        gradeSet: Set<string>;
+        cultivationSet: Set<number>;
+        maxBatchIndex: number;
+      }
+    >();
+
+    const ensureGroupMeta = (groupName: string) => {
+      if (!groupMetaMap.has(groupName)) {
+        groupMetaMap.set(groupName, {
+          gradeSet: new Set<string>(),
+          cultivationSet: new Set<number>(),
+          maxBatchIndex: -1,
+        });
+      }
+      return groupMetaMap.get(groupName)!;
+    };
 
     const fixStr = (v: any) =>
       v === undefined || v === null ? v : fixMojibake(String(v));
@@ -1306,6 +1340,15 @@ export class CetService {
         fixStr(score.student_no) || fixStr(score.id_card) || fixStr(score.name);
       const studentName = fixStr(score.name);
 
+      // 收集该分组的展示字段信息
+      const meta = ensureGroupMeta(groupName);
+      const grade = (fixStr((score as any).grade) || '').trim();
+      if (grade) meta.gradeSet.add(grade);
+      const cultivationLevel = Number((score as any).cultivation_level);
+      if (Number.isFinite(cultivationLevel) && cultivationLevel > 0) {
+        meta.cultivationSet.add(cultivationLevel);
+      }
+
       if (!groupMap.has(groupName)) {
         groupMap.set(groupName, new Map());
       }
@@ -1329,10 +1372,15 @@ export class CetService {
 
       if (batchIndex !== undefined) {
         const examLevel = fixStr(score.exam_level);
+        const totalScore = Number(score.total_score) || 0;
+        // 学期取“最近一次有成绩”的考次（避免把 0 分/空导入当成有效成绩）
+        if (totalScore > 0) {
+          meta.maxBatchIndex = Math.max(meta.maxBatchIndex, batchIndex);
+        }
         if (examLevel === 'CET4' || examLevel === 'CET-4') {
-          student.cet4Scores[batchIndex] = Number(score.total_score) || 0;
+          student.cet4Scores[batchIndex] = totalScore;
         } else if (examLevel === 'CET6' || examLevel === 'CET-6') {
-          student.cet6Scores[batchIndex] = Number(score.total_score) || 0;
+          student.cet6Scores[batchIndex] = totalScore;
         }
       }
     }
@@ -1340,9 +1388,31 @@ export class CetService {
     // 4. 转换为数组格式
     const result = [];
     for (const [groupName, studentMap] of groupMap) {
+      const meta = groupMetaMap.get(groupName);
+      const grade =
+        meta && meta.gradeSet.size > 0
+          ? meta.gradeSet.size === 1
+            ? Array.from(meta.gradeSet)[0]
+            : '混合'
+          : undefined;
+      // cultivation_level: 1/2/3；0 表示“混合”；undefined 表示无数据
+      const cultivation_level =
+        meta && meta.cultivationSet.size > 0
+          ? meta.cultivationSet.size === 1
+            ? Array.from(meta.cultivationSet)[0]
+            : 0
+          : undefined;
+      const latestBatch =
+        meta && meta.maxBatchIndex >= 0
+          ? (batches as any[])[meta.maxBatchIndex]
+          : undefined;
       result.push({
         id: groupName, // 维度ID暂用名称代替
         name: groupName,
+        year: latestBatch?.year,
+        semester: latestBatch?.semester,
+        grade,
+        cultivation_level,
         students: Array.from(studentMap.values()),
       });
     }

@@ -24,6 +24,19 @@ const ScoreTable: React.FC<ScoreTableProps> = ({
   onDelete,
   onEdit,
 }) => {
+  const renderCultivationLevel = (val?: number) => {
+    switch (Number(val)) {
+      case 1:
+        return '大专';
+      case 2:
+        return '本科';
+      case 3:
+        return '研究生';
+      default:
+        return '-';
+    }
+  };
+
   const columns: ColumnsType<ScoreRecord> = [
     {
       title: '姓名',
@@ -53,6 +66,13 @@ const ScoreTable: React.FC<ScoreTableProps> = ({
       key: 'major',
       width: 120,
       render: (text) => text || '-',
+    },
+    {
+      title: '培养层次',
+      dataIndex: 'cultivationLevel',
+      key: 'cultivationLevel',
+      width: 90,
+      render: (val) => renderCultivationLevel(val),
     },
     {
       title: '班级',
