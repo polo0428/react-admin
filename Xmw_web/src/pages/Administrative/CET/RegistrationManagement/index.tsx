@@ -127,7 +127,11 @@ export default function RegistrationManagement() {
   }, [searchTerm, levelFilter]);
 
   const handleBack = () => {
-    navigateWithMenuParam('/cet');
+    navigateWithMenuParam('/cet/list');
+    // 强制刷新页面，避免路由状态残留导致无限刷新
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const handleCreate = () => {

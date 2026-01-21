@@ -1,5 +1,5 @@
 import { useRequest } from '@umijs/max';
-import { Empty, message, Select, Spin, Tabs } from 'antd';
+import { Empty, Select, Spin, Tabs } from 'antd';
 import React, { useMemo, useState } from 'react';
 
 import { getCetList, getScoreGroups } from '@/services/administrative/cet';
@@ -246,11 +246,6 @@ export default function ScoreDashboard() {
     downloadCSV([headers, ...rows].join('\n'), `全校${groupLabel}成绩统计.csv`);
   };
 
-  // 导出全部班级的明细（模拟）
-  const handleExportAllDetails = () => {
-    message.info('此处将导出所有班级所有学生的详细成绩 CSV');
-  };
-
   return (
     <div className="space-y-6 p-6">
       <div className="mx-auto">
@@ -303,10 +298,7 @@ export default function ScoreDashboard() {
                 disabled={cultivationOptions.length === 0}
                 style={{ width: 140 }}
               />
-              <ExportDropdown
-                onExportDetailed={handleExportAllDetails}
-                onExportStats={handleExportAllStats}
-              />
+              <ExportDropdown onExport={handleExportAllStats} />
             </div>
           </>
         )}

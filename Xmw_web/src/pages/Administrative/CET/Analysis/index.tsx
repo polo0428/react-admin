@@ -6,11 +6,12 @@ import {
   TeamOutlined,
   TrophyOutlined,
 } from '@ant-design/icons';
-import { history, useLocation, useRequest } from '@umijs/max';
+import { useLocation, useRequest } from '@umijs/max';
 import { Button, Card, Col, Row, Space, Spin, Tag, Typography } from 'antd';
 import React from 'react';
 
 import { getAnalysisDashboard } from '@/services/administrative/cet';
+import { navigateWithMenuParam } from '@/utils';
 
 import { ExamBatch } from '../components/CreateExamModal';
 import DistributionChart from './components/DistributionChart';
@@ -45,7 +46,11 @@ const AnalysisPage: React.FC = () => {
   });
 
   const handleBack = () => {
-    history.back();
+    navigateWithMenuParam('/cet/list');
+    // 强制刷新页面，避免路由状态残留导致无限刷新
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   if (!batch) {
