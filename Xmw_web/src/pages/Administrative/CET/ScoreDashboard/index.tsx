@@ -1,8 +1,8 @@
 import { useRequest } from '@umijs/max';
-import { Empty, Spin, Tabs } from 'antd';
+import { Empty, Select, Spin, Tabs } from 'antd';
 import React, { useMemo, useState } from 'react';
 
-import { getScoreGroups } from '@/services/administrative/cet';
+import { getCetList, getScoreGroups } from '@/services/administrative/cet';
 
 import ClassListView from './components/ClassListView';
 import StudentListView from './components/StudentListView';
@@ -20,12 +20,26 @@ export default function ScoreDashboard() {
   const [dimension, setDimension] = useState<
     'teaching_class' | 'squadron' | 'brigade' | 'major' | 'student_type'
   >('teaching_class');
+  const [semesterKey, setSemesterKey] = useState<string | undefined>(undefined);
+  const [gradeFilter, setGradeFilter] = useState<string | undefined>(undefined);
+  const [cultivationFilter, setCultivationFilter] = useState<number | undefined>(undefined);
 
   const {
     data: resp,
     loading,
     error,
   } = useRequest(() => getScoreGroups({ group_by: dimension }), { refreshDeps: [dimension] });
+
+  const { data: batchResp, loading: batchLoading } = useRequest(
+    () => getCetList({ current: 1, pageSize: 9999 }),
+    {
+      refreshDeps: [],
+      // 避免首次渲染 batchResp 为 undefined
+      onError: (e) => {
+        console.error('获取考次列表失败:', e);
+      },
+    },
+  );
 
   const classes: ClassScoreGroup[] = useMemo(() => {
     const ensureLen8 = (arr: number[] | undefined) => {
@@ -62,6 +76,103 @@ export default function ScoreDashboard() {
     }));
   }, [resp]);
 
+  const formatSemesterLabel = (record: Pick<ClassScoreGroup, 'year' | 'semester'>) => {
+    const year = (record.year || '').trim();
+    const semester = (record.semester || '').trim();
+    if (!year && !semester) return '';
+    if (year && semester) {
+      return /^\d+$/.test(semester) ? `${year} 第${semester}学期` : `${year} ${semester}`;
+    }
+    return year || semester;
+  };
+  const getSemesterKey = (record: Pick<ClassScoreGroup, 'year' | 'semester'>) => {
+    const year = (record.year || '').trim();
+    const semester = (record.semester || '').trim();
+    if (!year && !semester) return undefined;
+    return `${year}__${semester}`;
+  };
+  const formatCultivationLabel = (level?: number) => {
+    if (level === 0) return '混合';
+    if (level === 1) return '大专';
+    if (level === 2) return '本科';
+    if (level === 3) return '研究生';
+    return '';
+  };
+
+  const semesterOptions = useMemo(() => {
+    // 学期来源：考试列表（考次列表）接口
+    // batchResp 可能为 undefined (请求中)，或者结构不符合预期
+    // 这里做更安全的深层解构默认值
+    const rawData = (batchResp as any) || {};
+    const rawList = rawData?.data?.list ?? rawData?.list ?? [];
+    const list = Array.isArray(rawList) ? rawList : [];
+    const map = new Map<string, { label: string; year: string; semester: string }>();
+
+    for (const b of list) {
+      const year = (b?.year ?? '').toString().trim();
+      const semester = (b?.semester ?? '').toString().trim();
+      if (!year || !semester) continue;
+      const key = `${year}__${semester}`;
+      const label = formatSemesterLabel({ year, semester });
+      if (!label) continue;
+      if (!map.has(key)) map.set(key, { label, year, semester });
+    }
+
+    const semesterRank = (s: string) => {
+      // 常见场景：1/2 或 上/下
+      if (/^\d+$/.test(s)) return Number(s);
+      if (s.includes('上')) return 1;
+      if (s.includes('下')) return 2;
+      return 99;
+    };
+
+    return Array.from(map.entries())
+      .sort((a, b) => {
+        const ay = Number(a[1].year) || 0;
+        const by = Number(b[1].year) || 0;
+        if (ay !== by) return by - ay; // 年份降序
+        return semesterRank(a[1].semester) - semesterRank(b[1].semester);
+      })
+      .map(([value, meta]) => ({ value, label: meta.label }));
+  }, [batchResp]);
+
+  const gradeOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const c of classes) {
+      const g = (c.grade || '').trim();
+      if (g) set.add(g);
+    }
+    return Array.from(set.values()).map((value) => ({ value, label: value }));
+  }, [classes]);
+
+  const cultivationOptions = useMemo(() => {
+    const set = new Set<number>();
+    for (const c of classes) {
+      const v = c.cultivationLevel;
+      if (typeof v === 'number' && Number.isFinite(v)) set.add(v);
+    }
+    const order = (n: number) => (n === 0 ? 99 : n);
+    return Array.from(set.values())
+      .sort((a, b) => order(a) - order(b))
+      .map((value) => ({ value, label: formatCultivationLabel(value) || String(value) }));
+  }, [classes]);
+
+  const filteredClasses = useMemo(() => {
+    return classes.filter((c) => {
+      if (semesterKey) {
+        const k = getSemesterKey(c);
+        if (k !== semesterKey) return false;
+      }
+      if (gradeFilter) {
+        if ((c.grade || '').trim() !== gradeFilter) return false;
+      }
+      if (cultivationFilter !== undefined) {
+        if (c.cultivationLevel !== cultivationFilter) return false;
+      }
+      return true;
+    });
+  }, [classes, semesterKey, gradeFilter, cultivationFilter]);
+
   const groupLabel = useMemo(() => {
     switch (dimension) {
       case 'squadron':
@@ -92,29 +203,66 @@ export default function ScoreDashboard() {
     <div className="space-y-6 p-6">
       <div className="mx-auto">
         {view === 'classes' && (
-          <Tabs
-            activeKey={dimension}
-            onChange={(key) => {
-              setDimension(key as any);
-              setSelectedClass(null);
-              setView('classes');
-            }}
-            items={[
-              { key: 'teaching_class', label: '教学班' },
-              { key: 'squadron', label: '学员队' },
-              { key: 'brigade', label: '学员大队' },
-              { key: 'major', label: '专业' },
-              { key: 'student_type', label: '学员类型' },
-            ]}
-          />
+          <>
+            <Tabs
+              activeKey={dimension}
+              onChange={(key) => {
+                setDimension(key as any);
+                setSelectedClass(null);
+                setView('classes');
+                setSemesterKey(undefined);
+                setGradeFilter(undefined);
+                setCultivationFilter(undefined);
+              }}
+              items={[
+                { key: 'teaching_class', label: '教学班' },
+                { key: 'squadron', label: '学员队' },
+                { key: 'brigade', label: '学员大队' },
+                { key: 'major', label: '专业' },
+                { key: 'student_type', label: '学员类型' },
+              ]}
+            />
+            <div className="flex flex-wrap items-center justify-end gap-3 pb-2">
+              <Select
+                placeholder="学期"
+                value={semesterKey}
+                onChange={(v) => setSemesterKey(v)}
+                allowClear
+                options={semesterOptions}
+                disabled={semesterOptions.length === 0}
+                loading={batchLoading}
+                style={{ width: 180 }}
+              />
+              <Select
+                placeholder="年级"
+                value={gradeFilter}
+                onChange={(v) => setGradeFilter(v)}
+                allowClear
+                options={gradeOptions}
+                disabled={gradeOptions.length === 0}
+                style={{ width: 140 }}
+              />
+              <Select<number>
+                placeholder="培养层次"
+                value={cultivationFilter}
+                onChange={(v) => setCultivationFilter(v)}
+                allowClear
+                options={cultivationOptions}
+                disabled={cultivationOptions.length === 0}
+                style={{ width: 140 }}
+              />
+            </div>
+          </>
         )}
         {view === 'classes' && (
           <Spin spinning={loading}>
             {!loading && classes.length === 0 ? (
               <Empty description={error ? '加载失败（请看控制台/Network）' : '暂无成绩数据'} />
+            ) : !loading && filteredClasses.length === 0 ? (
+              <Empty description="暂无匹配数据" />
             ) : (
               <ClassListView
-                classes={classes}
+                classes={filteredClasses}
                 loading={loading}
                 groupLabel={groupLabel}
                 onSelectClass={handleSelectClass}
