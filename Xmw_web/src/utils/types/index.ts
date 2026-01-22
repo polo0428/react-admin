@@ -107,9 +107,10 @@ export type InitialStateTypes = {
   Locales?: Record<string, any>;
   Access_token?: string;
   Settings?: Partial<LayoutSettings>;
-  CurrentUser?: API.USERMANAGEMENT;
+  // 仅用于布局水印等展示；当前项目不再依赖 openapi 生成的 API 类型
+  CurrentUser?: any;
   Permissions?: string[];
-  RouteMenu?: API.MENUMANAGEMENT[];
+  RouteMenu?: any[];
   Collapsed?: boolean;
 };
 
@@ -118,18 +119,9 @@ export type InitialStateTypes = {
  * @author: 黄鹏
  */
 export type AppLocalCacheTypes = {
-  [LOCAL_STORAGE.USER_INFO]?: API.USERMANAGEMENT;
+  [LOCAL_STORAGE.USER_INFO]?: any;
   [LOCAL_STORAGE.LAYOUT]?: Partial<LayoutSettings>;
   [LOCAL_STORAGE.ACCESS_TOKEN]?: string;
-};
-
-/**
- * @description: 用户休眠
- * @author: 黄鹏
- */
-export type LockSleepTypes = {
-  last_time: number;
-  isSleep: boolean;
 };
 
 /**

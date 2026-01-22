@@ -35,7 +35,7 @@ import type { InitialStateTypes, PageResponse, Response } from '@/utils/types';
 export const initUserAuthority = async (): Promise<InitialStateTypes> => {
   // 需求变更：系统不需要登录校验；不再拉取用户信息/权限，也不做登录页跳转
   return {
-    CurrentUser: {} as API.USERMANAGEMENT,
+    CurrentUser: {},
     Permissions: [],
   };
 };

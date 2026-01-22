@@ -55,6 +55,7 @@ export enum ROUTES {
   ORGANIZATION = '/administrative/organization', // 智能行政-组织管理
   JOBSMANAGEMENT = '/administrative/jobs-management', // 智能行政-岗位管理
   CET = '/cet', // 智能行政-CET考试管理
+  NCRE = '/ncre', // 智能行政-计算机等级考试管理
   PERSONALCENTER = '/personal-center', // 个人中心
   PERSONALINFOMATION = '/personal-center/personal-information', // 个人中心-个人信息
   PERSONALSETTING = '/personal-center/personal-setting', // 个人中心-个人设置
