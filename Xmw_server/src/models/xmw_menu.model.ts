@@ -1,11 +1,3 @@
-/*
- * @Description: XmwMenu Entity
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-10-27 10:13:54
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-09-28 17:23:20
- */
 import {
   BelongsTo,
   Column,

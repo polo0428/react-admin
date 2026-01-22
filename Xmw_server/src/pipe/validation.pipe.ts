@@ -1,11 +1,3 @@
-/*
- * @Description: 请求参数校验
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-10-16 22:07:40
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-09-28 15:21:58
- */
 import {
   ArgumentMetadata,
   BadRequestException,

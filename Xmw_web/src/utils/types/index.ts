@@ -1,11 +1,3 @@
-/*
- * @Description: 全局公共 type 接口
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2023-08-31 08:56:55
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-10-21 09:20:33
- */
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 
 import { FLAG, LANGS, LOCAL_STORAGE, REQUEST_METHODS, ROUTES, STATUS } from '@/utils/enums';

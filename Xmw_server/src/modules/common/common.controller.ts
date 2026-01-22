@@ -1,10 +1,3 @@
-/*
- * @Author: 黄鹏<baiwumm.com>
- * @Date: 2024-07-08 13:59:36
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-07-08 14:15:30
- * @Description: Common Controller
- */
 import { Body, Controller, Post } from '@nestjs/common';
 
 import { CommonService } from './common.service';

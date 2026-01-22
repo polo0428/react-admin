@@ -1,11 +1,3 @@
-/*
- * @Description: Files Module
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-11-17 17:49:35
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-09-28 15:54:55
- */
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

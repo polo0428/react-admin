@@ -1,10 +1,3 @@
-/*
- * @Author: 黄鹏<baiwumm.com>
- * @Date: 2024-07-08 13:55:01
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-07-08 14:41:29
- * @Description: 请求第三方接口
- */
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { lastValueFrom, map } from 'rxjs';

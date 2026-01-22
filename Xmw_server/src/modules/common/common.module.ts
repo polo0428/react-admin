@@ -1,10 +1,3 @@
-/*
- * @Author: 黄鹏<baiwumm.com>
- * @Date: 2024-07-08 14:04:40
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-07-08 14:06:36
- * @Description: Common Module
- */
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 

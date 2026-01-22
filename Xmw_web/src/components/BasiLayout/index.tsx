@@ -1,11 +1,3 @@
-/*
- * @Description: 入口文件-全局 layout 配置
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-09-19 20:39:53
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-10-21 17:45:47
- */
 import { ProConfigProvider, Settings as LayoutSettings } from '@ant-design/pro-components';
 import {
   Icon,

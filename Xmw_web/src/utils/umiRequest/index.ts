@@ -1,11 +1,3 @@
-/*
- * @Description: umi-Request 请求封装
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2023-09-06 10:12:49
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-10-17 09:18:19
- */
 import 'nprogress/nprogress.css';
 
 import {

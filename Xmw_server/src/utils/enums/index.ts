@@ -1,12 +1,3 @@
-/*
- * @Description: 枚举类型
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2023-09-28 14:12:07
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-09-28 15:59:19
- */
-
 /**
  * @description: 请求状态码
  * @author: 黄鹏

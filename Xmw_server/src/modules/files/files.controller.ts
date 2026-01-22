@@ -1,11 +1,3 @@
-/*
- * @Description: Files Controller
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-11-17 17:49:53
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-09-28 15:55:03
- */
 import {
   Controller,
   Post,

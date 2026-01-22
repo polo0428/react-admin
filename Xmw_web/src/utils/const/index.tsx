@@ -1,6 +1,3 @@
-/*
- * @Description: 全局常量数据（当前项目仅保留 CET/NCRE 菜单所需常量）
- */
 import { ROUTES } from '@/utils/enums';
 import type { UmiIcon } from '@/utils/types';
 

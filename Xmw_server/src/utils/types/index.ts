@@ -1,11 +1,3 @@
-/*
- * @Description: 类型标注
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2023-09-28 14:10:44
- * @LastEditors: 黄鹏
- * @LastEditTime: 2023-09-28 17:04:38
- */
 import {
   FLAG,
   LANGS,

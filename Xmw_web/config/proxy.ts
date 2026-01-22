@@ -1,11 +1,3 @@
-/*
- * @Description: 接口代理
- * @Version: 2.0
- * @Author: Cyan
- * @Date: 2022-09-08 15:54:03
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-10-24 14:24:05
- */
 /**
  * @name 代理的配置
  * @see 在生产环境 代理是无法生效的，所以这里没有生产环境的配置

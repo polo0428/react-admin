@@ -1,11 +1,3 @@
-/*
- * @Description: 全局工具函数
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-10-16 10:50:33
- * @LastEditors: 黄鹏<baiwumm.com>
- * @LastEditTime: 2024-10-10 11:28:54
- */
 import { Request } from 'express';
 import * as fs from 'fs';
 

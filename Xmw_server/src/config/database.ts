@@ -1,11 +1,3 @@
-/*
- * @Description: 数据库配置
- * @Version: 2.0
- * @Author: 黄鹏
- * @Date: 2022-10-15 20:04:23
- * @LastEditors: Cyan
- * @LastEditTime: 2022-10-29 17:21:46
- */
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => ({
