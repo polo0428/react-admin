@@ -7,13 +7,13 @@
  * @LastEditTime: 2023-10-12 11:30:54
  */
 import { HeaderProps } from '@ant-design/pro-components';
-import { SelectLang } from '@umijs/max';
+// import { SelectLang } from '@umijs/max';
 
 import FullScreen from './FullScreen'; // 全屏
 
 export default function actionsRender(props: HeaderProps) {
   // 判断是否侧边布局
-  const isSide = props.layout === 'side';
+  // const isSide = props.layout === 'side';
   if (props.isMobile || typeof window === 'undefined') return [];
   return [
     // props.layout !== 'side' && document.body.clientWidth > 1400 ? (
@@ -22,6 +22,6 @@ export default function actionsRender(props: HeaderProps) {
     // 全屏
     <FullScreen key="FullScreen" />,
     // 多语言
-    <SelectLang reload={false} key="SelectLang" style={{ padding: isSide ? 0 : 6 }} />,
+    // <SelectLang reload={false} key="SelectLang" style={{ padding: isSide ? 0 : 6 }} />,
   ];
 }
