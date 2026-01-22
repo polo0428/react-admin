@@ -104,7 +104,7 @@ export default function RegistrationManagement() {
   }, [searchTerm, levelFilter]);
 
   const handleBack = () => {
-    navigateWithMenuParam('/ncre');
+    navigateWithMenuParam('/ncre/list');
   };
 
   const handleCreate = () => {

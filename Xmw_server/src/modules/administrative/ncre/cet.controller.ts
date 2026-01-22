@@ -112,6 +112,24 @@ export class CetController {
     return this.cetService.getAnalysisDashboard(analysisInfo);
   }
 
+  @Get('score/all-classes')
+  @ApiOperation({ summary: '获取所有班级成绩聚合数据（NCRE）' })
+  getAllClassScores(): Promise<Response<any>> {
+    return this.cetService.getAllClassScores();
+  }
+
+  @Get('score/groups')
+  @ApiOperation({
+    summary:
+      '按维度获取成绩聚合数据（NCRE）（group_by=class_name|major|department；可选 level=计算机二级等）',
+  })
+  getScoreGroups(
+    @Query('group_by') groupBy?: string,
+    @Query('level') level?: string,
+  ): Promise<Response<any>> {
+    return this.cetService.getScoreGroups(groupBy, level);
+  }
+
   @Post('import-registration')
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: '导入报名数据' })

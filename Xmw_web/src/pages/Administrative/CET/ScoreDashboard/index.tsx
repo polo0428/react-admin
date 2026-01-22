@@ -27,12 +27,35 @@ export default function ScoreDashboard() {
   const [semesterKey, setSemesterKey] = useState<string | undefined>(undefined);
   const [gradeFilter, setGradeFilter] = useState<string | undefined>(undefined);
   const [cultivationFilter, setCultivationFilter] = useState<number | undefined>(undefined);
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
   const {
     data: resp,
     loading,
     error,
-  } = useRequest(() => getScoreGroups({ group_by: dimension }), { refreshDeps: [dimension] });
+    run: fetchGroups,
+  } = useRequest(
+    (params) =>
+      getScoreGroups({
+        group_by: dimension,
+        current: params?.current || current,
+        pageSize: params?.pageSize || pageSize,
+      }),
+    {
+      refreshDeps: [dimension],
+      onSuccess: (res: any) => {
+        const rawData = res?.data || res;
+        if (rawData?.total !== undefined) {
+          setTotal(rawData.total);
+        } else if (Array.isArray(rawData)) {
+          // 如果后端还没改分页，兼容旧的数组格式
+          setTotal(rawData.length);
+        }
+      },
+    },
+  );
 
   const { data: batchResp, loading: batchLoading } = useRequest(
     () => getCetList({ current: 1, pageSize: 9999 }),
@@ -61,8 +84,10 @@ export default function ScoreDashboard() {
       return Number.isFinite(n) ? n : undefined;
     };
 
-    const raw = (resp as any)?.data ?? resp ?? [];
-    const list = Array.isArray(raw) ? raw : [];
+    const rawRes = (resp as any)?.data ?? resp ?? {};
+    // 兼容分页格式 { list: [], total: 10 } 和旧数组格式 []
+    const list = Array.isArray(rawRes) ? rawRes : Array.isArray(rawRes?.list) ? rawRes.list : [];
+
     return list.map((cls: any) => ({
       id: String(cls?.id ?? cls?.name ?? ''),
       name: String(cls?.name ?? ''),
@@ -314,6 +339,16 @@ export default function ScoreDashboard() {
                 loading={loading}
                 groupLabel={groupLabel}
                 onSelectClass={handleSelectClass}
+                pagination={{
+                  current,
+                  pageSize,
+                  total,
+                  onChange: (page, size) => {
+                    setCurrent(page);
+                    setPageSize(size);
+                    fetchGroups({ current: page, pageSize: size });
+                  },
+                }}
               />
             )}
           </Spin>

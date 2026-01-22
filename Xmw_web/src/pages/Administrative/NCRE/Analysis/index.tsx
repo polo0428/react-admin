@@ -46,7 +46,7 @@ const AnalysisPage: React.FC = () => {
   });
 
   const handleBack = () => {
-    navigateWithMenuParam('/ncre');
+    navigateWithMenuParam('/ncre/list');
   };
 
   if (!batch) {
@@ -105,18 +105,18 @@ const AnalysisPage: React.FC = () => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <StatsCard
-            title="CET-4 通过率"
-            value={data?.cet4PassRate || '-'}
-            subtext={`同比去年 ${data?.cet4PassRateYoY || '-'}`}
+            title="二级通过率"
+            value={data?.level2PassRate || '-'}
+            subtext={`同比去年 ${data?.level2PassRateYoY || '-'}`}
             icon={<RiseOutlined />}
             colorClass="bg-emerald-500"
           />
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <StatsCard
-            title="CET-6 通过率"
-            value={data?.cet6PassRate || '-'}
-            subtext={`同比去年 ${data?.cet6PassRateYoY || '-'}`}
+            title="三级通过率"
+            value={data?.level3PassRate || '-'}
+            subtext={`同比去年 ${data?.level3PassRateYoY || '-'}`}
             icon={<TrophyOutlined />}
             colorClass="bg-indigo-500"
           />
@@ -137,7 +137,7 @@ const AnalysisPage: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card bordered={false} className="shadow-sm rounded-xl">
             <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
-              全校历史通过率趋势
+              全校历史通过率趋势 (二级/三级)
             </Title>
             <div style={{ height: '450px', width: '100%' }}>
               <TrendChart data={data?.trendData} />
@@ -161,7 +161,7 @@ const AnalysisPage: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card className="shadow-sm rounded-xl">
             <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
-              成绩段分布统计 (CET-4)
+              成绩段分布统计 (二级)
             </Title>
             <div style={{ height: '350px', width: '100%' }}>
               <DistributionChart data={data?.distributionData} />
@@ -171,10 +171,10 @@ const AnalysisPage: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card className="shadow-sm rounded-xl">
             <Title level={4} style={{ marginBottom: '24px', fontSize: '18px' }}>
-              成绩段分布统计 (CET-6)
+              成绩段分布统计 (三级)
             </Title>
             <div style={{ height: '350px', width: '100%' }}>
-              <DistributionChart data={data?.cet6DistributionData} />
+              <DistributionChart data={data?.level3DistributionData} />
             </div>
           </Card>
         </Col>

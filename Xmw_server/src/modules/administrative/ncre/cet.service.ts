@@ -700,7 +700,8 @@ export class CetService {
             reading_score,
             writing_score,
             total_score: listening_score + reading_score + writing_score,
-            is_passed: listening_score + reading_score + writing_score >= 425,
+            // NCRE 总分 100，及格线一般为 60
+            is_passed: listening_score + reading_score + writing_score >= 60,
           };
         })
         // 至少要能定位到某个考生：准考证号/学号 其一
@@ -915,33 +916,35 @@ export class CetService {
     // 辅助函数：计算通过率
     const calcPassRate = (scores: XmwNcreScore[]) => {
       if (scores.length === 0) return 0;
-      const passed = scores.filter((s) => s.total_score >= 425).length;
+      const passed = scores.filter((s) => s.total_score >= 60).length;
       return (passed / scores.length) * 100;
     };
 
-    // 筛选 CET4/CET6
-    const isCet4 = (s: XmwNcreScore) =>
-      s.exam_level === 'CET4' || s.exam_level === 'CET-4';
-    const isCet6 = (s: XmwNcreScore) =>
-      s.exam_level === 'CET6' || s.exam_level === 'CET-6';
+    // 筛选 计算机二级/计算机三级
+    // NCRE 级别通常存储为 "计算机二级" 或 "NCRE2" 等，需根据实际数据调整
+    // 这里假设数据中存储的是中文 "计算机二级" 或含 "二级" 的字符串
+    const isLevel2 = (s: XmwNcreScore) =>
+      s.exam_level.includes('二级') || s.exam_level.includes('NCRE2');
+    const isLevel3 = (s: XmwNcreScore) =>
+      s.exam_level.includes('三级') || s.exam_level.includes('NCRE3');
 
-    const cet4Scores = currentScores.filter(isCet4);
-    const cet6Scores = currentScores.filter(isCet6);
-    const prevCet4Scores = previousScores.filter(isCet4);
-    const prevCet6Scores = previousScores.filter(isCet6);
+    const level2Scores = currentScores.filter(isLevel2);
+    const level3Scores = currentScores.filter(isLevel3);
+    const prevLevel2Scores = previousScores.filter(isLevel2);
+    const prevLevel3Scores = previousScores.filter(isLevel3);
 
-    const cet4PassRateVal = calcPassRate(cet4Scores);
-    const cet6PassRateVal = calcPassRate(cet6Scores);
-    const prevCet4PassRateVal = calcPassRate(prevCet4Scores);
-    const prevCet6PassRateVal = calcPassRate(prevCet6Scores);
+    const level2PassRateVal = calcPassRate(level2Scores);
+    const level3PassRateVal = calcPassRate(level3Scores);
+    const prevLevel2PassRateVal = calcPassRate(prevLevel2Scores);
+    const prevLevel3PassRateVal = calcPassRate(prevLevel3Scores);
 
-    const cet4Diff = cet4PassRateVal - prevCet4PassRateVal;
-    const cet6Diff = cet6PassRateVal - prevCet6PassRateVal;
+    const level2Diff = level2PassRateVal - prevLevel2PassRateVal;
+    const level3Diff = level3PassRateVal - prevLevel3PassRateVal;
 
-    const cet4PassRateYoY =
-      (cet4Diff >= 0 ? '+' : '') + cet4Diff.toFixed(1) + '%';
-    const cet6PassRateYoY =
-      (cet6Diff >= 0 ? '+' : '') + cet6Diff.toFixed(1) + '%';
+    const level2PassRateYoY =
+      (level2Diff >= 0 ? '+' : '') + level2Diff.toFixed(1) + '%';
+    const level3PassRateYoY =
+      (level3Diff >= 0 ? '+' : '') + level3Diff.toFixed(1) + '%';
 
     const avgScore =
       totalCandidates > 0
@@ -974,16 +977,16 @@ export class CetService {
 
     const trendData = lastBatches.reverse().map((batch) => {
       const bScores = allTrendScores.filter((s) => s.batch_id === batch.id);
-      const bCet4 = bScores.filter(
-        (s) => s.exam_level === 'CET4' || s.exam_level === 'CET-4',
+      const bLevel2 = bScores.filter(
+        (s) => s.exam_level.includes('二级') || s.exam_level.includes('NCRE2'),
       );
-      const bCet6 = bScores.filter(
-        (s) => s.exam_level === 'CET6' || s.exam_level === 'CET-6',
+      const bLevel3 = bScores.filter(
+        (s) => s.exam_level.includes('三级') || s.exam_level.includes('NCRE3'),
       );
       return {
         batchName: batch.name,
-        cet4PassRate: parseFloat(calcPassRate(bCet4).toFixed(1)),
-        cet6PassRate: parseFloat(calcPassRate(bCet6).toFixed(1)),
+        level2PassRate: parseFloat(calcPassRate(bLevel2).toFixed(1)),
+        level3PassRate: parseFloat(calcPassRate(bLevel3).toFixed(1)),
       };
     });
 
@@ -1002,51 +1005,160 @@ export class CetService {
     const prevReading = calcAvg(previousScores, 'reading_score');
     const prevWriting = calcAvg(previousScores, 'writing_score');
 
+    // NCRE 科目可能不同，这里暂用 理论/操作/其它 映射
     const radarData = [
-      { subject: '听力', A: curListening, B: prevListening },
-      { subject: '阅读', A: curReading, B: prevReading },
-      { subject: '写作/翻译', A: curWriting, B: prevWriting },
+      { subject: '理论/选择', A: curListening, B: prevListening },
+      { subject: '操作/编程', A: curReading, B: prevReading },
+      { subject: '其它', A: curWriting, B: prevWriting },
     ];
 
-    // --- 分布图 (Distribution Chart) - 分别统计 CET4 和 CET6 ---
+    // --- 分布图 (Distribution Chart) - 分别统计 二级 和 三级 ---
+    // NCRE 总分100，分布段建议：<60, 60-80, 80-90, >90 (及格/良好/优秀)
     const getDistData = (scores: XmwNcreScore[]) => [
       {
-        range: '<425',
-        count: scores.filter((s) => s.total_score < 425).length,
+        range: '<60',
+        count: scores.filter((s) => s.total_score < 60).length,
       },
       {
-        range: '425-500',
-        count: scores.filter((s) => s.total_score >= 425 && s.total_score < 500)
+        range: '60-80',
+        count: scores.filter((s) => s.total_score >= 60 && s.total_score < 80)
           .length,
       },
       {
-        range: '500-600',
+        range: '80-90',
         count: scores.filter(
-          (s) => s.total_score >= 500 && s.total_score <= 600,
+          (s) => s.total_score >= 80 && s.total_score < 90,
         ).length,
       },
       {
-        range: '>600',
-        count: scores.filter((s) => s.total_score > 600).length,
+        range: '90-100',
+        count: scores.filter((s) => s.total_score >= 90).length,
       },
     ];
 
-    const distData = getDistData(cet4Scores);
-    const cet6DistData = getDistData(cet6Scores);
+    const distData = getDistData(level2Scores);
+    const level3DistData = getDistData(level3Scores);
 
     return responseMessage({
       totalCandidates,
       totalCandidatesYoY,
-      cet4PassRate: cet4PassRateVal.toFixed(1) + '%',
-      cet4PassRateYoY,
-      cet6PassRate: cet6PassRateVal.toFixed(1) + '%',
-      cet6PassRateYoY,
+      level2PassRate: level2PassRateVal.toFixed(1) + '%',
+      level2PassRateYoY,
+      level3PassRate: level3PassRateVal.toFixed(1) + '%',
+      level3PassRateYoY,
       avgScore,
       maxScore,
       trendData,
       radarData,
       distributionData: distData,
-      cet6DistributionData: cet6DistData,
+      level3DistributionData: level3DistData,
     });
+  }
+
+  /**
+   * @description: 获取所有班级成绩聚合数据（NCRE）
+   */
+  async getAllClassScores(): Promise<Response<any>> {
+    return this.getScoreGroups('class_name');
+  }
+
+  /**
+   * @description: 按维度获取成绩聚合数据（NCRE）
+   * @param groupBy class_name | major | department
+   * @param level 可选：计算机一级/二级/三级/四级（按包含匹配，兼容 “级别|科目”）
+   */
+  async getScoreGroups(
+    groupBy: string = 'class_name',
+    level?: string,
+  ): Promise<Response<any>> {
+    const groupByKey = (groupBy || 'class_name').toLowerCase();
+
+    // 1. 获取所有考次，按时间排序，用于确定成绩数组的索引顺序
+    const batches = await this.cetModel.findAll({
+      order: [['exam_date', 'ASC']],
+      raw: true,
+    });
+    const batchIdToIndex = new Map<string, number>();
+    batches.forEach((b: any, index: number) => batchIdToIndex.set(b.id, index));
+    const totalBatches = batches.length;
+
+    // 2. 获取成绩数据（可按 level 过滤）
+    const where: WhereOptions = {};
+    if (level) {
+      (where as any).exam_level = { [Op.substring]: level };
+    }
+    const allScores = await this.scoreModel.findAll({ where, raw: true });
+
+    // 3. 聚合：Group -> Student -> scores[]
+    const groupMap = new Map<string, Map<string, any>>();
+    const groupMetaMap = new Map<string, { maxBatchIndex: number }>();
+    const ensureMeta = (groupName: string) => {
+      if (!groupMetaMap.has(groupName)) {
+        groupMetaMap.set(groupName, { maxBatchIndex: -1 });
+      }
+      return groupMetaMap.get(groupName)!;
+    };
+
+    const fixStr = (v: any) =>
+      v === undefined || v === null ? v : fixMojibake(String(v));
+
+    for (const score of allScores as any[]) {
+      const groupName = (() => {
+        switch (groupByKey) {
+          case 'department':
+            return fixStr(score.department) || '未填写学院';
+          case 'major':
+            return fixStr(score.major) || '未填写专业';
+          case 'class_name':
+          default:
+            return fixStr(score.class_name) || '未填写班级';
+        }
+      })();
+
+      const studentId = fixStr(score.student_no) || fixStr(score.name);
+      const studentName = fixStr(score.name);
+
+      if (!groupMap.has(groupName)) groupMap.set(groupName, new Map());
+      const studentMap = groupMap.get(groupName)!;
+      if (!studentMap.has(studentId)) {
+        studentMap.set(studentId, {
+          id: studentId,
+          name: studentName,
+          groupId: groupName,
+          scores: new Array(totalBatches).fill(0),
+        });
+      }
+      const student = studentMap.get(studentId)!;
+      const batchIndex = batchIdToIndex.get(score.batch_id);
+      if (batchIndex === undefined) continue;
+
+      const totalScore = Number(score.total_score) || 0;
+      // 同一个考次可能存在“级别|科目”多条记录，这里取最大分
+      student.scores[batchIndex] = Math.max(
+        Number(student.scores[batchIndex]) || 0,
+        totalScore,
+      );
+      if (totalScore > 0) {
+        const meta = ensureMeta(groupName);
+        meta.maxBatchIndex = Math.max(meta.maxBatchIndex, batchIndex);
+      }
+    }
+
+    // 4. 转换为数组格式
+    const result: any[] = [];
+    for (const [groupName, studentMap] of groupMap) {
+      const meta = groupMetaMap.get(groupName);
+      const latestBatch =
+        meta && meta.maxBatchIndex >= 0 ? (batches as any[])[meta.maxBatchIndex] : undefined;
+      result.push({
+        id: groupName,
+        name: groupName,
+        year: latestBatch?.year,
+        semester: latestBatch?.semester,
+        students: Array.from(studentMap.values()),
+      });
+    }
+
+    return responseMessage(result);
   }
 }

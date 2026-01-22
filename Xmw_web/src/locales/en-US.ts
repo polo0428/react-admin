@@ -12,4 +12,6 @@ export default {
   'menu.cet.examList': 'Exam List',
   'menu.cet.scoreDashboard': 'CET Score Dashboard',
   'menu.ncre': 'NCRE Management',
+  'menu.ncre.examList': 'Exam List',
+  'menu.ncre.scoreDashboard': 'NCRE Score Dashboard',
 };

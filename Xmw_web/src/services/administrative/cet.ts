@@ -183,5 +183,8 @@ export const getAllClassScores = () =>
  * @description: 按维度获取成绩聚合数据
  * @param group_by teaching_class | squadron | brigade | major | student_type
  */
-export const getScoreGroups = (options?: { group_by?: string }) =>
-  httpRequest.get<any[]>(`${baseURL}/score/groups`, options);
+export const getScoreGroups = (options?: {
+  group_by?: string;
+  current?: number;
+  pageSize?: number;
+}) => httpRequest.get<any>(`${baseURL}/score/groups`, options);

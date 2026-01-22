@@ -12,4 +12,6 @@ export default {
   'menu.cet.examList': '考次列表',
   'menu.cet.scoreDashboard': 'CET成績看板',
   'menu.ncre': '計算機等級考試管理',
+  'menu.ncre.examList': '考次列表',
+  'menu.ncre.scoreDashboard': 'NCRE成績看板',
 };

@@ -156,3 +156,16 @@ export const getScoreAnalysis = (options: { batch_id: string }) =>
  */
 export const getAnalysisDashboard = (options: { batch_id: string }) =>
   httpRequest.get<any>(`${baseURL}/analysis/dashboard`, options);
+
+/**
+ * @description: 获取成绩看板聚合数据（按班级/专业/学院）
+ * @param group_by class_name | major | department
+ * @param level 可选：计算机一级/二级/三级/四级（后端按包含匹配，兼容 “级别|科目”）
+ */
+export const getScoreGroups = (options?: { group_by?: string; level?: string }) =>
+  httpRequest.get<any>(`${baseURL}/score/groups`, options);
+
+/**
+ * @description: 兼容接口（默认按班级聚合）
+ */
+export const getAllClassScores = () => httpRequest.get<any>(`${baseURL}/score/all-classes`);

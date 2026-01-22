@@ -18,7 +18,7 @@ const ImportScore: React.FC = () => {
   const [successCount, setSuccessCount] = useState<number | null>(null);
 
   const handleBack = () => {
-    navigateWithMenuParam('/ncre');
+    navigateWithMenuParam('/ncre/list');
   };
 
   const handleImport = async (formData: FormData) => {

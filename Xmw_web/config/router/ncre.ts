@@ -13,8 +13,23 @@ export default {
   routes: [
     {
       path: '/ncre',
-      component: './Administrative/NCRE',
+      redirect: '/ncre/list',
       exact: true,
+    },
+    {
+      path: '/ncre/list',
+      component: './Administrative/NCRE',
+      name: 'examList',
+    },
+    /**
+     * NCRE 成绩综合看板（班级/专业/学院维度聚合）
+     * 独立页面，不依赖具体“考次”选择
+     */
+    {
+      path: '/ncre/score-dashboard',
+      component: './Administrative/NCRE/ScoreDashboard',
+      name: 'scoreDashboard',
+      icon: 'barChart',
     },
     {
       path: '/ncre/scores',

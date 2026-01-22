@@ -1,4 +1,3 @@
-import { DownloadOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, Card, Table, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React from 'react';
@@ -15,6 +14,12 @@ interface ClassListViewProps {
   loading?: boolean;
   groupLabel?: string;
   onSelectClass: (cls: ClassScoreGroup) => void;
+  pagination?: {
+    current: number;
+    pageSize: number;
+    total: number;
+    onChange: (page: number, pageSize: number) => void;
+  };
 }
 
 /**
@@ -26,6 +31,7 @@ export default function ClassListView({
   loading,
   groupLabel,
   onSelectClass,
+  pagination,
 }: ClassListViewProps) {
   const groupLabelText = groupLabel || '教学班';
   const formatSemester = (record: ClassScoreGroup) => {
@@ -191,18 +197,10 @@ export default function ClassListView({
       render: (_, record) => (
         <div className="flex justify-center gap-2">
           <Tooltip title="导出该班成绩">
-            <Button
-              type="text"
-              icon={<DownloadOutlined />}
-              onClick={(e) => handleExportSingleClass(e, record)}
-              className="text-gray-400 hover:text-blue-600"
-            />
+            <Button type="link" onClick={(e) => handleExportSingleClass(e, record)}>
+              导出
+            </Button>
           </Tooltip>
-          <Button
-            type="text"
-            icon={<RightOutlined />}
-            className="text-gray-400 hover:text-blue-600"
-          />
         </div>
       ),
     },
@@ -224,7 +222,22 @@ export default function ClassListView({
           columns={columns}
           rowKey="id"
           loading={loading}
-          pagination={false}
+          pagination={
+            pagination
+              ? {
+                  current: pagination.current,
+                  pageSize: pagination.pageSize,
+                  total: pagination.total,
+                  showSizeChanger: true,
+                  showTotal: (total) => `共 ${total} 条`,
+                  onChange: pagination.onChange,
+                }
+              : {
+                  defaultPageSize: 10,
+                  showSizeChanger: true,
+                  showTotal: (total) => `共 ${total} 条`,
+                }
+          }
           onRow={(record) => ({
             onClick: () => onSelectClass(record),
             className: 'cursor-pointer hover:bg-slate-50 transition-colors',

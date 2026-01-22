@@ -195,7 +195,7 @@ export default function ScoreManagement() {
   };
 
   const handleBack = () => {
-    navigateWithMenuParam('/ncre');
+    navigateWithMenuParam('/ncre/list');
   };
 
   return (
